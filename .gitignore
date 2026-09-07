@@ -1,0 +1,14 @@
+node_modules/
+venv/
+__pycache__/
+*.pyc
+.env
+data/
+projects/
+studio.db
+studio.db-shm
+studio.db-wal
+*.mp4
+*.mov
+*.srt
+*.json

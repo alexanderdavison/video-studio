@@ -1,0 +1,6 @@
+[submodule "tools/video-use"]
+	path = tools/video-use
+	url = https://github.com/browser-use/video-use
+[submodule "tools/hyperframes"]
+	path = tools/hyperframes
+	url = https://github.com/heygen-com/hyperframes

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+<fcpxml version="1.10">
+  <resources>
+    <format id="fmt1" name="FFVideoFormat3840x2160p24" frameDuration="1001/24000s" width="3840" height="2160" colorSpace="1-1-1 (Rec. 709)" />
+    <format id="fmt2" name="FFVideoFormat1920x1080p30" frameDuration="1001/30000s" width="1920" height="1080" colorSpace="1-1-1 (Rec. 709)" />
+    <asset id="r1" name="DJI_20260604142256_0031_D.MP4" start="0s" duration="40135095/24000s" format="fmt1" hasVideo="1" hasAudio="1" src="file:///mnt/media/raw/DJI_20260604142256_0031_D.MP4" />
+    <asset id="r2" name="GP029467.MP4" start="0s" duration="26906880/30000s" format="fmt2" hasVideo="1" hasAudio="1" src="file:///mnt/media/raw/GP029467.MP4" />
+  </resources>
+  <library>
+    <event name="Video Studio">
+      <project name="wideframe-lift-test" uid="7ed8ef1961b94ab4945d6a288712ae39">
+        <sequence format="fmt1" duration="3001198/24000s" tcStart="0s" tcFormat="NDF" audioLayout="stereo" audioRate="48000" audioSources="2">
+          <spine>
+            <clip name="seg_00 opening drone pass" start="0/24000s" duration="1440439/24000s" format="fmt1" ref="r1" tcFormat="NDF">
+              <video offset="0s" sourceStart="2879877/24000s" sourceDuration="1440439/24000s" />
+              <audio offset="0s" sourceStart="2879877/24000s" sourceDuration="1440439/24000s" />
+            </clip>
+            <clip name="seg_01 crowd wide" start="1440439/24000s" duration="1080279/24000s" format="fmt2" ref="r2" tcFormat="NDF">
+              <video offset="0s" sourceStart="1350349/30000s" sourceDuration="1350349/30000s" />
+              <audio offset="0s" sourceStart="1350349/30000s" sourceDuration="1350349/30000s" />
+            </clip>
+            <clip name="seg_02 second drone pass" start="2520718/24000s" duration="480480/24000s" format="fmt1" ref="r1" tcFormat="NDF">
+              <video offset="0s" sourceStart="5759754/24000s" sourceDuration="480480/24000s" />
+              <audio offset="0s" sourceStart="5759754/24000s" sourceDuration="480480/24000s" />
+            </clip>
+          </spine>
+        </sequence>
+      </project>
+    </event>
+  </library>
+</fcpxml>
