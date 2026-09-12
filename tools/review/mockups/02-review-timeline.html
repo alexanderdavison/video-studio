@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISH D — Proposal Review</title>
+<style>
+  :root{
+    --ink:#0E1116; --midnight:#1B2438; --panel:#141A26; --line:#232C3E;
+    --cream:#F0E6D2; --muted:#8A8F9E; --teal:#4E7A7A; --lavender:#9D8FC0;
+    --green:#6EE77E; --orange:#C4551E; --red:#C93B3B;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--cream);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.45}
+  header{display:flex;align-items:center;gap:18px;padding:14px 24px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--ink);z-index:5}
+  .brand{font-size:20px;font-weight:800}.brand .d{color:var(--teal)}
+  nav{display:flex;gap:4px;margin-left:10px}
+  nav a{color:var(--muted);text-decoration:none;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:6px 10px;border-radius:4px}
+  nav a.on{color:var(--cream);background:var(--midnight)}
+  nav a:hover{color:var(--cream)}
+  .spacer{flex:1}
+  .chip{font-family:var(--mono);font-size:11px;color:var(--lavender);border:1px solid var(--line);padding:5px 10px;border-radius:4px}
+  main{padding:18px 24px}
+  .topline{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+  .topline h1{font-size:20px;font-weight:800}
+  .proj{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .readonly{font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--orange);border:1px solid var(--orange);padding:3px 8px;border-radius:3px}
+  .stats{display:flex;gap:22px;padding:12px 16px;background:var(--midnight);border:1px solid var(--line);border-radius:8px;margin-bottom:16px;flex-wrap:wrap}
+  .stat .k{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+  .stat .v{font-size:20px;font-weight:800;font-family:var(--mono)}
+  .stat .v.g{color:var(--green)}.stat .v.o{color:var(--orange)}.stat .v.t{color:var(--teal)}
+  .timeline-wrap{background:var(--midnight);border:1px solid var(--line);border-radius:8px;padding:18px;overflow-x:auto}
+  .lane{position:relative;margin-bottom:10px}
+  .lane .lab{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:6px;display:flex;justify-content:space-between}
+  .action-lane{height:34px;background:var(--panel);border-radius:4px;position:relative;overflow:hidden}
+  .action-bar{position:absolute;top:2px;height:30px;background:var(--green);opacity:.85;border-radius:2px}
+  .beats-lane{height:22px;background:var(--panel);border-radius:4px;position:relative;overflow:hidden}
+  .beat{position:absolute;top:3px;width:2px;height:16px;background:var(--lavender);opacity:.6}
+  .main-lane{height:56px;background:var(--panel);border-radius:4px;position:relative;overflow:hidden}
+  .a-block{position:absolute;top:8px;height:40px;background:var(--cream);color:var(--ink);border-radius:3px;font-family:var(--mono);font-size:9px;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap}
+  .b-block{position:absolute;top:4px;height:48px;background:var(--teal);border:1px solid #6E9B9B;color:#EAF3F3;border-radius:3px;font-family:var(--mono);font-size:9px;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;cursor:pointer}
+  .b-block:hover{outline:2px solid var(--green)}
+  .b-block.low{background:var(--orange)}
+  .rec-gap{position:absolute;top:30px;height:8px;background:var(--red);opacity:.35;border-radius:2px}
+  .warn-chip{position:absolute;top:2px;font-family:var(--mono);font-size:9px;color:var(--orange)}
+  .timebar{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px}
+  .legend{display:flex;gap:16px;margin-top:14px;font-family:var(--mono);font-size:10px;color:var(--muted);flex-wrap:wrap}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .sw{width:12px;height:12px;border-radius:2px;display:inline-block}
+  .bottom{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-top:16px}
+  .panel{background:var(--midnight);border:1px solid var(--line);border-radius:8px;padding:14px}
+  .panel h3{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:700}
+  table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px}
+  th{color:var(--muted);text-align:left;font-weight:400;padding:5px 8px;border-bottom:1px solid var(--line)}
+  td{padding:5px 8px;border-bottom:1px solid var(--line)}
+  td.b{color:var(--teal)}td.a{color:var(--cream)}td.beat-ok{color:var(--green)}
+  .kbd{font-family:var(--mono);font-size:10px;border:1px solid var(--line);border-radius:3px;padding:1px 5px;color:var(--muted)}
+  .notes{font-size:12px;color:var(--muted);line-height:1.6}
+  footer{padding:16px 24px;color:var(--muted);font-family:var(--mono);font-size:11px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">ISH <span class="d">D</span></div>
+  <nav>
+    <a href="01-projects.html">Projects</a><a class="on" href="#">Review</a><a href="03-proof-approval.html">Proof</a><a href="04-render-qc.html">Render</a><a href="05-mix-composer.html">Mix</a><a href="06-library-search.html">Library</a>
+  </nav>
+  <div class="spacer"></div>
+  <div class="chip">ESC TO CLOSE · J/K NAV</div>
+</header>
+<main>
+  <div class="topline">
+    <h1>Proposal Review</h1>
+    <span class="proj">2026-08-25-tester · club_dispatch_standard_v1 · proposed_firstcut_beats_action.yaml</span>
+    <span class="readonly">READ-ONLY · APPROVAL IS IN PROOF</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="k">Cuts</div><div class="v">117</div></div>
+    <div class="stat"><div class="k">B density</div><div class="v t">22.5%</div></div>
+    <div class="stat"><div class="k">On-beat</div><div class="v g">58/58</div></div>
+    <div class="stat"><div class="k">Sync violations</div><div class="v g">0</div></div>
+    <div class="stat"><div class="k">Mean action</div><div class="v g">+13%</div></div>
+    <div class="stat"><div class="k">Warnings</div><div class="v g">0</div></div>
+  </div>
+
+  <div class="timeline-wrap">
+    <div class="lane">
+      <div class="lab"><span>ACTION SCORE</span><span>reel mean · high windows preferred</span></div>
+      <div class="action-lane" id="actionLane"></div>
+    </div>
+    <div class="lane">
+      <div class="lab"><span>BEATS</span><span>4285 detected · 58/58 boundaries on beat</span></div>
+      <div class="beats-lane" id="beatsLane"></div>
+    </div>
+    <div class="lane">
+      <div class="lab"><span>CUTS — A SPINE + B INSERTS</span><span>numbers match proof burn-ins</span></div>
+      <div class="main-lane" id="mainLane"></div>
+    </div>
+    <div class="timebar"><span>00:00</span><span>00:05:00</span><span>00:10:00</span><span>00:15:00</span><span>00:20:00</span><span>00:34:19</span></div>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--cream)"></span> A-cam</span>
+      <span><span class="sw" style="background:var(--teal)"></span> B insert (sync-safe)</span>
+      <span><span class="sw" style="background:var(--orange)"></span> low confidence</span>
+      <span><span class="sw" style="background:var(--green)"></span> action window</span>
+      <span><span class="sw" style="background:var(--lavender)"></span> beat tick</span>
+      <span><span class="sw" style="background:var(--red)"></span> recovery gap</span>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="panel">
+      <h3>Cut list — first 12 of 117 <span class="kbd">J</span> <span class="kbd">K</span> move selection</h3>
+      <table>
+        <thead><tr><th>CUT</th><th>ANGLE</th><th>IN</th><th>OUT</th><th>DUR</th><th>BEAT</th><th>NOTE</th></tr></thead>
+        <tbody>
+          <tr><td>001</td><td class="a">A</td><td>07.0</td><td>24.7</td><td>17.7</td><td class="beat-ok">✓</td><td>intro</td></tr>
+          <tr><td>002</td><td class="b">B</td><td>16.6</td><td>24.9</td><td>8.2</td><td class="beat-ok">✓</td><td>sync-safe</td></tr>
+          <tr><td>003</td><td class="a">A</td><td>33.0</td><td>60.4</td><td>27.4</td><td class="beat-ok">✓</td><td></td></tr>
+          <tr><td>004</td><td class="b">B</td><td>52.3</td><td>60.0</td><td>7.7</td><td class="beat-ok">✓</td><td>action 0.71</td></tr>
+          <tr><td>005</td><td class="a">A</td><td>68.1</td><td>95.7</td><td>27.6</td><td class="beat-ok">✓</td><td></td></tr>
+          <tr><td>006</td><td class="b">B</td><td>87.3</td><td>95.6</td><td>8.3</td><td class="beat-ok">✓</td><td>action 0.68</td></tr>
+          <tr><td>007</td><td class="a">A</td><td>103.9</td><td>131.3</td><td>27.3</td><td class="beat-ok">✓</td><td></td></tr>
+          <tr><td>008</td><td class="b">B</td><td>112.0</td><td>120.0</td><td>8.1</td><td class="beat-ok">✓</td><td>action 0.75</td></tr>
+          <tr><td>009</td><td class="a">A</td><td>139.3</td><td>166.7</td><td>27.3</td><td class="beat-ok">✓</td><td></td></tr>
+          <tr><td>010</td><td class="b">B</td><td>158.5</td><td>166.6</td><td>8.1</td><td class="beat-ok">✓</td><td>action 0.66</td></tr>
+          <tr><td>011</td><td class="a">A</td><td>174.9</td><td>202.2</td><td>27.3</td><td class="beat-ok">✓</td><td></td></tr>
+          <tr><td>012</td><td class="b">B</td><td>194.0</td><td>202.2</td><td>8.2</td><td class="beat-ok">✓</td><td>action 0.80</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <h3>Selected cut — 008</h3>
+      <div class="notes">
+        <p><b>B-cam insert</b> · sync-safe window</p>
+        <p>source 111.95 → 120.00 (virtual reel B0038)</p>
+        <p>action score <b style="color:var(--green)">0.75</b> vs reel mean 0.52</p>
+        <p>boundary on beat ✓ · A recovery 9.9s ✓</p>
+        <p style="margin-top:8px;color:var(--muted)">Burn-in on proof: <b style="color:var(--cream)">CUT 008 / B-CAM</b></p>
+        <p style="margin-top:8px;color:var(--muted)">E <span class="kbd">enter</span> → jump to proof at 00:01:52</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+const TOT = 2059.6, START = 0;
+function pct(s,e){ return (s/TOT*100) + '%'; }
+function w(s,e){ return ((e-s)/TOT*100) + '%'; }
+// action lanes (real profile: 10s segments, first ~2min shown + tail)
+const actions = [[0,0.10,0.10],[10,20,0.51],[20,30,0.54],[30,40,0.59],[40,50,0.58],[50,60,0.62],[60,70,0.55],[70,80,0.49],[80,90,0.53],[90,100,0.60],[100,110,0.72],[110,120,0.78],[120,130,0.74],[130,140,0.61],[140,150,0.57],[150,160,0.63],[160,170,0.71],[170,180,0.69],[180,190,0.65],[190,200,0.73],[200,210,0.77],[210,220,0.70],[220,230,0.66],[230,240,0.62]];
+const aL = document.getElementById('actionLane');
+actions.forEach(a=>{ const d=document.createElement('div'); d.className='action-bar'; d.style.left=pct(a[0],a[1]); d.style.width=w(a[0],a[1]); d.style.opacity=0.25+a[2]*0.8; aL.appendChild(d); });
+// beats every ~0.48s is too dense — sample every 24th beat, but draw dense at 0.9s grid on first 60s
+const bL = document.getElementById('beatsLane');
+for(let t=0; t<TOT; t+=2.2){ const d=document.createElement('div'); d.className='beat'; d.style.left=pct(t,t+1); bL.appendChild(d); }
+// cuts — sample real proposal pattern, expand across full duration
+const cuts=[];
+let t=0, i=1;
+while(t < TOT-20){
+  let aLen = 17.7 + Math.random()*9;
+  if(t+aLen > TOT-20) aLen = TOT-20-t;
+  cuts.push({id:i, angle:'A', s:t, e:t+aLen}); t+=aLen; i++;
+  const bLen = 7.7 + Math.random()*0.6;
+  if(t+bLen > TOT-8) break;
+  cuts.push({id:i, angle:'B', s:t, e:t+bLen, action:0.6+Math.random()*0.25}); t+=bLen; i++;
+}
+const mL = document.getElementById('mainLane');
+cuts.forEach(c=>{
+  const d=document.createElement('div');
+  if(c.angle==='A'){ d.className='a-block'; d.textContent='A'; }
+  else { d.className='b-block'+(c.action&&c.action>0.74?' low':''); d.textContent='CUT '+String(c.id).padStart(3,'0'); d.title='CUT '+String(c.id).padStart(3,'0')+' · B-CAM · action '+c.action.toFixed(2); }
+  d.style.left=pct(c.s,c.e); d.style.width=w(c.s,c.e);
+  if(c.angle==='A') d.style.fontSize = (w(c.s,c.e)<1.2)?'0px':'9px';
+  mL.appendChild(d);
+});
+</script>
+<footer>ISH D · STUDIO REVIEW — MOCKUP 02 · PROPOSAL REVIEW / TIMELINE</footer>
+</body>
+</html>

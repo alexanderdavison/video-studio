@@ -1,0 +1,31 @@
+# Template definition — club_dispatch_standard_v1
+# Source: 2026-08-26-template-engine-scope.md presets table + editorial policy.
+# A template is the COMPLETE editorial policy, not just colors/graphics.
+# Names resolve against the profile registry; the engine never redesigns.
+template: club_dispatch_standard_v1
+preset: Standard
+b_camera_density_pct: "20-25"
+pacing: Balanced
+profiles:
+  grade: club_dispatch_pb3_v1
+  crop: cd_a_pushin_v1
+  graphics: cd_bug_v9
+  audio: cd_youtube_v1
+editing:
+  safe_camera: A                 # A-cam is always the safe master
+  cut_grid: phrase               # enter B before meaningful movement, exit on downbeat/boundary
+  minimum_b_shot: 4              # seconds
+  maximum_b_shot: 14             # seconds
+  minimum_a_recovery: 8          # seconds of A after a B exit before another B
+  low_confidence_action: stay_on_a
+  avoid_repeated_angles: true
+  b_policy: "B only when it adds information; prefer equipment interaction and visible DJ actions"
+delivery:
+  resolution: 1920x1080
+  frame_rate: 30000/1001
+  codec: h264
+  pixel_format: yuv420p
+  faststart: true
+  audio: "A continuous bed only; B fully muted"
+  lufs: -13.5
+  true_peak: -1.5

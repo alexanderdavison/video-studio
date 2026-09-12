@@ -1,0 +1,40 @@
+# VALID: same as valid_standard plus the postflight block the postflight
+# verifier appends to a COMPLETED job (QC record, never authored by Riley).
+manifest_version: 1
+job_id: valid_postflight
+template: club_dispatch_standard_v1
+sources:
+  a_reel: a_cam.mp4
+  b_reel:
+    - a_cam.mp4
+    - short_src.mp4
+timeline:
+  - id: cut_001
+    angle: A
+    source_in: 0.000
+    source_out: 2.000
+  - id: cut_002
+    angle: B
+    source_in: 1.500
+    source_out: 3.000
+  - id: cut_003
+    angle: A
+    source_in: 2.000
+    source_out: 4.000
+profiles:
+  grade: club_dispatch_pb3_v1
+  crop: cd_a_pushin_v1
+  graphics: cd_bug_v9
+  audio: cd_youtube_v1
+postflight:
+  status: passed
+  checked_at: 2026-08-26T22:10:00-07:00
+  integrated_lufs: -13.5
+  true_peak_dbtp: -1.66
+  lra: 1.9
+  duration_s: 4.0
+  bt709:
+    primaries: true
+    transfer: true
+    matrix: true
+  delivered_file: /tmp/manifest_test_output.mp4

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISH D — Proof &amp; Approval</title>
+<style>
+  :root{
+    --ink:#0E1116; --midnight:#1B2438; --panel:#141A26; --line:#232C3E;
+    --cream:#F0E6D2; --muted:#8A8F9E; --teal:#4E7A7A; --lavender:#9D8FC0;
+    --green:#6EE77E; --orange:#C4551E; --red:#C93B3B;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--cream);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.45}
+  header{display:flex;align-items:center;gap:18px;padding:14px 24px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--ink);z-index:5}
+  .brand{font-size:20px;font-weight:800}.brand .d{color:var(--teal)}
+  nav{display:flex;gap:4px;margin-left:10px}
+  nav a{color:var(--muted);text-decoration:none;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:6px 10px;border-radius:4px}
+  nav a.on{color:var(--cream);background:var(--midnight)}
+  nav a:hover{color:var(--cream)}
+  .spacer{flex:1}
+  .chip{font-family:var(--mono);font-size:11px;color:var(--lavender);border:1px solid var(--line);padding:5px 10px;border-radius:4px}
+  main{padding:22px 24px;display:grid;grid-template-columns:1.5fr 1fr;gap:20px}
+  .stage{background:#000;border:1px solid var(--line);border-radius:8px;overflow:hidden;position:relative;aspect-ratio:16/9}
+  .stage .frame{position:absolute;inset:0;background:linear-gradient(135deg,#10141d 0%,#0a0d13 55%,#171c28 100%)}
+  .stage .grain{position:absolute;inset:0;opacity:.35;background-image:radial-gradient(var(--midnight) 1px,transparent 1px);background-size:5px 5px}
+  .burn{position:absolute;font-family:var(--mono);font-size:15px;letter-spacing:1px;padding:3px 8px;background:rgba(14,17,22,.72);border:1px solid rgba(240,230,210,.25);border-radius:3px}
+  .burn.tl{top:12px;left:12px;color:var(--cream)}
+  .burn.tr{top:12px;right:12px;color:var(--teal)}
+  .burn.bl{bottom:46px;left:12px;color:var(--cream)}
+  .tc{position:absolute;bottom:12px;right:12px;font-family:var(--mono);font-size:14px;color:var(--green);background:rgba(14,17,22,.72);padding:2px 8px;border-radius:3px}
+  .playhead{position:absolute;top:0;bottom:0;width:2px;background:var(--green);left:34%;opacity:.9}
+  .playhead::after{content:'';position:absolute;top:-1px;left:-6px;border:6px solid transparent;border-top:8px solid var(--green)}
+  .timeline{margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+  .tl-bar{height:10px;background:var(--midnight);border-radius:5px;position:relative;overflow:hidden}
+  .tl-fill{height:100%;width:34%;background:var(--green);opacity:.8;border-radius:5px}
+  .tl-ticks{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px}
+  .transport{display:flex;align-items:center;gap:10px;margin-top:10px}
+  .tbtn{background:var(--midnight);border:1px solid var(--line);color:var(--cream);font-family:var(--mono);font-size:12px;padding:7px 14px;border-radius:4px;cursor:pointer}
+  .tbtn:hover{border-color:var(--teal)}
+  .tbtn.play{background:var(--teal);border-color:var(--teal);color:#EAF3F3;font-weight:700}
+  .half{font-family:var(--mono);font-size:10px;color:var(--orange);margin-left:auto;border:1px solid var(--orange);padding:3px 8px;border-radius:3px}
+  .meta{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:10px;line-height:1.7}
+  .right h1{font-size:20px;font-weight:800;margin-bottom:4px}
+  .sub{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:14px}
+  .status-box{background:var(--midnight);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:16px}
+  .status-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;padding:6px 0;border-bottom:1px dashed var(--line)}
+  .status-row:last-child{border-bottom:none}
+  .green{color:var(--green)}.orange{color:var(--orange)}.red{color:var(--red)}.teal{color:var(--teal)}
+  .actions{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+  .btn{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:1px;padding:14px;border-radius:6px;border:none;cursor:pointer;text-align:left}
+  .btn.approve{background:var(--green);color:#0A140C}
+  .btn.approve:hover{filter:brightness(1.1)}
+  .btn.changes{background:var(--midnight);color:var(--orange);border:1px solid var(--orange)}
+  .btn.changes:hover{background:var(--orange);color:var(--cream)}
+  .notes label{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .notes textarea{width:100%;margin-top:6px;background:var(--panel);border:1px solid var(--line);border-radius:6px;color:var(--cream);font-family:var(--sans);font-size:13px;padding:10px;min-height:80px;resize:vertical}
+  .notes textarea:focus{outline:1px solid var(--teal)}
+  .audit{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:14px;line-height:1.8}
+  footer{padding:16px 24px;color:var(--muted);font-family:var(--mono);font-size:11px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">ISH <span class="d">D</span></div>
+  <nav>
+    <a href="01-projects.html">Projects</a><a href="02-review-timeline.html">Review</a><a class="on" href="#">Proof</a><a href="04-render-qc.html">Render</a><a href="05-mix-composer.html">Mix</a><a href="06-library-search.html">Library</a>
+  </nav>
+  <div class="spacer"></div>
+  <div class="chip">PROOF · HALF RUNTIME</div>
+</header>
+<main>
+  <div>
+    <div class="stage">
+      <div class="frame"></div>
+      <div class="grain"></div>
+      <div class="burn tl">CUT 018</div>
+      <div class="burn tr">B-CAM</div>
+      <div class="burn bl">ISH D — CLUB DISPATCH</div>
+      <div class="tc">00:18:04</div>
+      <div class="playhead"></div>
+    </div>
+    <div class="timeline">
+      <div class="tl-bar"><div class="tl-fill"></div></div>
+      <div class="tl-ticks"><span>00:00</span><span>08:36</span><span>17:13</span><span>HALF → 25:48</span><span>51:37 FULL</span></div>
+    </div>
+    <div class="transport">
+      <button class="tbtn">⏮</button>
+      <button class="tbtn play">▶ PLAY</button>
+      <button class="tbtn">⏭</button>
+      <button class="tbtn">frame</button>
+      <span class="half">HALF-RUNTIME POLICY</span>
+    </div>
+    <div class="meta">
+      tester_weave_v4_redo_proof_half_bgrade.mp4 · 1033.3s · h264 960x540 yuv420p · aac · moov ✓<br>
+      sha256 f4a70f76… · YAVG 43.45 @ t=180 · grade: club_dispatch_pb3_b_v1
+    </div>
+  </div>
+
+  <div class="right">
+    <h1>Proof &amp; Approval</h1>
+    <div class="sub">2026-08-25-tester · weave v4 redo · half-runtime B-grade proof</div>
+
+    <div class="status-box">
+      <div class="status-row"><span>State</span><span class="green">READY FOR APPROVAL</span></div>
+      <div class="status-row"><span>Proof</span><span>half · 1033.3s</span></div>
+      <div class="status-row"><span>Burn-ins</span><span>CUT / A-CAM / B-CAM / TC</span></div>
+      <div class="status-row"><span>Render</span><span class="green">DONE · QC PASS</span></div>
+      <div class="status-row"><span>Kill switch</span><span class="red">ON — NO PUBLISH</span></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn approve" onclick="this.textContent='✓ APPROVED — RECORDED'; this.style.background='#3E9E4E'; this.disabled=true">✓ APPROVE PROOF</button>
+      <button class="btn changes">✗ REQUEST CHANGES</button>
+    </div>
+
+    <div class="notes">
+      <label>Notes for the edit (attached to approval record)</label>
+      <textarea placeholder="e.g. hold CUT 004 two beats longer / B-cam at 12:00 could lift…"></textarea>
+    </div>
+
+    <div class="audit">
+      last approval: 2026-08-27 23:18 PDT · Ish · hash f4a70f76…<br>
+      changes requested: 2 total · latest 08-27 10:08 "still too dark" → B-grade lookup fixed (P11)
+    </div>
+  </div>
+</main>
+<footer>ISH D · STUDIO REVIEW — MOCKUP 03 · PROOF PLAYER + APPROVAL</footer>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "project": "wideframe-lift-test",
+  "grade": "auto",
+  "sources": {
+    "dji_a": "/mnt/media/raw/DJI_20260604142256_0031_D.MP4",
+    "gopro": "/mnt/media/raw/GP029467.MP4"
+  },
+  "ranges": [
+    {"source": "dji_a", "start": 120.0, "end": 180.0, "note": "opening drone pass"},
+    {"source": "gopro", "start": 45.0, "end": 90.0, "note": "crowd wide"},
+    {"source": "dji_a", "start": 240.0, "end": 260.0, "note": "second drone pass"}
+  ]
+}

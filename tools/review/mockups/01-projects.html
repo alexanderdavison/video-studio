@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISH D — Projects</title>
+<style>
+  :root{
+    --ink:#0E1116; --midnight:#1B2438; --panel:#141A26; --line:#232C3E;
+    --cream:#F0E6D2; --muted:#8A8F9E; --teal:#4E7A7A; --lavender:#9D8FC0;
+    --green:#6EE77E; --orange:#C4551E; --red:#C93B3B;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--cream);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.45}
+  header{display:flex;align-items:center;gap:18px;padding:14px 24px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--ink);z-index:5}
+  .brand{font-size:20px;font-weight:800}.brand .d{color:var(--teal)}
+  nav{display:flex;gap:4px;margin-left:10px}
+  nav a{color:var(--muted);text-decoration:none;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:6px 10px;border-radius:4px}
+  nav a.on{color:var(--cream);background:var(--midnight)}
+  nav a:hover{color:var(--cream)}
+  .spacer{flex:1}
+  .chip{font-family:var(--mono);font-size:11px;color:var(--lavender);border:1px solid var(--line);padding:5px 10px;border-radius:4px}
+  main{padding:22px 24px;display:grid;grid-template-columns:1fr 300px;gap:22px}
+  .left h1{font-size:22px;font-weight:800;margin-bottom:14px}
+  .filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .filter{font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--muted);border:1px solid var(--line);background:none;padding:6px 12px;border-radius:4px;cursor:pointer}
+  .filter.on{color:var(--green);border-color:var(--green)}
+  .projects{display:grid;grid-template-columns:1fr;gap:12px}
+  .proj{background:var(--midnight);border:1px solid var(--line);border-radius:8px;padding:16px 18px;display:grid;grid-template-columns:1fr auto;gap:12px;cursor:pointer;transition:border-color .15s}
+  .proj:hover{border-color:var(--teal)}
+  .proj .top{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+  .proj h2{font-size:16px;font-weight:700}
+  .status{font-family:var(--mono);font-size:10px;letter-spacing:1px;padding:3px 8px;border-radius:3px}
+  .status.ready{color:var(--green);border:1px solid var(--green)}
+  .status.proposal{color:var(--orange);border:1px solid var(--orange)}
+  .status.draft{color:var(--muted);border:1px solid var(--line)}
+  .status.rendered{color:var(--teal);border:1px solid var(--teal)}
+  .stats{display:flex;gap:18px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .stats b{color:var(--cream);font-weight:700}
+  .act{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--teal)}
+  .act .go{font-family:var(--mono);font-size:16px}
+  .right h3{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;font-weight:700}
+  .feed{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:18px}
+  .fe{display:flex;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);font-size:12px;align-items:flex-start}
+  .fe:last-child{border-bottom:none}
+  .fe .t{font-family:var(--mono);font-size:10px;color:var(--teal);white-space:nowrap;padding-top:2px}
+  .fe .m{color:var(--cream)}
+  .fe .m small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+  .health{border:1px solid var(--line);border-radius:8px;padding:14px}
+  .health .row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;padding:5px 0;border-bottom:1px dashed var(--line)}
+  .health .row:last-child{border-bottom:none}
+  .ok{color:var(--green)}.warn{color:var(--orange)}.bad{color:var(--red)}
+  footer{padding:16px 24px;color:var(--muted);font-family:var(--mono);font-size:11px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">ISH <span class="d">D</span></div>
+  <nav>
+    <a class="on" href="#">Projects</a><a href="02-review-timeline.html">Review</a><a href="03-proof-approval.html">Proof</a><a href="04-render-qc.html">Render</a><a href="05-mix-composer.html">Mix</a><a href="06-library-search.html">Library</a>
+  </nav>
+  <div class="spacer"></div>
+  <div class="chip">UTC 23:41 · SAND</div>
+</header>
+<main>
+  <div class="left">
+    <h1>Projects</h1>
+    <div class="filters">
+      <button class="filter on">ALL</button>
+      <button class="filter">READY</button>
+      <button class="filter">PROPOSAL</button>
+      <button class="filter">RENDERED</button>
+      <button class="filter">DRAFT</button>
+    </div>
+    <div class="projects">
+      <div class="proj">
+        <div>
+          <div class="top"><h2>2026-08-25-tester</h2><span class="status ready">READY — PROPOSAL 117 CUTS</span></div>
+          <div class="stats"><span>117 cuts</span><span>B <b>22.5%</b></span><span>2059.6s</span><span>beats <b>58/58</b></span><span>+13% action</span></div>
+        </div>
+        <div class="act"><span>Open review</span><span class="go">→</span></div>
+      </div>
+      <div class="proj">
+        <div>
+          <div class="top"><h2>2026-08-12-dorfik-captured</h2><span class="status proposal">PROPOSAL PENDING</span></div>
+          <div class="stats"><span>86 cuts</span><span>B <b>24.1%</b></span><span>1892.2s</span><span>beats <b>43/43</b></span><span>analyzer no-op</span></div>
+        </div>
+        <div class="act"><span>Review proposal</span><span class="go">→</span></div>
+      </div>
+      <div class="proj">
+        <div>
+          <div class="top"><h2>2026-08-19-club-night-03</h2><span class="status rendered">RENDERED — QC PASS</span></div>
+          <div class="stats"><span>64 cuts</span><span>B <b>21.8%</b></span><span>1410.7s</span><span>QC -13.5 LUFS</span><span>BT.709 ✓</span></div>
+        </div>
+        <div class="act"><span>QC record</span><span class="go">→</span></div>
+      </div>
+      <div class="proj">
+        <div>
+          <div class="top"><h2>2026-08-26-preview-room</h2><span class="status draft">DRAFT — NO MANIFEST</span></div>
+          <div class="stats"><span>0 cuts</span><span>ingest 12/34 clips</span><span>analysis pending</span></div>
+        </div>
+        <div class="act"><span>Ingest status</span><span class="go">→</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="right">
+    <h3>Recent activity</h3>
+    <div class="feed">
+      <div class="fe"><span class="t">23:18</span><div class="m">Proof approved — tester weave v4 redo<small>B-grade, half runtime, 1033.3s · sha f4a70f76…</small></div></div>
+      <div class="fe"><span class="t">16:11</span><div class="m">Proposal generated — beats + action<small>117 cuts · 0 warnings · proposed_firstcut_beats_action.yaml</small></div></div>
+      <div class="fe"><span class="t">16:03</span><div class="m">Action profile computed<small>b_reel_profile.json · 209 segments · 2073.5s</small></div></div>
+      <div class="fe"><span class="t">16:00</span><div class="m">Beats generated<small>a_full_beats.json + b_reel_beats.json · 4285 beats</small></div></div>
+      <div class="fe"><span class="t">08:12</span><div class="m">Ingest completed<small>34/34 clips indexed · whisper base.en</small></div></div>
+    </div>
+    <h3>Pipeline health</h3>
+    <div class="health">
+      <div class="row"><span>studio-ingest</span><span class="ok">IDLE · OK</span></div>
+      <div class="row"><span>render lock</span><span class="ok">FREE</span></div>
+      <div class="row"><span>storage /mnt/media</span><span class="ok">2.1 TB FREE</span></div>
+      <div class="row"><span>quarantine</span><span class="warn">3 CLIPS</span></div>
+      <div class="row"><span>studio.db</span><span class="ok">WAL OK</span></div>
+    </div>
+  </div>
+</main>
+<footer>ISH D · STUDIO REVIEW — MOCKUP 01 · PROJECTS / WORKSPACE</footer>
+</body>
+</html>

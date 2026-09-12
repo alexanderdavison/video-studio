@@ -1,0 +1,44 @@
+# Club Dispatch — Active preset (30-35% B-camera, more performance/equipment cuts)
+# Same contract as Standard; denser B use, shorter B shots.
+manifest_version: 1
+job_id: club_dispatch_004
+template: club_dispatch_active_v1
+sources:
+  a_reel: DJI_0042.MP4
+  b_reel:
+    - GOPR0038.MP4
+    - GOPR0039.MP4
+timeline:
+  - id: cut_001
+    angle: A
+    source_in: 0.000
+    source_out: 96.000
+  - id: cut_002
+    angle: B
+    source_in: 96.000
+    source_out: 106.400
+  - id: cut_003
+    angle: A
+    source_in: 106.400
+    source_out: 186.242
+  - id: cut_004
+    angle: B
+    source_in: 186.242
+    source_out: 194.600
+  - id: cut_005
+    angle: A
+    source_in: 194.600
+    source_out: 320.000
+  - id: cut_006
+    angle: B
+    source_in: 320.000
+    source_out: 331.200
+  - id: cut_007
+    angle: A
+    source_in: 331.200
+    source_out: 480.000
+profiles:
+  grade: club_dispatch_pb3_v1
+  crop: cd_a_pushin_v1
+  graphics: cd_bug_v9
+  audio: cd_youtube_v1

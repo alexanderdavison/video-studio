@@ -1,0 +1,19 @@
+== fixture: a_cam.mp4 (6s)
+== fixture: short_src.mp4 (3s)
+== fixture: non-uniform pair (yuv420p + yuv444p)
+== fixture: uniform pair (yuv420p + yuv420p)
+== fixture: hot.mp4 (loud, bt709-tagged)
+== fixture: good.mp4 (two-pass loudnorm -13.5, bt709-tagged)
+   hot measures: I=-22.05 TP=-18.31 LRA=0.00 thresh=-32.05
+== fixture: untagged.mp4 (loudnorm -13.5, NO bt709)
+== verify fixtures ==
+   a_cam.mp4 dur=6.000000 pix=yuv420p
+   short_src.mp4 dur=3.000000 pix=yuv420p
+   nonunif_a.mp4 dur=2.000000 pix=yuv420p
+   nonunif_b.mp4 dur=2.000000 pix=yuv444p
+   unif_a.mp4 dur=2.000000 pix=yuv420p
+   unif_b.mp4 dur=2.000000 pix=yuv420p
+   hot.mp4 dur=4.000000 pix=yuv420p
+   good.mp4 dur=4.011000 pix=yuv420p
+   untagged.mp4 dur=4.000000 pix=yuv420p
+FIXTURES_OK

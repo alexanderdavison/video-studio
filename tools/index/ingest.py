@@ -14,6 +14,9 @@ OLLAMA = "http://192.168.1.22:11434"
 EMBED_MODEL = "bge-m3"
 MAX_RETRIES = 3
 VIDEO_EXTS = {".mp4", ".mov", ".mkv", ".m4v", ".avi", ".ts"}
+# Scene/keyframe stages read multi-GB masters over NFS (~13 MB/s):
+# 1800 s was not enough for a 4K file and the failure was silent.
+SCENE_TIMEOUT = 5400
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS clips (
@@ -191,31 +194,60 @@ def transcribe_whisper(path, max_seconds=None):
     segs = json.loads(out.stdout)
     return [{"start": s["start"], "end": s["end"], "text": s["text"].strip()} for s in segs]
 
+def parse_scene_csv(csv_path):
+    """PySceneDetect list-scenes CSV -> [(start_seconds, end_seconds)].
+
+    Two traps this handles, both live-verified:
+      1. The file begins with a BLANK LINE before the header, so feeding the handle
+         straight to csv.DictReader yields empty field names -> silent zero rows.
+      2. The columns are "Start Frame, Start Timecode, Start Time (seconds), ...",
+         so positional parsing (parts[0], parts[1]) reads FRAME NUMBERS as seconds.
+    """
+    import csv as _csv
+    lines = csv_path.read_text(errors="replace").splitlines()
+    hdr = next((i for i, l in enumerate(lines) if l.startswith("Scene Number")), None)
+    if hdr is None:
+        raise RuntimeError(f"no 'Scene Number' header row in {csv_path}")
+    out = []
+    for row in _csv.DictReader(lines[hdr:]):
+        try:
+            start = float(row["Start Time (seconds)"])
+            end = float(row["End Time (seconds)"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if end < start:
+            continue
+        out.append((start, end))
+    return out
+
+
 def run_scenedetect(path, outdir, clip_id, conn):
+    """Detect scene cuts; store them. Raises unless detection really produced a CSV.
+
+    Returns the scene count. 0 is legitimate (a locked-off master may contain no
+    cuts) and is reported by the caller as 'no_scenes', never as success-with-nothing.
+    """
     outdir.mkdir(parents=True, exist_ok=True)
-    subprocess.run(
+    for stale in outdir.glob("*.csv"):
+        stale.unlink()
+    out = subprocess.run(
         ["/opt/video-studio/tools/venv/bin/scenedetect", "-i", str(path),
-         "-o", str(outdir), "-d", "--downscale", "16"],
-        capture_output=True, text=True, timeout=1800)
-    csv = outdir / "scenes.csv"
-    if not csv.exists():
-        # scenedetect writes to output dir with a generated name; find any csv
-        csvs = list(outdir.glob("*.csv"))
-        if not csvs:
-            return 0
-        csv = csvs[0]
-    n = 0
-    for line in csv.read_text().splitlines()[1:]:
-        parts = line.split(",")
-        if len(parts) >= 2:
-            try:
-                start = float(parts[0])
-                end = float(parts[1])
-            except ValueError:
-                continue
-            conn.execute("INSERT INTO scenes (clip_id, start, end) VALUES (?,?,?)", (clip_id, start, end))
-            n += 1
-    return n
+         "-o", str(outdir), "--downscale", "16",
+         "detect-content", "list-scenes"],
+        capture_output=True, text=True, timeout=SCENE_TIMEOUT)
+    if out.returncode != 0:
+        raise RuntimeError(f"scenedetect rc={out.returncode}: "
+                           f"{(out.stderr or out.stdout or '')[-400:].strip()}")
+    csvs = sorted(outdir.glob("*.csv"))
+    if not csvs:
+        raise RuntimeError(f"scenedetect rc=0 but wrote no CSV into {outdir}")
+    scenes = parse_scene_csv(csvs[-1])
+    conn.execute("DELETE FROM scenes WHERE clip_id=?", (clip_id,))
+    for start, end in scenes:
+        conn.execute("INSERT INTO scenes (clip_id, start, end) VALUES (?,?,?)",
+                     (clip_id, start, end))
+    return len(scenes)
+
 
 def run_beats(path, clip_id, conn):
     out = subprocess.run(
@@ -233,15 +265,52 @@ def run_beats(path, clip_id, conn):
         conn.execute("INSERT INTO beats (clip_id, time, bpm) VALUES (?,?,?)", (clip_id, float(b), bpm))
     return len(beats), bpm
 
+def load_keyframe_picks(outdir):
+    """Read pick_keyframes' *_scores.json: the authoritative ts + quality components."""
+    js = sorted(outdir.glob("*_scores.json"))
+    if not js:
+        raise RuntimeError(f"pick_keyframes wrote no *_scores.json into {outdir}")
+    picks = json.loads(js[-1].read_text()).get("picks") or []
+    if not picks:
+        raise RuntimeError(f"no picks in {js[-1]}")
+    return picks
+
+
 def run_keyframes(path, clip_id, conn):
+    """Extract scored keyframes; store real ts + sharpness/brightness/motion.
+
+    Previously inserted (ts=0.0) and dropped every quality component even though
+    pick_keyframes had computed them.
+    """
     outdir = Path(f"/opt/video-studio/projects/index/keyframes-{clip_id}")
     outdir.mkdir(parents=True, exist_ok=True)
-    subprocess.run(
+    for stale in list(outdir.glob("*.jpg")) + list(outdir.glob("*_scores.json")):
+        stale.unlink()
+    out = subprocess.run(
         ["/opt/video-studio/tools/venv/bin/python", "/opt/video-studio/tools/bin/pick_keyframes.py",
          str(path), "--out", str(outdir), "--count", "5", "--samples", "30"],
-        capture_output=True, text=True, timeout=1800)
-    for img in sorted(outdir.glob("*.jpg")):
-        conn.execute("INSERT INTO keyframes (clip_id, ts, path) VALUES (?,?,?)", (clip_id, 0.0, str(img)))
+        capture_output=True, text=True, timeout=SCENE_TIMEOUT)
+    if out.returncode != 0:
+        raise RuntimeError(f"pick_keyframes rc={out.returncode}: "
+                           f"{(out.stderr or '')[-400:].strip()}")
+    picks = load_keyframe_picks(outdir)
+    conn.execute("DELETE FROM keyframes WHERE clip_id=?", (clip_id,))
+    n = 0
+    for pick in picks:
+        img = outdir / str(pick.get("file", ""))
+        if not img.exists():
+            continue
+        conn.execute(
+            "INSERT INTO keyframes (clip_id, ts, path, sharpness, brightness, motion) "
+            "VALUES (?,?,?,?,?,?)",
+            (clip_id, float(pick.get("ts", 0.0)), str(img),
+             pick.get("sharpness"), pick.get("brightness"), pick.get("motion")))
+        n += 1
+    if n == 0:
+        raise RuntimeError(f"no keyframe images matched the scores JSON in {outdir}")
+    return n
+
+
 
 def ingest_one(conn, path, stages, max_seconds=None):
     path = Path(path)
@@ -316,8 +385,9 @@ def ingest_one(conn, path, stages, max_seconds=None):
         try:
             n = run_scenedetect(path, Path(f"/opt/video-studio/projects/index/scenes-{cid}"), cid, conn)
             conn.commit()
-            log(conn, fhash, "scenes", "ok")
-            results.append(f"scenes: {n}")
+            status = "ok" if n else "no_scenes"
+            log(conn, fhash, "scenes", status)
+            results.append(f"scenes: {n} ({status})")
         except Exception as e:
             log(conn, fhash, "scenes", "failed", str(e))
             return fail_clip(conn, cid, fhash, "scenes", str(e), results)
@@ -334,10 +404,10 @@ def ingest_one(conn, path, stages, max_seconds=None):
 
     if "keyframes" in stages:
         try:
-            run_keyframes(path, cid, conn)
+            n = run_keyframes(path, cid, conn)
             conn.commit()
             log(conn, fhash, "keyframes", "ok")
-            results.append("keyframes: ok")
+            results.append(f"keyframes: {n} scored")
         except Exception as e:
             log(conn, fhash, "keyframes", "failed", str(e))
             return fail_clip(conn, cid, fhash, "keyframes", str(e), results)

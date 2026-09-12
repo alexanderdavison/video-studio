@@ -12,3 +12,17 @@ studio.db-wal
 *.mov
 *.srt
 *.json
+
+# --- scratch, backups and rollback snapshots are not source (added 2026-09-12) ---
+work/
+tools/tests/work/
+.render.lock
+*.bak
+.phase6-rollback/
+
+# --- real source JSON that the blanket *.json rule must NOT hide ---
+!tools/manifest/manifest_schema.json
+!tools/manifest/profile_registry.json
+!tools/bin/examples/example_edl.json
+!tools/analysis/p1_out/*.json
+!tools/analysis/harness/records/*.json

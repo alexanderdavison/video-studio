@@ -1,0 +1,70 @@
+{
+  "decisions": [
+    {
+      "event_id": "evt_01",
+      "selection": "b_glance",
+      "confidence_score": 0.74,
+      "rationale": "At 00:05:00.000 the overhead B angle clearly isolates both hands on the decks; a 4.000s glance delivers that useful detail without overstaying a steady setup."
+    },
+    {
+      "event_id": "evt_02",
+      "selection": "hold_a",
+      "confidence_score": 0.82,
+      "rationale": "Hold A for 4.000s: the proposed B return breaks the 8s A-recovery rule, while the reference’s long master holds, including 00:15:33.290, support restraint."
+    },
+    {
+      "event_id": "evt_03",
+      "selection": "hold_a",
+      "confidence_score": 0.83,
+      "rationale": "Hold A for 4.000s: the B view is another similar overhead deck detail and arrives before minimum A recovery, so it does not earn a new cut."
+    },
+    {
+      "event_id": "evt_04",
+      "selection": "hold_a",
+      "confidence_score": 0.81,
+      "rationale": "Hold A for 4.000s: despite the nominal phrase boundary, the B option would interrupt A recovery and its extended deck view adds no clearly distinct visual event."
+    },
+    {
+      "event_id": "evt_05",
+      "selection": "hold_a",
+      "confidence_score": 0.83,
+      "rationale": "Hold A for 4.000s: the 00:05:48.905 B frame shows a routine hand position, not a readable payoff, and the proposed switch violates minimum A recovery."
+    },
+    {
+      "event_id": "evt_06",
+      "selection": "hold_a",
+      "confidence_score": 0.84,
+      "rationale": "Hold A for 4.000s: B remains a dark, near-identical overhead of ongoing deck work at 00:05:59.814, so restraint preserves the master and A recovery."
+    },
+    {
+      "event_id": "evt_07",
+      "selection": "hold_a",
+      "confidence_score": 0.86,
+      "rationale": "Hold A for 4.000s: a 9.898s B action hold would linger on routine manipulation, and the short A recovery makes the safer master hold editorially stronger."
+    },
+    {
+      "event_id": "evt_08",
+      "selection": "hold_a",
+      "confidence_score": 0.84,
+      "rationale": "Hold A for 4.000s: the B frame at 00:06:15.633 shows continuing mixer work rather than a new completed gesture; preserve A recovery instead of repeating the angle."
+    },
+    {
+      "event_id": "evt_09",
+      "selection": "hold_a",
+      "confidence_score": 0.87,
+      "rationale": "Hold A for 4.000s: all B duration faces are a 10.909s sustained overhead view, far too long for the modest visible change and inside short A recovery."
+    },
+    {
+      "event_id": "evt_10",
+      "selection": "hold_a",
+      "confidence_score": 0.85,
+      "rationale": "Hold A for 4.000s: 00:06:39.452 shows hands already working the mixer, but no discrete visual payoff justifies a 5.253s or longer repeat cut before A recovers."
+    },
+    {
+      "event_id": "evt_11",
+      "selection": "hold_a",
+      "confidence_score": 0.82,
+      "rationale": "Hold A for 4.000s: the B view at 00:06:49.360 offers a similar deck adjustment, but its action evidence is ambiguous and the switch would again cut A recovery short."
+    }
+  ]
+}

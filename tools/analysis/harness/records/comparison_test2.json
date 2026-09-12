@@ -1,0 +1,472 @@
+{
+ "response_file": "/root/test1/responses_test2/decisions_20260911-212556.txt",
+ "decisions": {
+  "evt_01": {
+   "event_id": "evt_01",
+   "selection": "b_downbeat",
+   "confidence_score": 0.62,
+   "rationale": "The overhead B view reveals both hands working the decks at 00:05:00.000, earning one concise detail cut before returning to the restrained wide-shot language."
+  },
+  "evt_02": {
+   "event_id": "evt_02",
+   "selection": "hold_a",
+   "confidence_score": 0.84,
+   "rationale": "Hold the wider A view; the B material offers no new decisive action, and the reference favors sustained coverage over routine angle changes, including 00:15:33.290\u201300:17:50.350."
+  },
+  "evt_03": {
+   "event_id": "evt_03",
+   "selection": "hold_a",
+   "confidence_score": 0.85,
+   "rationale": "Stay on A: the alternate overhead repeats the same focused deck work and does not earn a second cut so soon after the prior B detail."
+  },
+  "evt_04": {
+   "event_id": "evt_04",
+   "selection": "hold_a",
+   "confidence_score": 0.79,
+   "rationale": "Although this is a nominal phrase start, the B frame is dark and visually repetitive; preserve the wider A composition rather than cut on an unverified musical phase."
+  },
+  "evt_05": {
+   "event_id": "evt_05",
+   "selection": "b_downbeat",
+   "confidence_score": 0.65,
+   "rationale": "The overhead angle isolates an extended reach across the mixer at 00:05:35.293, giving the viewer a readable physical-performance detail after a substantial A recovery."
+  },
+  "evt_06": {
+   "event_id": "evt_06",
+   "selection": "hold_a",
+   "confidence_score": 0.84,
+   "rationale": "Hold A after the detail insert; the B view remains a similar overhead of ordinary operation, while the reference uses long uninterrupted shots rather than frequent cutaways."
+  },
+  "evt_07": {
+   "event_id": "evt_07",
+   "selection": "hold_a",
+   "confidence_score": 0.85,
+   "rationale": "The B framing repeats the same two-hand deck posture without a distinct payoff, so staying on A protects measured club pacing."
+  },
+  "evt_08": {
+   "event_id": "evt_08",
+   "selection": "hold_a",
+   "confidence_score": 0.88,
+   "rationale": "Keep A: the B image is comparatively dark and the nominal downbeat is not enough to justify another cut without a clearly stronger visual event."
+  },
+  "evt_09": {
+   "event_id": "evt_09",
+   "selection": "hold_a",
+   "confidence_score": 0.88,
+   "rationale": "Hold the wide view; visible mixer work is continuous rather than a new beat-worthy gesture, consistent with the reference's deliberate non-cuts."
+  },
+  "evt_10": {
+   "event_id": "evt_10",
+   "selection": "hold_a",
+   "confidence_score": 0.86,
+   "rationale": "Stay on A because the overhead option is a similar operational view and the nominal musical marker alone does not earn interruption of the long recovery."
+  },
+  "evt_11": {
+   "event_id": "evt_11",
+   "selection": "b_downbeat",
+   "confidence_score": 0.69,
+   "rationale": "The overhead B view clearly shows both hands actively shaping the mixer at 00:06:33.254, a purposeful detail payoff after the extended A hold."
+  }
+ },
+ "decisions_test1": {
+  "evt_01": {
+   "event_id": "evt_01",
+   "selection": "hold_a",
+   "confidence_score": 0.88,
+   "rationale": "The B view at 00:05:00.008\u201300:05:04.804 is too dark and shows only routine control work; hold the readable wide, matching the reference\u2019s deliberate long-hold restraint."
+  },
+  "evt_02": {
+   "event_id": "evt_02",
+   "selection": "hold_a",
+   "confidence_score": 0.84,
+   "rationale": "Although hands move across the decks around 00:05:10.310\u201300:05:15.315, the dark B angle does not add a distinct beat; preserve the wide-shot patience seen in the reference."
+  },
+  "evt_03": {
+   "event_id": "evt_03",
+   "selection": "b_downbeat",
+   "confidence_score": 0.58,
+   "rationale": "At 00:05:17.525\u201300:05:19.527 the DJ lifts both hands and resets into active deck work, giving this close B detail a visible performance beat; downbeat phase remains nominal."
+  },
+  "evt_04": {
+   "event_id": "evt_04",
+   "selection": "hold_a",
+   "confidence_score": 0.86,
+   "rationale": "The B material at 00:05:30.038\u201300:05:35.543 returns to subtle, very dark mixer work; after the prior detail beat, the wide should recover rather than repeat the angle."
+  },
+  "evt_05": {
+   "event_id": "evt_05",
+   "selection": "hold_a",
+   "confidence_score": 0.85,
+   "rationale": "B shows a sustained but understated two-hand adjustment at 00:05:38.796\u201300:05:45.303, not a new visual event; the reference favors holding the master view through such work."
+  },
+  "evt_06": {
+   "event_id": "evt_06",
+   "selection": "hold_a",
+   "confidence_score": 0.9,
+   "rationale": "The B frame sequence from 00:05:44.802\u201300:05:54.812 is nearly static and underexposed, so a switch would not earn interruption of the wide composition."
+  },
+  "evt_07": {
+   "event_id": "evt_07",
+   "selection": "hold_a",
+   "confidence_score": 0.89,
+   "rationale": "Routine deck adjustments continue at 00:05:54.854\u201300:06:04.322 with no clean payoff; retain A recovery and the reference\u2019s wide-shot restraint."
+  },
+  "evt_08": {
+   "event_id": "evt_08",
+   "selection": "hold_a",
+   "confidence_score": 0.76,
+   "rationale": "The headphone check at 00:06:05.573\u201300:06:09.077 is a useful gesture, but the legal B starts are not visually verified here and the image remains dark; stay on A."
+  },
+  "evt_09": {
+   "event_id": "evt_09",
+   "selection": "hold_a",
+   "confidence_score": 0.9,
+   "rationale": "B remains a low-light close view of incremental fader and knob work from 00:06:13.748\u201300:06:23.716; the reference\u2019s extended holds argue against a decorative cut."
+  },
+  "evt_10": {
+   "event_id": "evt_10",
+   "selection": "hold_a",
+   "confidence_score": 0.9,
+   "rationale": "The DJ stays head-down in continuous technical work at 00:06:23.508\u201300:06:33.518; there is no visible change strong enough to justify leaving the wider A shot."
+  },
+  "evt_11": {
+   "event_id": "evt_11",
+   "selection": "hold_a",
+   "confidence_score": 0.88,
+   "rationale": "The B frames at 00:06:33.267\u201300:06:43.236 show only subtle mixer manipulation in darkness; hold A, consistent with the reference\u2019s 00:15:33.290\u201300:20:57.410 deliberate non-cut."
+  }
+ },
+ "det": {
+  "evt_01": {
+   "event_id": "evt_01",
+   "anchor_t": 300.784,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.751,
+    "b_early": 0.729,
+    "hold_a": 0.549
+   }
+  },
+  "evt_02": {
+   "event_id": "evt_02",
+   "anchor_t": 310.795,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.715,
+    "b_early": 0.684,
+    "hold_a": 0.547
+   }
+  },
+  "evt_03": {
+   "event_id": "evt_03",
+   "anchor_t": 320.545,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.713,
+    "b_early": 0.683,
+    "hold_a": 0.546
+   }
+  },
+  "evt_04": {
+   "event_id": "evt_04",
+   "anchor_t": 330.552,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.722,
+    "b_early": 0.678,
+    "hold_a": 0.564
+   }
+  },
+  "evt_05": {
+   "event_id": "evt_05",
+   "anchor_t": 340.293,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.699,
+    "b_early": 0.669,
+    "hold_a": 0.548
+   }
+  },
+  "evt_06": {
+   "event_id": "evt_06",
+   "anchor_t": 349.819,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.696,
+    "b_early": 0.667,
+    "hold_a": 0.548
+   }
+  },
+  "evt_07": {
+   "event_id": "evt_07",
+   "anchor_t": 359.339,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.701,
+    "b_early": 0.672,
+    "hold_a": 0.546
+   }
+  },
+  "evt_08": {
+   "event_id": "evt_08",
+   "anchor_t": 369.093,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.686,
+    "b_early": 0.661,
+    "hold_a": 0.548
+   }
+  },
+  "evt_09": {
+   "event_id": "evt_09",
+   "anchor_t": 378.733,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.676,
+    "b_early": 0.647,
+    "hold_a": 0.549
+   }
+  },
+  "evt_10": {
+   "event_id": "evt_10",
+   "anchor_t": 388.515,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.703,
+    "b_early": 0.673,
+    "hold_a": 0.548
+   }
+  },
+  "evt_11": {
+   "event_id": "evt_11",
+   "anchor_t": 398.254,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.737,
+    "b_early": 0.704,
+    "hold_a": 0.549
+   }
+  }
+ },
+ "problems": [],
+ "chain_a": [
+  {
+   "event": "evt_02",
+   "candidate": "b_downbeat",
+   "angle": "B",
+   "tl_in": 310.795,
+   "tl_out": 314.795,
+   "dur": 4.0,
+   "src_in": 315.631,
+   "src_out": 319.631
+  },
+  {
+   "event": "evt_04",
+   "candidate": "b_downbeat",
+   "angle": "B",
+   "tl_in": 330.552,
+   "tl_out": 334.552,
+   "dur": 4.0,
+   "src_in": 331.449,
+   "src_out": 335.449
+  },
+  {
+   "event": "evt_06",
+   "candidate": "b_downbeat",
+   "angle": "B",
+   "tl_in": 349.819,
+   "tl_out": 353.819,
+   "dur": 4.0,
+   "src_in": 359.267,
+   "src_out": 363.267
+  },
+  {
+   "event": "evt_08",
+   "candidate": "b_downbeat",
+   "angle": "B",
+   "tl_in": 369.093,
+   "tl_out": 373.093,
+   "dur": 4.0,
+   "src_in": 375.086,
+   "src_out": 379.086
+  },
+  {
+   "event": "evt_10",
+   "candidate": "b_downbeat",
+   "angle": "B",
+   "tl_in": 388.515,
+   "tl_out": 392.515,
+   "dur": 4.0,
+   "src_in": 398.904,
+   "src_out": 402.904
+  }
+ ],
+ "chain_b": [
+  {
+   "event": "evt_05",
+   "candidate": "b_downbeat",
+   "angle": "B",
+   "tl_in": 340.293,
+   "tl_out": 344.293,
+   "dur": 4.0,
+   "src_in": 348.358,
+   "src_out": 352.358
+  },
+  {
+   "event": "evt_11",
+   "candidate": "b_downbeat",
+   "angle": "B",
+   "tl_in": 398.254,
+   "tl_out": 402.254,
+   "dur": 4.0,
+   "src_in": 408.813,
+   "src_out": 412.813
+  }
+ ],
+ "chain_b_test1": [
+  {
+   "event": "evt_03",
+   "candidate": "b_downbeat",
+   "angle": "B",
+   "tl_in": 320.545,
+   "tl_out": 324.545,
+   "dur": 4.0,
+   "src_in": 320.54,
+   "src_out": 324.54
+  }
+ ],
+ "holds_a": [
+  {
+   "event": "evt_01",
+   "reason": "policy: A recovery 0.78s < 8.0s (forced hold)"
+  },
+  {
+   "event": "evt_03",
+   "reason": "policy: A recovery 5.75s < 8.0s (forced hold)"
+  },
+  {
+   "event": "evt_05",
+   "reason": "policy: A recovery 5.74s < 8.0s (forced hold)"
+  },
+  {
+   "event": "evt_07",
+   "reason": "policy: A recovery 5.52s < 8.0s (forced hold)"
+  },
+  {
+   "event": "evt_09",
+   "reason": "policy: A recovery 5.64s < 8.0s (forced hold)"
+  },
+  {
+   "event": "evt_11",
+   "reason": "policy: A recovery 5.74s < 8.0s (forced hold)"
+  }
+ ],
+ "holds_b": [
+  {
+   "event": "evt_01",
+   "reason": "policy: A recovery 0.78s < 8.0s (forced hold)"
+  },
+  {
+   "event": "evt_02",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_03",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_04",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_06",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_07",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_08",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_09",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_10",
+   "reason": "model chose hold_a"
+  }
+ ],
+ "holds_b_test1": [
+  {
+   "event": "evt_01",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_02",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_04",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_05",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_06",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_07",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_08",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_09",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_10",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_11",
+   "reason": "model chose hold_a"
+  }
+ ],
+ "changed_from_test1": 4,
+ "holda_test1": 10,
+ "holda_test2": 8,
+ "dark_rationales": {
+  "test1": 6,
+  "test2": 2
+ },
+ "edit_rationales": {
+  "test1": 10,
+  "test2": 9
+ },
+ "cost_usd": 0.360346,
+ "usage": {
+  "prompt_tokens": 170783,
+  "completion_tokens": 1565,
+  "total_tokens": 172348,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "audio_tokens": 0
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 946,
+   "audio_tokens": 0,
+   "accepted_prediction_tokens": 0,
+   "rejected_prediction_tokens": 0
+  }
+ },
+ "latency_s": 28.0
+}

@@ -1,0 +1,21 @@
+# VALID: A-Cam-Only preset — no b_reel, all A cuts, template club_dispatch_acamonly_v1.
+# Sources: a_cam.mp4 = 6s.
+manifest_version: 1
+job_id: valid_acamonly
+template: club_dispatch_acamonly_v1
+sources:
+  a_reel: a_cam.mp4
+timeline:
+  - id: cut_001
+    angle: A
+    source_in: 0.000
+    source_out: 2.000
+  - id: cut_002
+    angle: A
+    source_in: 2.500
+    source_out: 4.500
+profiles:
+  grade: club_dispatch_pb3_v1
+  crop: cd_a_pushin_v1
+  graphics: cd_bug_v9
+  audio: cd_youtube_v1

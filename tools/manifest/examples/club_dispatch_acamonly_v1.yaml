@@ -1,0 +1,22 @@
+# Club Dispatch — A-Cam Only preset (0% B-camera)
+# Grade, crop, graphics and audio only. b_reel may be omitted entirely;
+# no angle B cuts are allowed without it.
+manifest_version: 1
+job_id: club_dispatch_004
+template: club_dispatch_acamonly_v1
+sources:
+  a_reel: DJI_0042.MP4
+timeline:
+  - id: cut_001
+    angle: A
+    source_in: 0.000
+    source_out: 1040.000
+  - id: cut_002
+    angle: A
+    source_in: 1040.000
+    source_out: 2066.500
+profiles:
+  grade: club_dispatch_pb3_v1
+  crop: cd_a_pushin_v1
+  graphics: cd_bug_v9
+  audio: cd_youtube_v1

@@ -1,0 +1,27 @@
+# VALID: analyzer-written corrective pre-grade on a DECLARED source (Phase 6).
+# a_cam.mp4 is both the A reel and the first b_reel file, so the B cut at
+# virtual-reel [1.5,3.0) reads from a_cam.mp4 — the pre-grade must apply there.
+manifest_version: 1
+job_id: valid_pre_grades
+template: club_dispatch_standard_v1
+sources:
+  a_reel: a_cam.mp4
+  b_reel:
+    - a_cam.mp4
+    - short_src.mp4
+pre_grades:
+  a_cam.mp4: "curves=all='0/0.05 0.2/0.5 1/1'"
+timeline:
+  - id: cut_001
+    angle: A
+    source_in: 0.000
+    source_out: 2.000
+  - id: cut_002
+    angle: B
+    source_in: 1.500
+    source_out: 3.000
+profiles:
+  grade: club_dispatch_pb3_v1
+  crop: cd_a_pushin_v1
+  graphics: cd_bug_v9
+  audio: cd_youtube_v1

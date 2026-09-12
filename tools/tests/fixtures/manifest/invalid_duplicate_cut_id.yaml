@@ -1,0 +1,20 @@
+# INVALID: duplicate cut id cut_001. Cut ids must be unique (1:1 with burn-in).
+manifest_version: 1
+job_id: invalid_duplicate_cut_id
+template: club_dispatch_standard_v1
+sources:
+  a_reel: a_cam.mp4
+timeline:
+  - id: cut_001
+    angle: A
+    source_in: 0.000
+    source_out: 1.000
+  - id: cut_001
+    angle: A
+    source_in: 1.000
+    source_out: 2.000
+profiles:
+  grade: club_dispatch_pb3_v1
+  crop: cd_a_pushin_v1
+  graphics: cd_bug_v9
+  audio: cd_youtube_v1

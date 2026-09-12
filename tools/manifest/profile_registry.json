@@ -1,0 +1,78 @@
+{
+  "registry_version": 1,
+  "description": "Versioned template + profile registry for the ISH D template engine. Names here are the ONLY names a manifest may reference. Values are the LOCKED creative params \u2014 the app encodes these, it does not redesign them. To change a locked param, add a NEW versioned name; never edit a name in place.",
+  "templates": {
+    "club_dispatch_minimal_v1": {
+      "preset": "Minimal",
+      "b_camera_density_pct": "10-15",
+      "pacing": "Long, restrained shots",
+      "source": "2026-08-26-template-engine-scope.md presets table"
+    },
+    "club_dispatch_standard_v1": {
+      "preset": "Standard",
+      "b_camera_density_pct": "20-25",
+      "pacing": "Balanced",
+      "source": "2026-08-26-template-engine-scope.md presets table"
+    },
+    "club_dispatch_active_v1": {
+      "preset": "Active",
+      "b_camera_density_pct": "30-35",
+      "pacing": "More performance/equipment cuts",
+      "source": "2026-08-26-template-engine-scope.md presets table"
+    },
+    "club_dispatch_acamonly_v1": {
+      "preset": "A-Cam Only",
+      "b_camera_density_pct": "0",
+      "pacing": "Grade, crop, graphics and audio only",
+      "source": "2026-08-26-template-engine-scope.md presets table"
+    }
+  },
+  "profiles": {
+    "grade": {
+      "club_dispatch_pb3_v1": {
+        "locked_params": "eq=brightness=-0.02:saturation=0.92,colorbalance=rs=0.0:bs=0.0:rm=0.0",
+        "applies_to": "A-cam (approved 2026-08-25). B-cuts use club_dispatch_pb3_b_v1 when present (renderer resolves per angle).",
+        "note": "APPROVED NEUTRAL grade (2026-08-25, user rejected BRIGHT+WARM as too orange on night footage). Source: club-dispatch-vol1-tester-resume-2026-08-25.md. SUPERSEDED warm chain kept for trace: eq=brightness=0.06:saturation=1.12,colorbalance=rs=0.09:bs=-0.06:rm=0.03 (runbook 08-18 table, now corrected).",
+        "source": "club-dispatch-vol1-tester-resume-2026-08-25.md (user-approved)"
+      },
+      "club_dispatch_pb3_b_v1": {
+        "locked_params": "curves=all='0/0.03 0.05/0.28 0.10/0.50 0.20/0.70 0.35/0.85 1/1',eq=brightness=-0.02:saturation=1.05,colorbalance=rs=0.0:bs=0.0:rm=0.0",
+        "applies_to": "B-cam (GoPro) inserts ONLY. Shadow-lift curves for dark night footage; added 2026-08-27 after the half-runtime proof showed B inserts unreadably dark.",
+        "note": "GRADE_B from 2026-08-26-tester-postmortem.md + video-weave-runbook.md. Renders B cuts with this chain when the manifest grade is club_dispatch_pb3_v1 (renderer rule: <name>_b_v1 for B angle). yuv444p risk: curves chain up-converts chroma — renderers MUST append format=yuv420p after grade (both do).",
+        "source": "2026-08-26-tester-postmortem.md (GRADE_B)"
+      }
+    },
+    "crop": {
+      "cd_a_pushin_v1": {
+        "locked_params": "scale=-2:2160,crop=iw*0.87:ih*0.87,scale=1920:1080",
+        "alt_vaapi_spine": "crop=1690:950:115:65,scale=1920:1080",
+        "note": "A push-in (1.15x, hides B-rig). The VAAPI-spine form was verified on the v6 canonical redo; exact filter placement is the renderer's job.",
+        "source": "video-weave-runbook.md canonical settings + 2026-08-26 canonical redo lessons"
+      }
+    },
+    "graphics": {
+      "cd_bug_v9": {
+        "locked_params": "bug overlay v9 (CD bug). Exact overlay asset + placement owned by the renderer/hyperframes; this name locks WHICH bug, not the filter graph.",
+        "source": "2026-08-26-audio-true-peak-repair.md (v9 bug mux)"
+      }
+    },
+    "audio": {
+      "cd_youtube_v1": {
+        "locked_params": {
+          "chain": "loudnorm=I=-13.5:LRA=6.4:TP=-1.5 (two-pass, from clean continuous A bed) -> alimiter=limit=0.60:level=false -> volume=+0.55dB (makeup only if loudness dips)",
+          "codec": "AAC 320k / 48kHz",
+          "bitrate_rule": "AAC 320k is the delivery bitrate. 192k CANNOT pass the -1.5 dBTP gate on DJ audio (encoder ringing).",
+          "limiter_rule": "alimiter=limit=0.60:level=false ONLY. Never limit=0.95, never default level (level defaults to a no-op auto-level).",
+          "bt709_mux": "h264_metadata=colour_primaries=1:transfer_characteristics=1:matrix_coefficients=1",
+          "gate": {
+            "integrated_lufs": -13.5,
+            "lufs_tolerance": 0.3,
+            "true_peak_dbtp": -1.5,
+            "measure_on": "delivered file, full program; cross-check AAC TP via decoded WAV (loudnorm JSON over-reads on AAC input)"
+          }
+        },
+        "source": "2026-08-26-audio-true-peak-repair.md (LOCKED audio chain)"
+      }
+    }
+  }
+}

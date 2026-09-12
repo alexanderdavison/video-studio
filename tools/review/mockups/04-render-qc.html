@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISH D — Render &amp; QC</title>
+<style>
+  :root{
+    --ink:#0E1116; --midnight:#1B2438; --panel:#141A26; --line:#232C3E;
+    --cream:#F0E6D2; --muted:#8A8F9E; --teal:#4E7A7A; --lavender:#9D8FC0;
+    --green:#6EE77E; --orange:#C4551E; --red:#C93B3B;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--cream);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.45}
+  header{display:flex;align-items:center;gap:18px;padding:14px 24px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--ink);z-index:5}
+  .brand{font-size:20px;font-weight:800}.brand .d{color:var(--teal)}
+  nav{display:flex;gap:4px;margin-left:10px}
+  nav a{color:var(--muted);text-decoration:none;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:6px 10px;border-radius:4px}
+  nav a.on{color:var(--cream);background:var(--midnight)}
+  nav a:hover{color:var(--cream)}
+  .spacer{flex:1}
+  .chip{font-family:var(--mono);font-size:11px;color:var(--lavender);border:1px solid var(--line);padding:5px 10px;border-radius:4px}
+  main{padding:22px 24px}
+  .topline{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+  .topline h1{font-size:20px;font-weight:800}
+  .lock{font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--green);border:1px solid var(--green);padding:3px 8px;border-radius:3px}
+  .lock.busy{color:var(--orange);border-color:var(--orange)}
+  .grid{display:grid;grid-template-columns:1.6fr 1fr;gap:16px}
+  .panel{background:var(--midnight);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:16px}
+  .panel h3{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:700}
+  .job{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px;margin-bottom:10px}
+  .job .row1{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+  .job .name{font-family:var(--mono);font-size:13px;font-weight:700}
+  .job .type{font-family:var(--mono);font-size:10px;color:var(--teal);letter-spacing:1px;border:1px solid var(--teal);border-radius:3px;padding:2px 6px}
+  .job .st{font-family:var(--mono);font-size:10px;letter-spacing:1px;margin-left:auto}
+  .st.run{color:var(--green)}.st.done{color:var(--teal)}.st.fail{color:var(--red)}.st.queued{color:var(--muted)}
+  .bar{height:8px;background:var(--midnight);border-radius:4px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--green);border-radius:4px;transition:width .5s}
+  .job .meta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:6px}
+  .qc{font-family:var(--mono);font-size:12px}
+  .qc .row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--line)}
+  .qc .row:last-child{border-bottom:none}
+  .qc .ok{color:var(--green)}.qc .warn{color:var(--orange)}
+  .log{background:#0A0D12;border:1px solid var(--line);border-radius:6px;font-family:var(--mono);font-size:11px;color:var(--muted);padding:10px;line-height:1.6;max-height:180px;overflow-y:auto}
+  .log .t{color:var(--teal)}
+  .log .ok{color:var(--green)}.log .warn{color:var(--orange)}
+  table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px}
+  th{color:var(--muted);text-align:left;font-weight:400;padding:6px 8px;border-bottom:1px solid var(--line)}
+  td{padding:6px 8px;border-bottom:1px solid var(--line)}
+  footer{padding:16px 24px;color:var(--muted);font-family:var(--mono);font-size:11px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">ISH <span class="d">D</span></div>
+  <nav>
+    <a href="01-projects.html">Projects</a><a href="02-review-timeline.html">Review</a><a href="03-proof-approval.html">Proof</a><a class="on" href="#">Render</a><a href="05-mix-composer.html">Mix</a><a href="06-library-search.html">Library</a>
+  </nav>
+  <div class="spacer"></div>
+  <div class="chip">LXC 204 · 4 VCPU</div>
+</header>
+<main>
+  <div class="topline">
+    <h1>Render Pipeline &amp; QC</h1>
+    <span class="lock busy">LOCK BUSY — ONE RENDER AT A TIME</span>
+    <span class="chip">2026-08-25-tester</span>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="panel">
+        <h3>Active jobs</h3>
+        <div class="job">
+          <div class="row1"><span class="name">proxy · tester_weave_v4_redo</span><span class="type">PROOF</span><span class="st run">RUNNING</span></div>
+          <div class="bar"><i style="width:62%"></i></div>
+          <div class="meta"><span>62% · 12:41 elapsed</span><span>est. 7 min left · half-runtime 1033s</span></div>
+        </div>
+        <div class="job">
+          <div class="row1"><span class="name">final · club_night_03</span><span class="type">FINAL</span><span class="st queued">QUEUED</span></div>
+          <div class="bar"><i style="width:0%"></i></div>
+          <div class="meta"><span>waits for lock</span><span>1080p30 h264 + AAC 320k</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Live log — proxy render</h3>
+        <div class="log">
+          <span class="t">23:41:02</span> gate: manifest valid (rc 0) · flock acquired<br>
+          <span class="t">23:41:03</span> auto pre-grade: prepare_grades.py --json (no-op — in profile)<br>
+          <span class="t">23:41:04</span> segments: 117 · VAAPI h264_vaapi 960x540<br>
+          <span class="t">23:41:10</span> seg 001/117 ok · 17.7s<br>
+          <span class="t">23:41:12</span> seg 002/117 ok · 8.2s · B-cam grade pb3_b_v1<br>
+          <span class="t">23:41:20</span> seg 003/117 ok · 27.4s<br>
+          <span class="t">23:53:44</span> seg 072/117 ok · 62%<br>
+          <span class="t">23:53:45</span> <span class="ok">concat -c copy → proof half-runtime</span><br>
+          <span class="t">23:53:46</span> <span class="warn">verify pending: duration ±1.5s, moov, v+a</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Render history</h3>
+        <table>
+          <thead><tr><th>WHEN</th><th>JOB</th><th>TYPE</th><th>RESULT</th><th>SHA</th></tr></thead>
+          <tbody>
+            <tr><td>08-27 23:18</td><td>tester weave v4 redo</td><td>PROOF</td><td class="green">PASS</td><td>f4a70f76…</td></tr>
+            <tr><td>08-27 16:20</td><td>tester weave v4 redo</td><td>PROOF</td><td class="red">FAIL — too dark</td><td>fbca69f4…</td></tr>
+            <tr><td>08-25 20:00</td><td>club night 03</td><td>FINAL</td><td class="green">PASS</td><td>9c1e…</td></tr>
+            <tr><td>08-25 16:22</td><td>club night 03</td><td>FINAL</td><td class="red">HANG — no moov</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <h3>QC record — last completed</h3>
+        <div class="qc">
+          <div class="row"><span>integrated loudness</span><span class="ok">-13.5 LUFS ✓</span></div>
+          <div class="row"><span>true peak</span><span class="ok">-1.2 dBTP ✓</span></div>
+          <div class="row"><span>dynamic makeup</span><span class="ok">+0.00 dB (no dip)</span></div>
+          <div class="row"><span>BT.709</span><span class="ok">✓</span></div>
+          <div class="row"><span>pre_grades_applied</span><span class="ok">none (in profile)</span></div>
+          <div class="row"><span>grade</span><span class="ok">club_dispatch_pb3_v1 + b_v1</span></div>
+          <div class="row"><span>duration</span><span class="ok">1033.3s ±0.1</span></div>
+          <div class="row"><span>moov atom</span><span class="ok">present</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Policy</h3>
+        <div class="qc">
+          <div class="row"><span>one render at a time</span><span class="ok">flock .render.lock</span></div>
+          <div class="row"><span>proof policy</span><span class="ok">half-runtime</span></div>
+          <div class="row"><span>never-clobber</span><span class="ok">refuse without --force</span></div>
+          <div class="row"><span>fail loud</span><span class="ok">rc 0/1/2 + log</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<footer>ISH D · STUDIO REVIEW — MOCKUP 04 · RENDER PIPELINE + QC</footer>
+</body>
+</html>

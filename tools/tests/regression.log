@@ -1,0 +1,50 @@
+== LINTER (D3) — dead patterns must be blocked ==
+  L01 stream_loop+-shortest (#1)               PASS
+  L02 vaapi+concat mixed (#2)                  PASS
+  L03 stream label mismatch (#12)              PASS
+  L04 -c copy + -pix_fmt                       PASS
+  L05 concat -c copy non-uniform               PASS
+  L05b concat -c copy uniform                  PASS
+  L06 scale_vaapi unsupported                  PASS
+  L07 alimiter=limit=0.95 (locked chain)       PASS
+  L08 AAC 192k on delivery mux                 PASS
+  L08b AAC 320k on delivery mux                PASS
+  L09 clean command                            PASS
+== STAGE VERIFY (D1) ==
+  S01 verify good duration                     PASS
+  S02 verify duration mismatch (76s-short #8)  PASS
+  S03 verify no-moov garbage (#7/#13)          PASS
+  S04 verify fatal stderr pattern (#6)         PASS
+== SPAN VALIDATION (b8 truncation shape #8) ==
+  SP01 span fits                               PASS
+  SP02 span fits exactly                       PASS
+  SP03 span overflows source                   PASS
+  SP04 b8 shape: 100s from 3s src              PASS
+== INPUT HASHES (stable-upload + verified-handle) ==
+  H01 record+verify unchanged                  PASS
+  H02 verify detects modified input            PASS
+  H03 verify without record file               PASS
+== RENDER LOCK (D5b flock) ==
+  LK01 flock refuses concurrent render         PASS
+  LK02 acquire after holder exit               PASS
+  LK03 stale lockfile (dead pid) taken over    PASS
+== ATOMIC PUBLISH (never-clobber) ==
+  PB01 publish unverified (no moov)            PASS
+  PB02 publish over verified final             PASS
+  PB03 publish --force parks old               PASS
+  PB03b old verified parked as .prev           PASS
+  PB04 publish over unverified leftover        PASS
+  PB04b leftover parked as .unverified         PASS
+== POSTFLIGHT (full-program loudness, BT.709, ALLDONE discipline) ==
+  PF01 postflight PASS good                    PASS
+  PF01b ALLDONE + .verified written            PASS
+  PF01c ALLDONE carries postflight stamp       PASS
+  PF02 postflight FAIL no bt709                PASS
+  PF03 postflight FAIL loudness                PASS
+  PF04 postflight FAIL wrong duration          PASS
+  PF05 stale ALLDONE cleared on FAIL           PASS
+  PF05b stale ALLDONE removed by FAIL          PASS
+
+==============================================
+REGRESSION SUMMARY: 39 passed, 0 failed
+==============================================

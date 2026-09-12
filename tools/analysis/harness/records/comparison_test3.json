@@ -1,0 +1,469 @@
+{
+ "response_file": "/root/test1/responses_test3/decisions_20260911-225215.txt",
+ "decisions": {
+  "evt_01": {
+   "event_id": "evt_01",
+   "selection": "b_action",
+   "confidence_score": 0.72,
+   "rationale": "The overhead B view shows hands actively working the decks at 00:05:00.000; holding through the brief action gives the detail room without overstaying it."
+  },
+  "evt_02": {
+   "event_id": "evt_02",
+   "selection": "hold_a",
+   "confidence_score": 0.8,
+   "rationale": "The B detail is usable at 00:05:16.156, but it arrives before the required 8-second A recovery; hold the master rather than force another cut."
+  },
+  "evt_03": {
+   "event_id": "evt_03",
+   "selection": "hold_a",
+   "confidence_score": 0.77,
+   "rationale": "Although the overhead angle shows deck work at 00:05:21.088, the short A recovery and nominal phrase phase do not make this repeat cut earn its place."
+  },
+  "evt_04": {
+   "event_id": "evt_04",
+   "selection": "hold_a",
+   "confidence_score": 0.76,
+   "rationale": "Even at the nominal phrase start, the B view at 00:05:31.996 is another similar deck detail after insufficient A recovery; preserve the wide-shot restraint."
+  },
+  "evt_05": {
+   "event_id": "evt_05",
+   "selection": "hold_a",
+   "confidence_score": 0.8,
+   "rationale": "The visible hand on the right deck at 00:05:48.905 is not a sufficiently distinct payoff to override the short A recovery; stay with the master."
+  },
+  "evt_06": {
+   "event_id": "evt_06",
+   "selection": "hold_a",
+   "confidence_score": 0.79,
+   "rationale": "B shows continued mixer work at 00:05:59.814, but the next quick detail would crowd the A view; the reference\u2019s long holds support refusing this cut."
+  },
+  "evt_07": {
+   "event_id": "evt_07",
+   "selection": "hold_a",
+   "confidence_score": 0.82,
+   "rationale": "The longer B options would linger on largely continuous deck work visible at 00:06:04.724, while A recovery remains short; hold A for calmer club pacing."
+  },
+  "evt_08": {
+   "event_id": "evt_08",
+   "selection": "hold_a",
+   "confidence_score": 0.81,
+   "rationale": "The overhead frame at 00:06:15.633 has no clearly exceptional gesture beyond ongoing mixer handling, so another short-recovery switch would feel mechanical."
+  },
+  "evt_09": {
+   "event_id": "evt_09",
+   "selection": "hold_a",
+   "confidence_score": 0.84,
+   "rationale": "The candidate would spend nearly a full slot on similar deck work at 00:06:26.541 despite weak visible escalation; retain A and let the performance breathe."
+  },
+  "evt_10": {
+   "event_id": "evt_10",
+   "selection": "hold_a",
+   "confidence_score": 0.8,
+   "rationale": "Hands remain engaged at 00:06:39.452, but the action is visually continuous rather than a new payoff and A recovery is below policy; do not cut."
+  },
+  "evt_11": {
+   "event_id": "evt_11",
+   "selection": "hold_a",
+   "confidence_score": 0.76,
+   "rationale": "The B angle shows a potentially useful two-hand adjustment at 00:06:49.360, but the short A recovery and nominal phase leave the switch insufficiently certain."
+  }
+ },
+ "decisions_test2": {
+  "evt_01": {
+   "event_id": "evt_01",
+   "selection": "b_downbeat",
+   "confidence_score": 0.62,
+   "rationale": "The overhead B view reveals both hands working the decks at 00:05:00.000, earning one concise detail cut before returning to the restrained wide-shot language."
+  },
+  "evt_02": {
+   "event_id": "evt_02",
+   "selection": "hold_a",
+   "confidence_score": 0.84,
+   "rationale": "Hold the wider A view; the B material offers no new decisive action, and the reference favors sustained coverage over routine angle changes, including 00:15:33.290\u201300:17:50.350."
+  },
+  "evt_03": {
+   "event_id": "evt_03",
+   "selection": "hold_a",
+   "confidence_score": 0.85,
+   "rationale": "Stay on A: the alternate overhead repeats the same focused deck work and does not earn a second cut so soon after the prior B detail."
+  },
+  "evt_04": {
+   "event_id": "evt_04",
+   "selection": "hold_a",
+   "confidence_score": 0.79,
+   "rationale": "Although this is a nominal phrase start, the B frame is dark and visually repetitive; preserve the wider A composition rather than cut on an unverified musical phase."
+  },
+  "evt_05": {
+   "event_id": "evt_05",
+   "selection": "b_downbeat",
+   "confidence_score": 0.65,
+   "rationale": "The overhead angle isolates an extended reach across the mixer at 00:05:35.293, giving the viewer a readable physical-performance detail after a substantial A recovery."
+  },
+  "evt_06": {
+   "event_id": "evt_06",
+   "selection": "hold_a",
+   "confidence_score": 0.84,
+   "rationale": "Hold A after the detail insert; the B view remains a similar overhead of ordinary operation, while the reference uses long uninterrupted shots rather than frequent cutaways."
+  },
+  "evt_07": {
+   "event_id": "evt_07",
+   "selection": "hold_a",
+   "confidence_score": 0.85,
+   "rationale": "The B framing repeats the same two-hand deck posture without a distinct payoff, so staying on A protects measured club pacing."
+  },
+  "evt_08": {
+   "event_id": "evt_08",
+   "selection": "hold_a",
+   "confidence_score": 0.88,
+   "rationale": "Keep A: the B image is comparatively dark and the nominal downbeat is not enough to justify another cut without a clearly stronger visual event."
+  },
+  "evt_09": {
+   "event_id": "evt_09",
+   "selection": "hold_a",
+   "confidence_score": 0.88,
+   "rationale": "Hold the wide view; visible mixer work is continuous rather than a new beat-worthy gesture, consistent with the reference's deliberate non-cuts."
+  },
+  "evt_10": {
+   "event_id": "evt_10",
+   "selection": "hold_a",
+   "confidence_score": 0.86,
+   "rationale": "Stay on A because the overhead option is a similar operational view and the nominal musical marker alone does not earn interruption of the long recovery."
+  },
+  "evt_11": {
+   "event_id": "evt_11",
+   "selection": "b_downbeat",
+   "confidence_score": 0.69,
+   "rationale": "The overhead B view clearly shows both hands actively shaping the mixer at 00:06:33.254, a purposeful detail payoff after the extended A hold."
+  }
+ },
+ "det": {
+  "evt_01": {
+   "event_id": "evt_01",
+   "anchor_t": 300.784,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.751,
+    "b_early": 0.729,
+    "hold_a": 0.549
+   }
+  },
+  "evt_02": {
+   "event_id": "evt_02",
+   "anchor_t": 310.795,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.715,
+    "b_early": 0.684,
+    "hold_a": 0.547
+   }
+  },
+  "evt_03": {
+   "event_id": "evt_03",
+   "anchor_t": 320.545,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.713,
+    "b_early": 0.683,
+    "hold_a": 0.546
+   }
+  },
+  "evt_04": {
+   "event_id": "evt_04",
+   "anchor_t": 330.552,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.722,
+    "b_early": 0.678,
+    "hold_a": 0.564
+   }
+  },
+  "evt_05": {
+   "event_id": "evt_05",
+   "anchor_t": 340.293,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.699,
+    "b_early": 0.669,
+    "hold_a": 0.548
+   }
+  },
+  "evt_06": {
+   "event_id": "evt_06",
+   "anchor_t": 349.819,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.696,
+    "b_early": 0.667,
+    "hold_a": 0.548
+   }
+  },
+  "evt_07": {
+   "event_id": "evt_07",
+   "anchor_t": 359.339,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.701,
+    "b_early": 0.672,
+    "hold_a": 0.546
+   }
+  },
+  "evt_08": {
+   "event_id": "evt_08",
+   "anchor_t": 369.093,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.686,
+    "b_early": 0.661,
+    "hold_a": 0.548
+   }
+  },
+  "evt_09": {
+   "event_id": "evt_09",
+   "anchor_t": 378.733,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.676,
+    "b_early": 0.647,
+    "hold_a": 0.549
+   }
+  },
+  "evt_10": {
+   "event_id": "evt_10",
+   "anchor_t": 388.515,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.703,
+    "b_early": 0.673,
+    "hold_a": 0.548
+   }
+  },
+  "evt_11": {
+   "event_id": "evt_11",
+   "anchor_t": 398.254,
+   "winner": "b_downbeat",
+   "weighted_sums": {
+    "b_downbeat": 0.737,
+    "b_early": 0.704,
+    "hold_a": 0.549
+   }
+  }
+ },
+ "problems": [],
+ "chain_a": [
+  {
+   "event": "evt_02",
+   "candidate": "b_downbeat",
+   "angle": "B",
+   "tl_in": 310.795,
+   "tl_out": 314.795,
+   "dur": 4.0,
+   "src_in": 315.631,
+   "src_out": 319.631
+  },
+  {
+   "event": "evt_04",
+   "candidate": "b_downbeat",
+   "angle": "B",
+   "tl_in": 330.552,
+   "tl_out": 334.552,
+   "dur": 4.0,
+   "src_in": 331.449,
+   "src_out": 335.449
+  },
+  {
+   "event": "evt_06",
+   "candidate": "b_downbeat",
+   "angle": "B",
+   "tl_in": 349.819,
+   "tl_out": 353.819,
+   "dur": 4.0,
+   "src_in": 359.267,
+   "src_out": 363.267
+  },
+  {
+   "event": "evt_08",
+   "candidate": "b_downbeat",
+   "angle": "B",
+   "tl_in": 369.093,
+   "tl_out": 373.093,
+   "dur": 4.0,
+   "src_in": 375.086,
+   "src_out": 379.086
+  },
+  {
+   "event": "evt_10",
+   "candidate": "b_downbeat",
+   "angle": "B",
+   "tl_in": 388.515,
+   "tl_out": 392.515,
+   "dur": 4.0,
+   "src_in": 398.904,
+   "src_out": 402.904
+  }
+ ],
+ "chain_b": [],
+ "chain_b_test2": [
+  {
+   "event": "evt_05",
+   "candidate": "b_downbeat",
+   "angle": "B",
+   "tl_in": 340.293,
+   "tl_out": 344.293,
+   "dur": 4.0,
+   "src_in": 348.358,
+   "src_out": 352.358
+  },
+  {
+   "event": "evt_11",
+   "candidate": "b_downbeat",
+   "angle": "B",
+   "tl_in": 398.254,
+   "tl_out": 402.254,
+   "dur": 4.0,
+   "src_in": 408.813,
+   "src_out": 412.813
+  }
+ ],
+ "holds_a": [
+  {
+   "event": "evt_01",
+   "reason": "policy: A recovery 0.78s < 8.0s (forced hold)"
+  },
+  {
+   "event": "evt_03",
+   "reason": "policy: A recovery 5.75s < 8.0s (forced hold)"
+  },
+  {
+   "event": "evt_05",
+   "reason": "policy: A recovery 5.74s < 8.0s (forced hold)"
+  },
+  {
+   "event": "evt_07",
+   "reason": "policy: A recovery 5.52s < 8.0s (forced hold)"
+  },
+  {
+   "event": "evt_09",
+   "reason": "policy: A recovery 5.64s < 8.0s (forced hold)"
+  },
+  {
+   "event": "evt_11",
+   "reason": "policy: A recovery 5.74s < 8.0s (forced hold)"
+  }
+ ],
+ "holds_b": [
+  {
+   "event": "evt_01",
+   "reason": "policy: A recovery 0.78s < 8.0s (forced hold)"
+  },
+  {
+   "event": "evt_02",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_03",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_04",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_05",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_06",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_07",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_08",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_09",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_10",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_11",
+   "reason": "model chose hold_a"
+  }
+ ],
+ "holds_b_test2": [
+  {
+   "event": "evt_01",
+   "reason": "policy: A recovery 0.78s < 8.0s (forced hold)"
+  },
+  {
+   "event": "evt_02",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_03",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_04",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_06",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_07",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_08",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_09",
+   "reason": "model chose hold_a"
+  },
+  {
+   "event": "evt_10",
+   "reason": "model chose hold_a"
+  }
+ ],
+ "changed_from_test2": 3,
+ "holda_test2": 8,
+ "holda_test3": 10,
+ "length_rationales": {
+  "test2": 5,
+  "test3": 4
+ },
+ "b_inserts": {
+  "test2": 2,
+  "test3": 0
+ },
+ "b_seconds": {
+  "test2": 8.0,
+  "test3": 0
+ },
+ "cost_usd": 0.335086,
+ "usage": {
+  "prompt_tokens": 161099,
+  "completion_tokens": 1074,
+  "total_tokens": 162173,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "audio_tokens": 0
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 425,
+   "audio_tokens": 0,
+   "accepted_prediction_tokens": 0,
+   "rejected_prediction_tokens": 0
+  }
+ },
+ "latency_s": 18.5
+}

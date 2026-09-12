@@ -1,0 +1,16 @@
+# INVALID: source_in is negative. A cut cannot start before the source starts.
+manifest_version: 1
+job_id: invalid_negative_source_in
+template: club_dispatch_standard_v1
+sources:
+  a_reel: a_cam.mp4
+timeline:
+  - id: cut_001
+    angle: A
+    source_in: -0.500
+    source_out: 1.000
+profiles:
+  grade: club_dispatch_pb3_v1
+  crop: cd_a_pushin_v1
+  graphics: cd_bug_v9
+  audio: cd_youtube_v1

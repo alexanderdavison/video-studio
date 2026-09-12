@@ -1,0 +1,25 @@
+# VALID: B span crosses the a_cam.mp4/short_src.mp4 boundary of the virtual
+# reel (a_cam 0-6s + short_src 6-9s = 9s). Span [4.0, 7.0) crosses at 6.0s.
+# Valid SHAPE — Phase 4 auto-splits cross-file spans; Phase 2 only validates.
+manifest_version: 1
+job_id: valid_crossfile_span
+template: club_dispatch_standard_v1
+sources:
+  a_reel: a_cam.mp4
+  b_reel:
+    - a_cam.mp4
+    - short_src.mp4
+timeline:
+  - id: cut_001
+    angle: A
+    source_in: 0.000
+    source_out: 2.000
+  - id: cut_002
+    angle: B
+    source_in: 4.000
+    source_out: 7.000
+profiles:
+  grade: club_dispatch_pb3_v1
+  crop: cd_a_pushin_v1
+  graphics: cd_bug_v9
+  audio: cd_youtube_v1

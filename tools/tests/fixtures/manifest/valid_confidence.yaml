@@ -1,0 +1,30 @@
+# VALID: standard structure plus confidence: low on cut_002 (Phase 3 proxy burn-in).
+# Sources: a_cam.mp4 = 6s, short_src.mp4 = 3s.
+manifest_version: 1
+job_id: valid_confidence
+template: club_dispatch_standard_v1
+sources:
+  a_reel: a_cam.mp4
+  b_reel:
+    - a_cam.mp4
+    - short_src.mp4
+timeline:
+  - id: cut_001
+    angle: A
+    source_in: 0.000
+    source_out: 2.000
+  - id: cut_002
+    angle: B
+    source_in: 1.500
+    source_out: 3.000
+    confidence: low
+  - id: cut_003
+    angle: A
+    source_in: 2.000
+    source_out: 4.000
+    confidence: high
+profiles:
+  grade: club_dispatch_pb3_v1
+  crop: cd_a_pushin_v1
+  graphics: cd_bug_v9
+  audio: cd_youtube_v1

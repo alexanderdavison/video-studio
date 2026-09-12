@@ -1,0 +1,16 @@
+# INVALID: sources.a_reel names a file that does not exist under --media-root.
+manifest_version: 1
+job_id: invalid_missing_source
+template: club_dispatch_standard_v1
+sources:
+  a_reel: does_not_exist.mp4
+timeline:
+  - id: cut_001
+    angle: A
+    source_in: 0.000
+    source_out: 1.000
+profiles:
+  grade: club_dispatch_pb3_v1
+  crop: cd_a_pushin_v1
+  graphics: cd_bug_v9
+  audio: cd_youtube_v1

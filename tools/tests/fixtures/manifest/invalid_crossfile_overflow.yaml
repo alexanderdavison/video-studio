@@ -1,0 +1,24 @@
+# INVALID: B span [4.0, 10.0) exceeds the virtual reel (a_cam 6s + short_src
+# 3s = 9s). Same failure class as b8, at whole-reel level.
+manifest_version: 1
+job_id: invalid_crossfile_overflow
+template: club_dispatch_standard_v1
+sources:
+  a_reel: a_cam.mp4
+  b_reel:
+    - a_cam.mp4
+    - short_src.mp4
+timeline:
+  - id: cut_001
+    angle: A
+    source_in: 0.000
+    source_out: 2.000
+  - id: cut_002
+    angle: B
+    source_in: 4.000
+    source_out: 10.000
+profiles:
+  grade: club_dispatch_pb3_v1
+  crop: cd_a_pushin_v1
+  graphics: cd_bug_v9
+  audio: cd_youtube_v1

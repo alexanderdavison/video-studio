@@ -1,0 +1,1272 @@
+{
+ "tool": "candidate_score.py",
+ "principle": "Scores are evidence, not the edit. They rank the legal choices for a boundary; they do not choose. hold_a is always offered and must always be weighed by the editor.",
+ "recommended_by_score_is": "informational only \u2014 not the creative answer",
+ "inputs": {
+  "beats": "/opt/video-studio/projects/2026-08-25-tester/work/analysis/a_full_beats.json",
+  "bpm": 121.44036102294922,
+  "n_beats": 4287,
+  "action_profiles": [
+   {
+    "path": "/opt/video-studio/projects/2026-08-25-tester/work/analysis/b_reel_profile.json",
+    "reel": "B virtual reel (B0038+B0039)",
+    "duration_s": 2073.536,
+    "offset": 0.0,
+    "segments": 209
+   }
+  ],
+  "signals_b": [
+   "p1_out/signals_b_300_420.json"
+  ],
+  "signals_a": [
+   "p1_out/signals_a_300_420.json"
+  ],
+  "signals_a_is_b_proxy": false,
+  "phrases": "/opt/video-studio/projects/2026-08-25-tester/work/analysis/a_full_phrases.json",
+  "structure": {
+   "source": "phrase_map.py",
+   "downbeats": 1072,
+   "phrases": 134,
+   "beats_per_bar": 4,
+   "bars_per_phrase": 8
+  },
+  "sync_json": null,
+  "keyframes": {
+   "usable": false,
+   "clip_id": 3,
+   "rows_total": 5,
+   "rows_with_sharpness": 0,
+   "reason": "clip 3 has 5 keyframe rows but no sharpness values -> quality falls back to visual_signals"
+  },
+  "offsets": {
+   "a_offset": 0.0,
+   "b_offset": 0.0
+  }
+ },
+ "policy": {
+  "minimum_b_shot": 4.0,
+  "maximum_b_shot": 14.0,
+  "minimum_a_recovery": 8.0,
+  "events_requested": 12,
+  "min_event_gap": 9.0,
+  "event_window": [
+   300.0,
+   405.0
+  ],
+  "b_search_window": [
+   300.0,
+   420.0
+  ],
+  "novelty_cap_s": 30.0
+ },
+ "weights": {
+  "sync": 0.1,
+  "musical": 0.15,
+  "action": 0.2,
+  "quality": 0.1,
+  "info_gain": 0.15,
+  "continuity": 0.1,
+  "novelty": 0.05,
+  "coverage": 0.15
+ },
+ "score_keys": [
+  "sync",
+  "musical",
+  "action",
+  "quality",
+  "info_gain",
+  "continuity",
+  "novelty",
+  "coverage"
+ ],
+ "events": [
+  {
+   "event_id": "evt_01",
+   "context": {
+    "beat": 300.784,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 19,
+    "bars_into_phrase": 1,
+    "b_slot": [
+     300.0,
+     310.909
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_downbeat",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 300.0,
+     "end": 304.0,
+     "timeline_start": 300.784,
+     "timeline_end": 304.784,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.274,
+      "quality": 0.494,
+      "info_gain": 0.747,
+      "continuity": 1.0,
+      "novelty": 1.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter exactly on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.253 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "first event in the run",
+      "gap since previous B exit: 300.78s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.751
+    },
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 299.52,
+     "end": 303.52,
+     "timeline_start": 300.304,
+     "timeline_end": 304.304,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.748,
+      "action": 0.283,
+      "quality": 0.481,
+      "info_gain": 0.747,
+      "continuity": 1.0,
+      "novelty": 1.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter one beat (0.480s) before the boundary; action peak stays on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.253 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "first event in the run",
+      "gap since previous B exit: 300.30s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.729
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 300.784,
+     "end": 304.784,
+     "timeline_start": 300.784,
+     "timeline_end": 304.784,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.64,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.549
+    }
+   ],
+   "recommended_by_score": "b_downbeat",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only"
+  },
+  {
+   "event_id": "evt_02",
+   "context": {
+    "beat": 310.795,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 19,
+    "bars_into_phrase": 6,
+    "b_slot": [
+     310.909,
+     321.818
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_downbeat",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 316.909,
+     "end": 320.909,
+     "timeline_start": 310.795,
+     "timeline_end": 314.795,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.408,
+      "quality": 0.521,
+      "info_gain": 0.739,
+      "continuity": 0.751,
+      "novelty": 0.2,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter exactly on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.261 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 6.01s < minimum 8.00s",
+      "gap since previous B exit: 6.01s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.715
+    },
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 316.406,
+     "end": 320.406,
+     "timeline_start": 310.292,
+     "timeline_end": 314.292,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.75,
+      "action": 0.405,
+      "quality": 0.521,
+      "info_gain": 0.739,
+      "continuity": 0.688,
+      "novelty": 0.184,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter one beat (0.503s) before the boundary; action peak stays on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.261 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.51s < minimum 8.00s",
+      "gap since previous B exit: 5.51s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.684
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 310.795,
+     "end": 314.795,
+     "timeline_start": 310.795,
+     "timeline_end": 314.795,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.623,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.547
+    }
+   ],
+   "recommended_by_score": "b_downbeat",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only"
+  },
+  {
+   "event_id": "evt_03",
+   "context": {
+    "beat": 320.545,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 20,
+    "bars_into_phrase": 3,
+    "b_slot": [
+     321.818,
+     332.727
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_downbeat",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 321.818,
+     "end": 325.818,
+     "timeline_start": 320.545,
+     "timeline_end": 324.545,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.43,
+      "quality": 0.476,
+      "info_gain": 0.75,
+      "continuity": 0.719,
+      "novelty": 0.192,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter exactly on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.250 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.75s < minimum 8.00s",
+      "gap since previous B exit: 5.75s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.713
+    },
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 321.338,
+     "end": 325.338,
+     "timeline_start": 320.065,
+     "timeline_end": 324.065,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.747,
+      "action": 0.43,
+      "quality": 0.476,
+      "info_gain": 0.75,
+      "continuity": 0.659,
+      "novelty": 0.176,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter one beat (0.480s) before the boundary; action peak stays on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.250 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.27s < minimum 8.00s",
+      "gap since previous B exit: 5.27s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.683
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 320.545,
+     "end": 324.545,
+     "timeline_start": 320.545,
+     "timeline_end": 324.545,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.615,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.546
+    }
+   ],
+   "recommended_by_score": "b_downbeat",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only"
+  },
+  {
+   "event_id": "evt_04",
+   "context": {
+    "beat": 330.552,
+    "downbeat": true,
+    "phrase_boundary": true,
+    "phrase_index": 21,
+    "bars_into_phrase": 0,
+    "b_slot": [
+     332.727,
+     343.636
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_downbeat",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 332.727,
+     "end": 336.727,
+     "timeline_start": 330.552,
+     "timeline_end": 334.552,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 1.0,
+      "action": 0.419,
+      "quality": 0.421,
+      "info_gain": 0.742,
+      "continuity": 0.751,
+      "novelty": 0.2,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter exactly on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.258 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 6.01s < minimum 8.00s",
+      "gap since previous B exit: 6.01s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.722
+    },
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 332.246,
+     "end": 336.246,
+     "timeline_start": 330.071,
+     "timeline_end": 334.071,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.748,
+      "action": 0.419,
+      "quality": 0.421,
+      "info_gain": 0.742,
+      "continuity": 0.691,
+      "novelty": 0.184,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter one beat (0.481s) before the boundary; action peak stays on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.258 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.53s < minimum 8.00s",
+      "gap since previous B exit: 5.53s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.678
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 330.552,
+     "end": 334.552,
+     "timeline_start": 330.552,
+     "timeline_end": 334.552,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 1.0,
+      "action": 0.0,
+      "quality": 0.644,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.564
+    }
+   ],
+   "recommended_by_score": "b_downbeat",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only"
+  },
+  {
+   "event_id": "evt_05",
+   "context": {
+    "beat": 340.293,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 21,
+    "bars_into_phrase": 5,
+    "b_slot": [
+     343.636,
+     354.545
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_downbeat",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 349.636,
+     "end": 353.636,
+     "timeline_start": 340.293,
+     "timeline_end": 344.293,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.373,
+      "quality": 0.466,
+      "info_gain": 0.743,
+      "continuity": 0.718,
+      "novelty": 0.191,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter exactly on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.257 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.74s < minimum 8.00s",
+      "gap since previous B exit: 5.74s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.699
+    },
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 349.155,
+     "end": 353.155,
+     "timeline_start": 339.812,
+     "timeline_end": 343.812,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.749,
+      "action": 0.372,
+      "quality": 0.466,
+      "info_gain": 0.741,
+      "continuity": 0.657,
+      "novelty": 0.175,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter one beat (0.481s) before the boundary; action peak stays on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.259 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.26s < minimum 8.00s",
+      "gap since previous B exit: 5.26s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.669
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 340.293,
+     "end": 344.293,
+     "timeline_start": 340.293,
+     "timeline_end": 344.293,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.628,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.548
+    }
+   ],
+   "recommended_by_score": "b_downbeat",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only"
+  },
+  {
+   "event_id": "evt_06",
+   "context": {
+    "beat": 349.819,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 22,
+    "bars_into_phrase": 2,
+    "b_slot": [
+     354.545,
+     365.455
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_downbeat",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 360.545,
+     "end": 364.545,
+     "timeline_start": 349.819,
+     "timeline_end": 353.819,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.406,
+      "quality": 0.399,
+      "info_gain": 0.746,
+      "continuity": 0.691,
+      "novelty": 0.184,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter exactly on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.254 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.53s < minimum 8.00s",
+      "gap since previous B exit: 5.53s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.696
+    },
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 360.064,
+     "end": 364.064,
+     "timeline_start": 349.338,
+     "timeline_end": 353.338,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.749,
+      "action": 0.406,
+      "quality": 0.399,
+      "info_gain": 0.746,
+      "continuity": 0.631,
+      "novelty": 0.168,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter one beat (0.481s) before the boundary; action peak stays on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.254 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.05s < minimum 8.00s",
+      "gap since previous B exit: 5.05s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.667
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 349.819,
+     "end": 353.819,
+     "timeline_start": 349.819,
+     "timeline_end": 353.819,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.63,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.548
+    }
+   ],
+   "recommended_by_score": "b_downbeat",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only"
+  },
+  {
+   "event_id": "evt_07",
+   "context": {
+    "beat": 359.339,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 22,
+    "bars_into_phrase": 7,
+    "b_slot": [
+     365.455,
+     376.364
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_downbeat",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 365.455,
+     "end": 369.455,
+     "timeline_start": 359.339,
+     "timeline_end": 363.339,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.406,
+      "quality": 0.467,
+      "info_gain": 0.734,
+      "continuity": 0.69,
+      "novelty": 0.184,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter exactly on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.266 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.52s < minimum 8.00s",
+      "gap since previous B exit: 5.52s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.701
+    },
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 364.974,
+     "end": 368.974,
+     "timeline_start": 358.858,
+     "timeline_end": 362.858,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.75,
+      "action": 0.406,
+      "quality": 0.462,
+      "info_gain": 0.737,
+      "continuity": 0.63,
+      "novelty": 0.168,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter one beat (0.481s) before the boundary; action peak stays on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.263 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.04s < minimum 8.00s",
+      "gap since previous B exit: 5.04s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.672
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 359.339,
+     "end": 363.339,
+     "timeline_start": 359.339,
+     "timeline_end": 363.339,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.608,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.546
+    }
+   ],
+   "recommended_by_score": "b_downbeat",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only"
+  },
+  {
+   "event_id": "evt_08",
+   "context": {
+    "beat": 369.093,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 23,
+    "bars_into_phrase": 4,
+    "b_slot": [
+     376.364,
+     387.273
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_downbeat",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 376.364,
+     "end": 380.364,
+     "timeline_start": 369.093,
+     "timeline_end": 373.093,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.363,
+      "quality": 0.344,
+      "info_gain": 0.749,
+      "continuity": 0.719,
+      "novelty": 0.192,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter exactly on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.251 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.75s < minimum 8.00s",
+      "gap since previous B exit: 5.75s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.686
+    },
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 375.883,
+     "end": 379.883,
+     "timeline_start": 368.612,
+     "timeline_end": 372.612,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.75,
+      "action": 0.368,
+      "quality": 0.381,
+      "info_gain": 0.75,
+      "continuity": 0.659,
+      "novelty": 0.176,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter one beat (0.481s) before the boundary; action peak stays on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.250 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.27s < minimum 8.00s",
+      "gap since previous B exit: 5.27s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.661
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 369.093,
+     "end": 373.093,
+     "timeline_start": 369.093,
+     "timeline_end": 373.093,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.626,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.548
+    }
+   ],
+   "recommended_by_score": "b_downbeat",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only"
+  },
+  {
+   "event_id": "evt_09",
+   "context": {
+    "beat": 378.733,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 24,
+    "bars_into_phrase": 1,
+    "b_slot": [
+     387.273,
+     398.182
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_downbeat",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 387.273,
+     "end": 391.273,
+     "timeline_start": 378.733,
+     "timeline_end": 382.733,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.304,
+      "quality": 0.382,
+      "info_gain": 0.75,
+      "continuity": 0.705,
+      "novelty": 0.188,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter exactly on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.250 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.64s < minimum 8.00s",
+      "gap since previous B exit: 5.64s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.676
+    },
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 386.791,
+     "end": 390.791,
+     "timeline_start": 378.251,
+     "timeline_end": 382.251,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.747,
+      "action": 0.308,
+      "quality": 0.378,
+      "info_gain": 0.751,
+      "continuity": 0.645,
+      "novelty": 0.172,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter one beat (0.482s) before the boundary; action peak stays on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.249 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.16s < minimum 8.00s",
+      "gap since previous B exit: 5.16s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.647
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 378.733,
+     "end": 382.733,
+     "timeline_start": 378.733,
+     "timeline_end": 382.733,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.638,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.549
+    }
+   ],
+   "recommended_by_score": "b_downbeat",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only"
+  },
+  {
+   "event_id": "evt_10",
+   "context": {
+    "beat": 388.515,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 24,
+    "bars_into_phrase": 6,
+    "b_slot": [
+     398.182,
+     409.091
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_downbeat",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 400.182,
+     "end": 404.182,
+     "timeline_start": 388.515,
+     "timeline_end": 392.515,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.431,
+      "quality": 0.358,
+      "info_gain": 0.757,
+      "continuity": 0.723,
+      "novelty": 0.193,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter exactly on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.243 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.78s < minimum 8.00s",
+      "gap since previous B exit: 5.78s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.703
+    },
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 399.702,
+     "end": 403.702,
+     "timeline_start": 388.035,
+     "timeline_end": 392.035,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.749,
+      "action": 0.42,
+      "quality": 0.385,
+      "info_gain": 0.755,
+      "continuity": 0.663,
+      "novelty": 0.177,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter one beat (0.480s) before the boundary; action peak stays on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.245 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.30s < minimum 8.00s",
+      "gap since previous B exit: 5.30s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.673
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 388.515,
+     "end": 392.515,
+     "timeline_start": 388.515,
+     "timeline_end": 392.515,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.63,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.548
+    }
+   ],
+   "recommended_by_score": "b_downbeat",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only"
+  },
+  {
+   "event_id": "evt_11",
+   "context": {
+    "beat": 398.254,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 25,
+    "bars_into_phrase": 3,
+    "b_slot": [
+     409.091,
+     420.0
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_downbeat",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 410.091,
+     "end": 414.091,
+     "timeline_start": 398.254,
+     "timeline_end": 402.254,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.552,
+      "quality": 0.469,
+      "info_gain": 0.756,
+      "continuity": 0.717,
+      "novelty": 0.191,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter exactly on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.244 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.74s < minimum 8.00s",
+      "gap since previous B exit: 5.74s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.737
+    },
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 409.61,
+     "end": 413.61,
+     "timeline_start": 397.773,
+     "timeline_end": 401.773,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.747,
+      "action": 0.54,
+      "quality": 0.463,
+      "info_gain": 0.753,
+      "continuity": 0.657,
+      "novelty": 0.175,
+      "coverage": 1.0
+     },
+     "notes": [
+      "enter one beat (0.481s) before the boundary; action peak stays on the boundary",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.247 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.26s < minimum 8.00s",
+      "gap since previous B exit: 5.26s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.704
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 398.254,
+     "end": 402.254,
+     "timeline_start": 398.254,
+     "timeline_end": 402.254,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.645,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.549
+    }
+   ],
+   "recommended_by_score": "b_downbeat",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only"
+  }
+ ]
+}

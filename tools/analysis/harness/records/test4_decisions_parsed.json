@@ -1,0 +1,72 @@
+{
+ "raw_text": "{\"decisions\":[{\"event_id\":\"evt_01\",\"selection\":\"hold_a\",\"confidence_score\":0.86,\"rationale\":\"The frontal master already shows the DJ working both decks; the overhead angle adds no decisive action, so hold the wider performance view in the reference\u2019s restrained style.\"},{\"event_id\":\"evt_02\",\"selection\":\"hold_a\",\"confidence_score\":0.88,\"rationale\":\"Both views show steady mixer work rather than a distinct payoff, and the proposed B stay is long; preserve the clean A master rather than manufacture coverage.\"},{\"event_id\":\"evt_03\",\"selection\":\"hold_a\",\"confidence_score\":0.84,\"rationale\":\"The visible raised-hand response reads best in the frontal A frame at 00:05:20.050; an overhead cut would trade the performer\u2019s energy for less expressive deck detail.\"},{\"event_id\":\"evt_04\",\"selection\":\"b_glance\",\"confidence_score\":0.66,\"rationale\":\"At the phrase boundary, the overhead view usefully isolates the two-handed deck move; take the 10.069 s glance, then return before the detail becomes routine.\"},{\"event_id\":\"evt_05\",\"selection\":\"hold_a\",\"confidence_score\":0.83,\"rationale\":\"The B view exposes a control adjustment, but the A master at 00:05:39.802 keeps the DJ and the action legible; this is not enough contrast to earn another quick switch.\"},{\"event_id\":\"evt_06\",\"selection\":\"hold_a\",\"confidence_score\":0.85,\"rationale\":\"Sustained but modest control work does not justify a 10\u201313 s overhead insert; retain the brighter A master and the deliberate non-cut behavior reflected after 00:15:33.290.\"},{\"event_id\":\"evt_07\",\"selection\":\"hold_a\",\"confidence_score\":0.88,\"rationale\":\"The overhead angle remains dark and observational while A cleanly carries the performance; with no unmistakable visual climax, restraint is the stronger club edit.\"},{\"event_id\":\"evt_08\",\"selection\":\"hold_a\",\"confidence_score\":0.84,\"rationale\":\"The brief hand motion is readable in the frontal A frame at 00:06:08.598, but does not sustain a B insert; hold the master rather than cut on nominal phrase timing.\"},{\"event_id\":\"evt_09\",\"selection\":\"hold_a\",\"confidence_score\":0.87,\"rationale\":\"The overhead detail is noticeably darker and the action is slight; the stable frontal master at 00:06:18.240 gives the viewer the clearer, more intentional image.\"},{\"event_id\":\"evt_10\",\"selection\":\"hold_a\",\"confidence_score\":0.85,\"rationale\":\"Both angles show concentrated mixer work, but no singular gesture earns an 11\u201313 s overhead stay; preserve A\u2019s stronger composition and unbroken performance focus.\"},{\"event_id\":\"evt_11\",\"selection\":\"hold_a\",\"confidence_score\":0.86,\"rationale\":\"The DJ\u2019s two-handed adjustment remains better balanced in A at 00:06:37.760; B adds detail but not a new beat of story, so the cut should be refused.\"}]}",
+ "parse_note": "wrapped in object key 'decisions'",
+ "decisions": [
+  {
+   "event_id": "evt_01",
+   "selection": "hold_a",
+   "confidence_score": 0.86,
+   "rationale": "The frontal master already shows the DJ working both decks; the overhead angle adds no decisive action, so hold the wider performance view in the reference\u2019s restrained style."
+  },
+  {
+   "event_id": "evt_02",
+   "selection": "hold_a",
+   "confidence_score": 0.88,
+   "rationale": "Both views show steady mixer work rather than a distinct payoff, and the proposed B stay is long; preserve the clean A master rather than manufacture coverage."
+  },
+  {
+   "event_id": "evt_03",
+   "selection": "hold_a",
+   "confidence_score": 0.84,
+   "rationale": "The visible raised-hand response reads best in the frontal A frame at 00:05:20.050; an overhead cut would trade the performer\u2019s energy for less expressive deck detail."
+  },
+  {
+   "event_id": "evt_04",
+   "selection": "b_glance",
+   "confidence_score": 0.66,
+   "rationale": "At the phrase boundary, the overhead view usefully isolates the two-handed deck move; take the 10.069 s glance, then return before the detail becomes routine."
+  },
+  {
+   "event_id": "evt_05",
+   "selection": "hold_a",
+   "confidence_score": 0.83,
+   "rationale": "The B view exposes a control adjustment, but the A master at 00:05:39.802 keeps the DJ and the action legible; this is not enough contrast to earn another quick switch."
+  },
+  {
+   "event_id": "evt_06",
+   "selection": "hold_a",
+   "confidence_score": 0.85,
+   "rationale": "Sustained but modest control work does not justify a 10\u201313 s overhead insert; retain the brighter A master and the deliberate non-cut behavior reflected after 00:15:33.290."
+  },
+  {
+   "event_id": "evt_07",
+   "selection": "hold_a",
+   "confidence_score": 0.88,
+   "rationale": "The overhead angle remains dark and observational while A cleanly carries the performance; with no unmistakable visual climax, restraint is the stronger club edit."
+  },
+  {
+   "event_id": "evt_08",
+   "selection": "hold_a",
+   "confidence_score": 0.84,
+   "rationale": "The brief hand motion is readable in the frontal A frame at 00:06:08.598, but does not sustain a B insert; hold the master rather than cut on nominal phrase timing."
+  },
+  {
+   "event_id": "evt_09",
+   "selection": "hold_a",
+   "confidence_score": 0.87,
+   "rationale": "The overhead detail is noticeably darker and the action is slight; the stable frontal master at 00:06:18.240 gives the viewer the clearer, more intentional image."
+  },
+  {
+   "event_id": "evt_10",
+   "selection": "hold_a",
+   "confidence_score": 0.85,
+   "rationale": "Both angles show concentrated mixer work, but no singular gesture earns an 11\u201313 s overhead stay; preserve A\u2019s stronger composition and unbroken performance focus."
+  },
+  {
+   "event_id": "evt_11",
+   "selection": "hold_a",
+   "confidence_score": 0.86,
+   "rationale": "The DJ\u2019s two-handed adjustment remains better balanced in A at 00:06:37.760; B adds detail but not a new beat of story, so the cut should be refused."
+  }
+ ]
+}

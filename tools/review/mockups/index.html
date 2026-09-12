@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISH D — Studio Review · 6 Templates</title>
+<style>
+  :root{
+    --ink:#0E1116; --midnight:#1B2438; --panel:#141A26; --line:#232C3E;
+    --cream:#F0E6D2; --muted:#8A8F9E; --teal:#4E7A7A; --lavender:#9D8FC0;
+    --green:#6EE77E; --orange:#C4551E; --red:#C93B3B;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--cream);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.45}
+  header{display:flex;align-items:baseline;gap:18px;padding:18px 28px;border-bottom:1px solid var(--line)}
+  .brand{font-size:22px;font-weight:800;letter-spacing:.5px}
+  .brand .d{color:var(--teal)}
+  .sub{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+  main{padding:34px 28px;max-width:1200px;margin:0 auto}
+  h1{font-size:26px;font-weight:800;margin-bottom:6px}
+  p.lede{color:var(--muted);font-size:14px;max-width:640px;margin-bottom:28px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+  a.card{display:block;background:var(--midnight);border:1px solid var(--line);border-radius:8px;padding:20px;text-decoration:none;color:var(--cream);transition:border-color .15s,transform .15s}
+  a.card:hover{border-color:var(--teal);transform:translateY(-2px)}
+  .num{font-family:var(--mono);font-size:12px;color:var(--green);letter-spacing:1px;margin-bottom:10px}
+  .name{font-size:17px;font-weight:700;margin-bottom:6px}
+  .desc{font-size:13px;color:var(--muted);margin-bottom:14px;min-height:54px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px}
+  .tag{font-family:var(--mono);font-size:10px;letter-spacing:1px;padding:3px 8px;border:1px solid var(--line);border-radius:4px;color:var(--lavender)}
+  .tag.act{color:var(--green);border-color:var(--green)}
+  footer{padding:24px 28px;color:var(--muted);font-family:var(--mono);font-size:11px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">ISH <span class="d">D</span></div>
+  <div class="sub">STUDIO REVIEW · MOCKUP GALLERY</div>
+</header>
+<main>
+  <h1>Six templates, one application</h1>
+  <p class="lede">The video-editor review surface covers the whole loop: pick a project, review the first cut, approve the proof, watch the render, tune the mix, and find footage. Each template below is a standalone HTML mockup with the real tester-weave data baked in.</p>
+  <div class="grid">
+    <a class="card" href="01-projects.html">
+      <div class="num">TEMPLATE 01 · OPERATE</div>
+      <div class="name">Projects &amp; Workspace</div>
+      <div class="desc">Landing surface. Every project with its status, cut stats, and pipeline health. One click into the review loop.</div>
+      <div class="tags"><span class="tag act">PROJECTS</span><span class="tag">STATUS</span><span class="tag">ACTIVITY</span></div>
+    </a>
+    <a class="card" href="02-review-timeline.html">
+      <div class="num">TEMPLATE 02 · INSPECT</div>
+      <div class="name">Proposal Review — Timeline</div>
+      <div class="desc">The core surface. Full first cut at a glance: A spine, B inserts, beat ticks, action band, density, recovery gaps, warnings.</div>
+      <div class="tags"><span class="tag act">TIMELINE</span><span class="tag">BEATS</span><span class="tag">DENSITY</span></div>
+    </a>
+    <a class="card" href="03-proof-approval.html">
+      <div class="num">TEMPLATE 03 · DECIDE</div>
+      <div class="name">Proof Player &amp; Approval</div>
+      <div class="desc">Watch the half-runtime proof with the same burn-ins the proposal used. Approve (recorded) or request changes.</div>
+      <div class="tags"><span class="tag act">APPROVE</span><span class="tag">PLAYER</span><span class="tag">NOTES</span></div>
+    </a>
+    <a class="card" href="04-render-qc.html">
+      <div class="num">TEMPLATE 04 · MONITOR</div>
+      <div class="name">Render Pipeline &amp; QC</div>
+      <div class="desc">Jobs, progress, one-render-at-a-time lock, log tail, and the QC record: loudness, BT.709, pre-grades applied.</div>
+      <div class="tags"><span class="tag act">RENDER</span><span class="tag">QC</span><span class="tag">LOGS</span></div>
+    </a>
+    <a class="card" href="05-mix-composer.html">
+      <div class="num">TEMPLATE 05 · CONFIGURE</div>
+      <div class="name">Mix Composer</div>
+      <div class="desc">Form editor for mix.yaml: preset, density nudge, sections, durations, B profile. Live validation and a density preview.</div>
+      <div class="tags"><span class="tag act">FORM</span><span class="tag">VALIDATION</span><span class="tag">PRESETS</span></div>
+    </a>
+    <a class="card" href="06-library-search.html">
+      <div class="num">TEMPLATE 06 · EXPLORE</div>
+      <div class="name">Clip Library &amp; Search</div>
+      <div class="desc">Semantic + keyword search over the raw library. Ingest state, tags, beats and transcript sidecars per clip.</div>
+      <div class="tags"><span class="tag act">SEARCH</span><span class="tag">INDEX</span><span class="tag">SIDECARS</span></div>
+    </a>
+  </div>
+</main>
+<footer>ISH D · STUDIO REVIEW — MOCKUP GALLERY · 2026-08-27 · LXC 204 :8891</footer>
+</body>
+</html>

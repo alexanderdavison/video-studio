@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISH D — Library Search</title>
+<style>
+  :root{
+    --ink:#0E1116; --midnight:#1B2438; --panel:#141A26; --line:#232C3E;
+    --cream:#F0E6D2; --muted:#8A8F9E; --teal:#4E7A7A; --lavender:#9D8FC0;
+    --green:#6EE77E; --orange:#C4551E; --red:#C93B3B;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--cream);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.45}
+  header{display:flex;align-items:center;gap:18px;padding:14px 24px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--ink);z-index:5}
+  .brand{font-size:20px;font-weight:800}.brand .d{color:var(--teal)}
+  nav{display:flex;gap:4px;margin-left:10px}
+  nav a{color:var(--muted);text-decoration:none;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:6px 10px;border-radius:4px}
+  nav a.on{color:var(--cream);background:var(--midnight)}
+  nav a:hover{color:var(--cream)}
+  .spacer{flex:1}
+  .chip{font-family:var(--mono);font-size:11px;color:var(--lavender);border:1px solid var(--line);padding:5px 10px;border-radius:4px}
+  main{padding:22px 24px}
+  .searchbar{display:flex;gap:0;margin-bottom:14px;border:1px solid var(--teal);border-radius:8px;overflow:hidden;background:var(--midnight)}
+  .searchbar input{flex:1;background:transparent;border:none;color:var(--cream);font-size:15px;padding:14px 16px;font-family:var(--sans)}
+  .searchbar input:focus{outline:none}
+  .searchbar .mode{font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--teal);border-left:1px solid var(--line);display:flex;align-items:center;padding:0 14px}
+  .filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .filter{font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--muted);border:1px solid var(--line);background:none;padding:6px 12px;border-radius:4px;cursor:pointer}
+  .filter.on{color:var(--green);border-color:var(--green)}
+  .count{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:12px}
+  .results{display:grid;grid-template-columns:1fr;gap:10px}
+  .clip{display:grid;grid-template-columns:96px 1fr auto;gap:14px;background:var(--midnight);border:1px solid var(--line);border-radius:8px;padding:12px;cursor:pointer;transition:border-color .12s}
+  .clip:hover{border-color:var(--teal)}
+  .thumb{background:var(--panel);border:1px solid var(--line);border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:var(--muted);aspect-ratio:16/9;min-height:54px}
+  .clip .name{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--cream);margin-bottom:4px}
+  .clip .path{font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:6px}
+  .clip .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+  .tag{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:2px 7px;border:1px solid var(--line);border-radius:3px;color:var(--lavender)}
+  .tag.side{color:var(--green);border-color:var(--green)}
+  .clip .meta{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:right;white-space:nowrap}
+  .clip .meta .score{font-size:16px;font-weight:800;color:var(--green);font-family:var(--mono)}
+  .clip .meta .dur{margin-top:4px}
+  footer{padding:16px 24px;color:var(--muted);font-family:var(--mono);font-size:11px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">ISH <span class="d">D</span></div>
+  <nav>
+    <a href="01-projects.html">Projects</a><a href="02-review-timeline.html">Review</a><a href="03-proof-approval.html">Proof</a><a href="04-render-qc.html">Render</a><a href="05-mix-composer.html">Mix</a><a class="on" href="#">Library</a>
+  </nav>
+  <div class="spacer"></div>
+  <div class="chip">INDEX 34 CLIPS · DB studio.db</div>
+</header>
+<main>
+  <div class="searchbar">
+    <input value="drop transition crowd hands" placeholder="search clips, tags, transcripts…">
+    <div class="mode">SEMANTIC</div>
+  </div>
+  <div class="filters">
+    <button class="filter on">ALL</button>
+    <button class="filter">A-CAM</button>
+    <button class="filter">B-CAM</button>
+    <button class="filter">HAS BEATS</button>
+    <button class="filter">HAS TRANSCRIPT</button>
+    <button class="filter">QUARANTINE (3)</button>
+  </div>
+  <div class="count">7 results · 0.04s · embeddings bge-m3 @ .22</div>
+
+  <div class="results">
+    <div class="clip">
+      <div class="thumb">B0039</div>
+      <div>
+        <div class="name">B0039.MP4</div>
+        <div class="path">/mnt/media/raw/bcam/2026-08-25/B0039.MP4</div>
+        <div class="tags"><span class="tag">B-CAM</span><span class="tag side">BEATS</span><span class="tag side">PROFILE</span><span class="tag">drop</span><span class="tag">crowd</span></div>
+      </div>
+      <div class="meta"><div class="score">0.92</div><div class="dur">10:22</div></div>
+    </div>
+    <div class="clip">
+      <div class="thumb">B0038</div>
+      <div>
+        <div class="name">B0038.MP4</div>
+        <div class="path">/mnt/media/raw/bcam/2026-08-25/B0038.MP4</div>
+        <div class="tags"><span class="tag">B-CAM</span><span class="tag side">BEATS</span><span class="tag side">PROFILE</span><span class="tag">hands</span></div>
+      </div>
+      <div class="meta"><div class="score">0.88</div><div class="dur">24:11</div></div>
+    </div>
+    <div class="clip">
+      <div class="thumb">A0071</div>
+      <div>
+        <div class="name">A0071.MP4</div>
+        <div class="path">/mnt/media/raw/acam/2026-08-25/A0071.MP4</div>
+        <div class="tags"><span class="tag">A-CAM</span><span class="tag side">TRANSCRIPT</span><span class="tag">wide</span></div>
+      </div>
+      <div class="meta"><div class="score">0.81</div><div class="dur">19:04</div></div>
+    </div>
+    <div class="clip">
+      <div class="thumb">A0069</div>
+      <div>
+        <div class="name">A0069.MP4</div>
+        <div class="path">/mnt/media/raw/acam/2026-08-25/A0069.MP4</div>
+        <div class="tags"><span class="tag">A-CAM</span><span class="tag side">TRANSCRIPT</span><span class="tag">transition</span></div>
+      </div>
+      <div class="meta"><div class="score">0.77</div><div class="dur">18:51</div></div>
+    </div>
+    <div class="clip">
+      <div class="thumb">GOPRO5</div>
+      <div>
+        <div class="name">GOPRO_5123.MP4</div>
+        <div class="path">/mnt/media/raw/camcorder/2026-08-25/GOPRO_5123.MP4</div>
+        <div class="tags"><span class="tag">C-CAM</span><span class="tag">crowd</span><span class="tag">close</span></div>
+      </div>
+      <div class="meta"><div class="score">0.69</div><div class="dur">08:33</div></div>
+    </div>
+    <div class="clip">
+      <div class="thumb">DJI</div>
+      <div>
+        <div class="name">DJI_0876.MP4</div>
+        <div class="path">/mnt/media/raw/aerial/2026-08-25/DJI_0876.MP4</div>
+        <div class="tags"><span class="tag">AERIAL</span><span class="tag">4K</span><span class="tag">crowd</span></div>
+      </div>
+      <div class="meta"><div class="score">0.61</div><div class="dur">02:17</div></div>
+    </div>
+    <div class="clip">
+      <div class="thumb">UNK</div>
+      <div>
+        <div class="name">UNKNOWN_001.MP4</div>
+        <div class="path">/mnt/media/raw/unknown/UNKNOWN_001.MP4</div>
+        <div class="tags"><span class="tag" style="color:var(--orange);border-color:var(--orange)">QUARANTINE</span><span class="tag">3-strike</span></div>
+      </div>
+      <div class="meta"><div class="score" style="color:var(--muted)">—</div><div class="dur">00:00</div></div>
+    </div>
+  </div>
+</main>
+<footer>ISH D · STUDIO REVIEW — MOCKUP 06 · CLIP LIBRARY + SEARCH</footer>
+</body>
+</html>

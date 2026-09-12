@@ -1,0 +1,25 @@
+# INVALID: pre_grades key is NOT a declared source (Phase 6 validator gate).
+manifest_version: 1
+job_id: invalid_pre_grades_key
+template: club_dispatch_standard_v1
+sources:
+  a_reel: a_cam.mp4
+  b_reel:
+    - a_cam.mp4
+    - short_src.mp4
+pre_grades:
+  nope.mp4: "curves=all='0/0.05 1/1'"
+timeline:
+  - id: cut_001
+    angle: A
+    source_in: 0.000
+    source_out: 2.000
+  - id: cut_002
+    angle: B
+    source_in: 1.500
+    source_out: 3.000
+profiles:
+  grade: club_dispatch_pb3_v1
+  crop: cd_a_pushin_v1
+  graphics: cd_bug_v9
+  audio: cd_youtube_v1

@@ -48,11 +48,16 @@ def score_frame(gray, prev_gray):
         # Reward moderate motion; clamp so extreme shake doesn't dominate
         motion_score = min(1.0, motion / 12.0)
     else:
+        # No previous frame: motion is not measurable for the first sample.
+        motion = None
         motion_score = 0.5
     total = (SHARPNESS_W * min(1.0, sharpness / 400.0)
              + BRIGHTNESS_W * bright_pen
              + MOTION_W * motion_score)
-    return total
+    # Raw components travel with the score so ingest can persist them:
+    # sharpness = variance of the Laplacian, brightness = mean gray, motion = mean abs diff.
+    motion_out = float(motion) if motion is not None else None
+    return total, float(sharpness), float(brightness), motion_out
 
 
 def extract_frames(input_path, samples, size, workdir):
@@ -131,24 +136,27 @@ def main():
             if img is None:
                 continue
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            score = score_frame(gray, prev_gray)
-            candidates.append((score, ts, img))
+            score, sharp_v, bright_v, motion_v = score_frame(gray, prev_gray)
+            candidates.append((score, ts, img, sharp_v, bright_v, motion_v))
             prev_gray = gray
 
         candidates.sort(key=lambda c: -c[0])
         chosen = []
-        for score, ts, frame in candidates:
-            if all(abs(ts - c_ts) >= args.min_gap for _, c_ts, _ in chosen):
-                chosen.append((score, ts, frame))
+        for cand in candidates:
+            ts = cand[1]
+            if all(abs(ts - c[1]) >= args.min_gap for c in chosen):
+                chosen.append(cand)
                 if len(chosen) >= args.count:
                     break
 
         results = []
-        for i, (score, ts, frame) in enumerate(chosen):
+        for i, (score, ts, frame, sharp_v, bright_v, motion_v) in enumerate(chosen):
             fname = f"{base}_{ts:.2f}s_{score:.3f}.jpg"
             path = os.path.join(args.out, fname)
             cv2.imwrite(path, frame, [cv2.IMWRITE_JPEG_QUALITY, 90])
-            results.append({"ts": ts, "score": score, "file": fname})
+            results.append({"ts": float(ts), "score": float(score), "file": fname,
+                            "sharpness": sharp_v, "brightness": bright_v,
+                            "motion": motion_v})
             print(f"{ts:.2f}s  score={score:.3f}  {path}")
 
         with open(os.path.join(args.out, f"{base}_scores.json"), "w") as f:

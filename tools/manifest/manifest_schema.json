@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://studio.lab/schemas/video-manifest/v1.schema.json",
+  "title": "ISH D DJ-video template manifest",
+  "description": "Typed, versioned edit-plan manifest for the ISH D template engine (Phase 2). The manifest constrains, never expands: everything in it is a request the template engine is allowed to honor, and nothing more. Consumed identically by the visual proxy (Phase 3) and the future deterministic renderer (Phase 4).",
+  "type": "object",
+  "required": ["manifest_version", "job_id", "template", "sources", "timeline", "profiles"],
+  "additionalProperties": false,
+  "properties": {
+    "manifest_version": {
+      "const": 1,
+      "description": "Schema version. Bump only for an intentional breaking change to this file."
+    },
+    "job_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+      "description": "Short identifier for the job/mix. No spaces; use snake_case."
+    },
+    "template": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Versioned template name, resolved against the profile registry (editorial policy + preset density)."
+    },
+    "sources": {
+      "type": "object",
+      "required": ["a_reel"],
+      "additionalProperties": false,
+      "properties": {
+        "a_reel": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Single A-camera file. One A-camera spine, continuous A audio."
+        },
+        "b_reel": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Ordered B-camera files. Treated as ONE virtual reel: durations concatenate in list order. Omit for A-Cam-Only jobs; any angle B cut requires it."
+        }
+      }
+    },
+    "timeline": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/cut" },
+      "description": "Ordered list of hard cuts. Within one angle, cuts must be sorted by source_in and must not overlap."
+    },
+    "profiles": {
+      "type": "object",
+      "required": ["grade", "crop", "graphics", "audio"],
+      "additionalProperties": false,
+      "properties": {
+        "grade":    { "type": "string", "minLength": 1 },
+        "crop":     { "type": "string", "minLength": 1 },
+        "graphics": { "type": "string", "minLength": 1 },
+        "audio":    { "type": "string", "minLength": 1 }
+      },
+      "description": "Versioned profile names resolved to LOCKED creative params in the profile registry. The app encodes these; it does not redesign them."
+    },
+    "postflight": {
+      "type": "object",
+      "description": "OPTIONAL — written by the postflight verifier onto the COMPLETED job manifest (never an input request). Records the QC results the refined plan requires: integrated loudness + BT.709 confirmation + delivery file.",
+      "required": ["status"],
+      "additionalProperties": false,
+      "properties": {
+        "status": { "enum": ["passed", "failed"] },
+        "checked_at": { "type": "string", "format": "date-time" },
+        "integrated_lufs": { "type": "number", "description": "Full-program integrated loudness (EBU R128), target -13.5 ±0.3." },
+        "true_peak_dbtp": { "type": "number", "description": "True peak on the delivered file, must be <= -1.5 dBTP." },
+        "lra": { "type": "number" },
+        "duration_s": { "type": "number", "minimum": 0 },
+        "bt709": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "primaries": { "type": "boolean" },
+            "transfer":  { "type": "boolean" },
+            "matrix":    { "type": "boolean" }
+          },
+          "description": "All three must be true for a passed BT.709 confirmation."
+        },
+        "delivered_file": { "type": "string", "minLength": 1 },
+        "pre_grades_applied": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": { "type": ["string", "number", "boolean"] }
+          },
+          "description": "OPTIONAL — Phase 6 QC record of exposure pre-grades the renderer applied (written by renderer postflight, never authored). Key = source name; value = {curve, ...}."
+        }
+      }
+    },
+    "pre_grades": {
+      "type": "object",
+      "additionalProperties": { "type": "string", "minLength": 1 },
+      "description": "OPTIONAL — Phase 6 analyzer-written corrective exposure pre-grades. Keys MUST be exact source names declared in sources (a_reel or b_reel entries) — enforced by the validator. Values are ffmpeg filter fragments (curves=...). Applied BEFORE the locked creative grade; an absent source has no pre-grade."
+    }
+  },
+  "$defs": {
+    "cut": {
+      "type": "object",
+      "required": ["id", "angle", "source_in", "source_out"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^cut_\\d{3}$",
+          "description": "Cut id, 1:1 with the proxy burn-in (cut_018 renders as CUT 018). Zero-padded, three digits. Must be unique within the timeline."
+        },
+        "angle": {
+          "enum": ["A", "B"],
+          "description": "A = a_reel (safe master). B = the b_reel virtual reel (concatenated files)."
+        },
+        "source_in": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Source timecode in seconds. For B, measured on the concatenated virtual reel."
+        },
+        "source_out": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Source timecode in seconds; must be > source_in and within the source's real duration (checked against media when --media-root is given)."
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["low", "high"],
+          "description": "OPTIONAL (Phase 3). low = proxy burns a LOW CONF marker on this cut; high/absent = no marker. Drives the proxy's low-confidence burn-in only; no editorial effect yet."
+        }
+      }
+    }
+  }
+}

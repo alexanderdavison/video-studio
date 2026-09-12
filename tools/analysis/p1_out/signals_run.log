@@ -1,0 +1,4 @@
+[visual_signals] /mnt/media/raw/B CAM/DJI_20260824204627_0038_D.MP4  samples=121  (todo=121, reused=0, workers=3)
+VISUAL SIGNALS /mnt/media/raw/B CAM/DJI_20260824204627_0038_D.MP4 -> p1_out/signals_b_300_420.json (121 samples, clean_frac=1.000, obstruction=0, frozen=0)
+[visual_signals] /mnt/media/raw/A CAM/DJI_20260824204625_0054_D.MP4  samples=121  (todo=121, reused=0, workers=3)
+VISUAL SIGNALS /mnt/media/raw/A CAM/DJI_20260824204625_0054_D.MP4 -> p1_out/signals_a_300_420.json (121 samples, clean_frac=1.000, obstruction=0, frozen=0)

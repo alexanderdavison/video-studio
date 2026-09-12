@@ -9,12 +9,25 @@
 #   render_loudnorm.sh edit/base.mp4 finals/final.mp4 -vf "scale=1080:1920" -r 30
 #
 # Two-pass single-filter loudnorm (measured + linear) for accurate results.
+#
+# Hardened (2026-08-26 pipeline directives):
+#   D5 — acquires the render lock; refuses to start if a bake is live.
+#   D3 — the render pass is linted before launch; a dead pattern blocks it.
+#   D1 — output verified (moov + duration + stderr) before returning control.
 set -euo pipefail
+source /opt/video-studio/tools/lib/hardening.sh
 
 IN="$1"; OUT="$2"; shift 2
 
+if ! acquire_render_lock; then
+  exit 1
+fi
+
 TMP=$(mktemp -d /tmp/loudnorm.XXXXXX)
 trap 'rm -rf "$TMP"' EXIT
+
+# expected duration for the gate = source duration (loudnorm linear preserves it)
+SRC_DUR=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$IN" 2>/dev/null || echo 0)
 
 MEASURED="$TMP/measured.json"
 echo "[render_loudnorm] pass 1: measure $IN" >&2
@@ -39,9 +52,18 @@ OFFSET=$(python3 -c "import json,sys; d=json.load(open('$MEASURED')); print(d.ge
 echo "[render_loudnorm] measured: I=${INPUT_I} TP=${INPUT_TP} LRA=${INPUT_LRA} thresh=${INPUT_THRESH} offset=${OFFSET}" >&2
 echo "[render_loudnorm] pass 2: render with loudnorm applied -> $OUT" >&2
 
-ffmpeg -y -v error -i "$IN" \
+if ! run_ffmpeg -y -v error -i "$IN" \
   -af "loudnorm=I=-14:TP=-1.5:LRA=11:measured_I=${INPUT_I}:measured_TP=${INPUT_TP}:measured_LRA=${INPUT_LRA}:measured_thresh=${INPUT_THRESH}:offset=${OFFSET}:linear=true:print_format=summary" \
   "$@" \
-  "$OUT"
+  "$OUT" 2>"$TMP/pass2.log"; then
+  echo "[render_loudnorm] FFMPEG FAILED — tail:" >&2
+  tail -5 "$TMP/pass2.log" >&2
+  exit 1
+fi
+
+if ! verify_stage "$OUT" "$SRC_DUR" "$TMP/pass2.log"; then
+  echo "[render_loudnorm] VERIFY FAIL — stage NOT complete" >&2
+  exit 1
+fi
 
 echo "[render_loudnorm] done: $OUT" >&2

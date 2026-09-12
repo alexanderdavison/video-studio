@@ -1,0 +1,16 @@
+# INVALID: profiles.grade references a name not in the registry.
+manifest_version: 1
+job_id: invalid_unknown_profile
+template: club_dispatch_standard_v1
+sources:
+  a_reel: a_cam.mp4
+timeline:
+  - id: cut_001
+    angle: A
+    source_in: 0.000
+    source_out: 1.000
+profiles:
+  grade: not_a_real_grade_v99
+  crop: cd_a_pushin_v1
+  graphics: cd_bug_v9
+  audio: cd_youtube_v1

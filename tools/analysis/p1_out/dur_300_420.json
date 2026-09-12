@@ -1,0 +1,2408 @@
+{
+ "tool": "candidate_score.py",
+ "principle": "Scores are evidence, not the edit. They rank the legal choices for a boundary; they do not choose. hold_a is always offered and must always be weighed by the editor.",
+ "recommended_by_score_is": "informational only \u2014 not the creative answer",
+ "inputs": {
+  "beats": "/opt/video-studio/projects/2026-08-25-tester/work/analysis/a_full_beats.json",
+  "bpm": 121.44036102294922,
+  "n_beats": 4287,
+  "action_profiles": [
+   {
+    "path": "/opt/video-studio/projects/2026-08-25-tester/work/analysis/b_reel_profile.json",
+    "reel": "B virtual reel (B0038+B0039)",
+    "duration_s": 2073.536,
+    "offset": 0.0,
+    "segments": 209
+   }
+  ],
+  "signals_b": [
+   "/opt/video-studio/tools/analysis/p1_out/signals_b_300_420.json"
+  ],
+  "signals_a": [
+   "/opt/video-studio/tools/analysis/p1_out/signals_a_300_420.json"
+  ],
+  "signals_a_is_b_proxy": false,
+  "phrases": "/opt/video-studio/projects/2026-08-25-tester/work/analysis/a_full_phrases.json",
+  "structure": {
+   "source": "phrase_map.py",
+   "downbeats": 1072,
+   "phrases": 134,
+   "beats_per_bar": 4,
+   "bars_per_phrase": 8
+  },
+  "sync_json": null,
+  "keyframes": null,
+  "offsets": {
+   "a_offset": 0.0,
+   "b_offset": 0.0
+  }
+ },
+ "policy": {
+  "minimum_b_shot": 4.0,
+  "maximum_b_shot": 14.0,
+  "minimum_a_recovery": 8.0,
+  "events_requested": 12,
+  "min_event_gap": 9.0,
+  "event_window": [
+   300.0,
+   405.0
+  ],
+  "b_search_window": [
+   300.0,
+   420.0
+  ],
+  "novelty_cap_s": 30.0,
+  "duration_choices": true
+ },
+ "duration_choice_rules": {
+  "b_early": "anticipate the boundary by one beat, carrying this event's own B_ACTION length (its action peak lands ON the boundary)",
+  "b_glance": "brief useful detail \u2014 exit on the first BEAT at/after the strongest visible movement in the slot",
+  "b_action": "hold through the visible action \u2014 exit on the first BEAT at/after the end of the contiguous action run around that peak",
+  "b_hold": "continue past the action to the next useful musical boundary \u2014 exit on the first DOWNBEAT at/after the action run end",
+  "hold_a": "stay on angle A (always offered)",
+  "endpoint_provenance": "every endpoint is a beat or downbeat of the same beat/phrase artifact the cut grid uses; every length is clamped to minimum_b_shot, maximum_b_shot and the remaining slot width, and the clamp that fired is recorded per candidate"
+ },
+ "weights": {
+  "sync": 0.1,
+  "musical": 0.15,
+  "action": 0.2,
+  "quality": 0.1,
+  "info_gain": 0.15,
+  "continuity": 0.1,
+  "novelty": 0.05,
+  "coverage": 0.15
+ },
+ "score_keys": [
+  "sync",
+  "musical",
+  "action",
+  "quality",
+  "info_gain",
+  "continuity",
+  "novelty",
+  "coverage"
+ ],
+ "events": [
+  {
+   "event_id": "evt_01",
+   "context": {
+    "beat": 300.784,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 19,
+    "bars_into_phrase": 1,
+    "b_slot": [
+     300.0,
+     310.909
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 299.52,
+     "end": 303.716,
+     "timeline_start": 300.304,
+     "timeline_end": 304.5,
+     "duration_s": 4.196,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.748,
+      "action": 0.283,
+      "quality": 0.481,
+      "info_gain": 0.747,
+      "continuity": 1.0,
+      "novelty": 1.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_EARLY \u2014 enter one beat (0.480s) before the boundary, carrying the B_ACTION length, so the action peak lands ON the boundary: Duration taken from this event's B_ACTION level (the visible action), not a fixed bucket. Endpoint 304.196s = first beat at/after the action run end. Length 4.196s (as derived); derived 4.196s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0060).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.253 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "first event in the run",
+      "gap since previous B exit: 300.30s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.729
+    },
+    {
+     "id": "b_glance",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 300.0,
+     "end": 304.0,
+     "timeline_start": 300.784,
+     "timeline_end": 304.784,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.274,
+      "quality": 0.494,
+      "info_gain": 0.747,
+      "continuity": 1.0,
+      "novelty": 1.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_GLANCE \u2014 a brief useful detail: leave as soon as the strongest visible movement in the slot has been delivered, on the next beat. Endpoint 301.264s = first beat at/after the motion peak. Length 4.000s (clamped UP to minimum_b_shot 4.0s); derived 1.264s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0060).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.253 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "first event in the run",
+      "gap since previous B exit: 300.78s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.751
+    },
+    {
+     "id": "b_action",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 300.0,
+     "end": 304.196,
+     "timeline_start": 300.784,
+     "timeline_end": 304.98,
+     "duration_s": 4.196,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.274,
+      "quality": 0.494,
+      "info_gain": 0.747,
+      "continuity": 1.0,
+      "novelty": 1.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_ACTION \u2014 hold through the visible action: stay until the contiguous movement around the peak has run out, then leave on the next beat. Endpoint 304.196s = first beat at/after the action run end. Length 4.196s (as derived); derived 4.196s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0060).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.253 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "first event in the run",
+      "gap since previous B exit: 300.78s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.751
+    },
+    {
+     "id": "b_hold",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 300.0,
+     "end": 304.702,
+     "timeline_start": 300.784,
+     "timeline_end": 305.486,
+     "duration_s": 4.702,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.274,
+      "quality": 0.494,
+      "info_gain": 0.746,
+      "continuity": 1.0,
+      "novelty": 1.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_HOLD \u2014 continue past the action to the next useful musical boundary (the next downbeat). Endpoint 304.702s = first downbeat at/after the action run end. Length 4.702s (as derived); derived 4.702s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0060).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.254 over 5 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "first event in the run",
+      "gap since previous B exit: 300.78s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.751
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 300.784,
+     "end": 304.784,
+     "timeline_start": 300.784,
+     "timeline_end": 304.784,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.64,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.549
+    }
+   ],
+   "recommended_by_score": "b_glance",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only",
+   "duration_choices": {
+    "instrument": "B-window motion (visual_signals.py, 1.0 Hz samples)",
+    "n_samples": 11,
+    "sample_period_s": 1.0,
+    "peak": {
+     "t_s": 301.0,
+     "motion": 0.006
+    },
+    "action_run": {
+     "start_s": 301.0,
+     "end_s": 304.0,
+     "threshold_motion": 0.004,
+     "open_ended_at_window_edge": false
+    },
+    "levels": {
+     "glance": {
+      "endpoint_s": 301.264,
+      "duration_s": 4.0,
+      "derived_duration_s": 1.264,
+      "clamp": "clamped UP to minimum_b_shot 4.0s",
+      "landmark": "first beat at/after the motion peak"
+     },
+     "action": {
+      "endpoint_s": 304.196,
+      "duration_s": 4.196,
+      "derived_duration_s": 4.196,
+      "clamp": "as derived",
+      "landmark": "first beat at/after the action run end"
+     },
+     "hold": {
+      "endpoint_s": 304.702,
+      "duration_s": 4.702,
+      "derived_duration_s": 4.702,
+      "clamp": "as derived",
+      "landmark": "first downbeat at/after the action run end"
+     }
+    },
+    "collapsed": [],
+    "fallback": null,
+    "limits": {
+     "minimum_b_shot": 4.0,
+     "maximum_b_shot": 14.0,
+     "remaining_slot_width_s": 10.909
+    }
+   }
+  },
+  {
+   "event_id": "evt_02",
+   "context": {
+    "beat": 310.795,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 19,
+    "bars_into_phrase": 6,
+    "b_slot": [
+     310.909,
+     321.818
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 316.406,
+     "end": 321.315,
+     "timeline_start": 310.292,
+     "timeline_end": 315.201,
+     "duration_s": 4.909,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.75,
+      "action": 0.41,
+      "quality": 0.514,
+      "info_gain": 0.739,
+      "continuity": 0.688,
+      "novelty": 0.184,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_EARLY \u2014 enter one beat (0.503s) before the boundary, carrying the B_ACTION length, so the action peak lands ON the boundary: Duration taken from this event's B_ACTION level (the visible action), not a fixed bucket. Endpoint 322.007s = first beat at/after the action run end. Length 4.909s (capped by the remaining slot width 4.909s); derived 5.098s. Evidence: 5 motion samples at 1 Hz over this window (peak 0.0080).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.261 over 5 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.51s < minimum 8.00s",
+      "gap since previous B exit: 5.51s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.685
+    },
+    {
+     "id": "b_glance",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 316.909,
+     "end": 320.909,
+     "timeline_start": 310.795,
+     "timeline_end": 314.795,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.408,
+      "quality": 0.521,
+      "info_gain": 0.739,
+      "continuity": 0.751,
+      "novelty": 0.2,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_GLANCE \u2014 a brief useful detail: leave as soon as the strongest visible movement in the slot has been delivered, on the next beat. Endpoint 320.065s = first beat at/after the motion peak. Length 4.000s (clamped UP to minimum_b_shot 4.0s); derived 3.155s. Evidence: 5 motion samples at 1 Hz over this window (peak 0.0080).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.261 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 6.01s < minimum 8.00s",
+      "gap since previous B exit: 6.01s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.715
+    },
+    {
+     "id": "b_action",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 316.909,
+     "end": 321.818,
+     "timeline_start": 310.795,
+     "timeline_end": 315.704,
+     "duration_s": 4.909,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.412,
+      "quality": 0.514,
+      "info_gain": 0.739,
+      "continuity": 0.751,
+      "novelty": 0.2,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_ACTION \u2014 hold through the visible action: stay until the contiguous movement around the peak has run out, then leave on the next beat. Endpoint 322.007s = first beat at/after the action run end. Length 4.909s (capped by the remaining slot width 4.909s); derived 5.098s. Evidence: 5 motion samples at 1 Hz over this window (peak 0.0080).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.261 over 5 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 6.01s < minimum 8.00s",
+      "gap since previous B exit: 6.01s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.715
+    },
+    {
+     "id": "b_hold",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 316.909,
+     "end": 321.818,
+     "timeline_start": 310.795,
+     "timeline_end": 315.704,
+     "duration_s": 4.909,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.412,
+      "quality": 0.514,
+      "info_gain": 0.739,
+      "continuity": 0.751,
+      "novelty": 0.2,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_HOLD \u2014 continue past the action to the next useful musical boundary (the next downbeat). Endpoint 322.508s = first downbeat at/after the action run end. Length 4.909s (capped by the remaining slot width 4.909s); derived 5.599s. Evidence: 5 motion samples at 1 Hz over this window (peak 0.0080).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.261 over 5 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 6.01s < minimum 8.00s",
+      "gap since previous B exit: 6.01s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.715
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 310.795,
+     "end": 314.795,
+     "timeline_start": 310.795,
+     "timeline_end": 314.795,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.623,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.547
+    }
+   ],
+   "recommended_by_score": "b_hold",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only",
+   "duration_choices": {
+    "instrument": "B-window motion (visual_signals.py, 1.0 Hz samples)",
+    "n_samples": 5,
+    "sample_period_s": 1.0,
+    "peak": {
+     "t_s": 320.0,
+     "motion": 0.008
+    },
+    "action_run": {
+     "start_s": 319.0,
+     "end_s": 322.0,
+     "threshold_motion": 0.005,
+     "open_ended_at_window_edge": true
+    },
+    "levels": {
+     "glance": {
+      "endpoint_s": 320.065,
+      "duration_s": 4.0,
+      "derived_duration_s": 3.155,
+      "clamp": "clamped UP to minimum_b_shot 4.0s",
+      "landmark": "first beat at/after the motion peak"
+     },
+     "action": {
+      "endpoint_s": 322.007,
+      "duration_s": 4.909,
+      "derived_duration_s": 5.098,
+      "clamp": "capped by the remaining slot width 4.909s",
+      "landmark": "first beat at/after the action run end"
+     },
+     "hold": {
+      "endpoint_s": 322.508,
+      "duration_s": 4.909,
+      "derived_duration_s": 5.599,
+      "clamp": "capped by the remaining slot width 4.909s",
+      "landmark": "first downbeat at/after the action run end"
+     }
+    },
+    "collapsed": [],
+    "fallback": null,
+    "limits": {
+     "minimum_b_shot": 4.0,
+     "maximum_b_shot": 14.0,
+     "remaining_slot_width_s": 4.909
+    }
+   }
+  },
+  {
+   "event_id": "evt_03",
+   "context": {
+    "beat": 320.545,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 20,
+    "bars_into_phrase": 3,
+    "b_slot": [
+     321.818,
+     332.727
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 321.338,
+     "end": 325.338,
+     "timeline_start": 320.065,
+     "timeline_end": 324.065,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.747,
+      "action": 0.43,
+      "quality": 0.476,
+      "info_gain": 0.75,
+      "continuity": 0.659,
+      "novelty": 0.176,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_EARLY \u2014 enter one beat (0.480s) before the boundary, carrying the B_ACTION length, so the action peak lands ON the boundary: Duration taken from this event's B_ACTION level (the visible action), not a fixed bucket. Endpoint 324.703s = first beat at/after the action run end. Length 4.000s (clamped UP to minimum_b_shot 4.0s); derived 2.885s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0070).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.250 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.27s < minimum 8.00s",
+      "gap since previous B exit: 5.27s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.683
+    },
+    {
+     "id": "b_glance",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 321.818,
+     "end": 325.818,
+     "timeline_start": 320.545,
+     "timeline_end": 324.545,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.43,
+      "quality": 0.476,
+      "info_gain": 0.75,
+      "continuity": 0.719,
+      "novelty": 0.192,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_GLANCE \u2014 a brief useful detail: leave as soon as the strongest visible movement in the slot has been delivered, on the next beat. Endpoint 323.469s = first beat at/after the motion peak. Length 4.000s (clamped UP to minimum_b_shot 4.0s); derived 1.650s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0070).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.250 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.75s < minimum 8.00s",
+      "gap since previous B exit: 5.75s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.713
+    },
+    {
+     "id": "b_action",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 321.818,
+     "end": 325.818,
+     "timeline_start": 320.545,
+     "timeline_end": 324.545,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.43,
+      "quality": 0.476,
+      "info_gain": 0.75,
+      "continuity": 0.719,
+      "novelty": 0.192,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_ACTION \u2014 hold through the visible action: stay until the contiguous movement around the peak has run out, then leave on the next beat. Endpoint 324.703s = first beat at/after the action run end. Length 4.000s (clamped UP to minimum_b_shot 4.0s); derived 2.885s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0070).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.250 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.75s < minimum 8.00s",
+      "gap since previous B exit: 5.75s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.713
+    },
+    {
+     "id": "b_hold",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 321.818,
+     "end": 325.818,
+     "timeline_start": 320.545,
+     "timeline_end": 324.545,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.43,
+      "quality": 0.476,
+      "info_gain": 0.75,
+      "continuity": 0.719,
+      "novelty": 0.192,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_HOLD \u2014 continue past the action to the next useful musical boundary (the next downbeat). Endpoint 324.703s = first downbeat at/after the action run end. Length 4.000s (clamped UP to minimum_b_shot 4.0s); derived 2.885s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0070).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.250 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.75s < minimum 8.00s",
+      "gap since previous B exit: 5.75s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.713
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 320.545,
+     "end": 324.545,
+     "timeline_start": 320.545,
+     "timeline_end": 324.545,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.615,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.546
+    }
+   ],
+   "recommended_by_score": "b_hold",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only",
+   "duration_choices": {
+    "instrument": "B-window motion (visual_signals.py, 1.0 Hz samples)",
+    "n_samples": 11,
+    "sample_period_s": 1.0,
+    "peak": {
+     "t_s": 323.0,
+     "motion": 0.007
+    },
+    "action_run": {
+     "start_s": 322.0,
+     "end_s": 324.0,
+     "threshold_motion": 0.004,
+     "open_ended_at_window_edge": false
+    },
+    "levels": {
+     "glance": {
+      "endpoint_s": 323.469,
+      "duration_s": 4.0,
+      "derived_duration_s": 1.65,
+      "clamp": "clamped UP to minimum_b_shot 4.0s",
+      "landmark": "first beat at/after the motion peak"
+     },
+     "action": {
+      "endpoint_s": 324.703,
+      "duration_s": 4.0,
+      "derived_duration_s": 2.885,
+      "clamp": "clamped UP to minimum_b_shot 4.0s",
+      "landmark": "first beat at/after the action run end"
+     },
+     "hold": {
+      "endpoint_s": 324.703,
+      "duration_s": 4.0,
+      "derived_duration_s": 2.885,
+      "clamp": "clamped UP to minimum_b_shot 4.0s",
+      "landmark": "first downbeat at/after the action run end"
+     }
+    },
+    "collapsed": [],
+    "fallback": null,
+    "limits": {
+     "minimum_b_shot": 4.0,
+     "maximum_b_shot": 14.0,
+     "remaining_slot_width_s": 10.909
+    }
+   }
+  },
+  {
+   "event_id": "evt_04",
+   "context": {
+    "beat": 330.552,
+    "downbeat": true,
+    "phrase_boundary": true,
+    "phrase_index": 21,
+    "bars_into_phrase": 0,
+    "b_slot": [
+     332.727,
+     343.636
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 332.246,
+     "end": 339.811,
+     "timeline_start": 330.071,
+     "timeline_end": 337.636,
+     "duration_s": 7.565,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.748,
+      "action": 0.419,
+      "quality": 0.431,
+      "info_gain": 0.742,
+      "continuity": 0.691,
+      "novelty": 0.184,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_EARLY \u2014 enter one beat (0.481s) before the boundary, carrying the B_ACTION length, so the action peak lands ON the boundary: Duration taken from this event's B_ACTION level (the visible action), not a fixed bucket. Endpoint 340.293s = first beat at/after the action run end. Length 7.565s (as derived); derived 7.565s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0070).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.258 over 7 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.53s < minimum 8.00s",
+      "gap since previous B exit: 5.53s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.679
+    },
+    {
+     "id": "b_glance",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 332.727,
+     "end": 339.331,
+     "timeline_start": 330.552,
+     "timeline_end": 337.156,
+     "duration_s": 6.604,
+     "scores": {
+      "sync": 1.0,
+      "musical": 1.0,
+      "action": 0.419,
+      "quality": 0.431,
+      "info_gain": 0.742,
+      "continuity": 0.751,
+      "novelty": 0.2,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_GLANCE \u2014 a brief useful detail: leave as soon as the strongest visible movement in the slot has been delivered, on the next beat. Endpoint 339.331s = first beat at/after the motion peak. Length 6.604s (as derived); derived 6.604s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0070).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.258 over 7 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 6.01s < minimum 8.00s",
+      "gap since previous B exit: 6.01s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.723
+    },
+    {
+     "id": "b_action",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 332.727,
+     "end": 340.292,
+     "timeline_start": 330.552,
+     "timeline_end": 338.117,
+     "duration_s": 7.565,
+     "scores": {
+      "sync": 1.0,
+      "musical": 1.0,
+      "action": 0.417,
+      "quality": 0.439,
+      "info_gain": 0.742,
+      "continuity": 0.751,
+      "novelty": 0.2,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_ACTION \u2014 hold through the visible action: stay until the contiguous movement around the peak has run out, then leave on the next beat. Endpoint 340.293s = first beat at/after the action run end. Length 7.565s (as derived); derived 7.565s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0070).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.258 over 8 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 6.01s < minimum 8.00s",
+      "gap since previous B exit: 6.01s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.724
+    },
+    {
+     "id": "b_hold",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 332.727,
+     "end": 340.293,
+     "timeline_start": 330.552,
+     "timeline_end": 338.118,
+     "duration_s": 7.566,
+     "scores": {
+      "sync": 1.0,
+      "musical": 1.0,
+      "action": 0.417,
+      "quality": 0.439,
+      "info_gain": 0.742,
+      "continuity": 0.751,
+      "novelty": 0.2,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_HOLD \u2014 continue past the action to the next useful musical boundary (the next downbeat). Endpoint 340.293s = first downbeat at/after the action run end. Length 7.566s (as derived); derived 7.566s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0070).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.258 over 8 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 6.01s < minimum 8.00s",
+      "gap since previous B exit: 6.01s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.724
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 330.552,
+     "end": 334.552,
+     "timeline_start": 330.552,
+     "timeline_end": 334.552,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 1.0,
+      "action": 0.0,
+      "quality": 0.644,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.564
+    }
+   ],
+   "recommended_by_score": "b_hold",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only",
+   "duration_choices": {
+    "instrument": "B-window motion (visual_signals.py, 1.0 Hz samples)",
+    "n_samples": 11,
+    "sample_period_s": 1.0,
+    "peak": {
+     "t_s": 339.0,
+     "motion": 0.007
+    },
+    "action_run": {
+     "start_s": 339.0,
+     "end_s": 340.0,
+     "threshold_motion": 0.004,
+     "open_ended_at_window_edge": false
+    },
+    "levels": {
+     "glance": {
+      "endpoint_s": 339.331,
+      "duration_s": 6.604,
+      "derived_duration_s": 6.604,
+      "clamp": "as derived",
+      "landmark": "first beat at/after the motion peak"
+     },
+     "action": {
+      "endpoint_s": 340.293,
+      "duration_s": 7.565,
+      "derived_duration_s": 7.565,
+      "clamp": "as derived",
+      "landmark": "first beat at/after the action run end"
+     },
+     "hold": {
+      "endpoint_s": 340.293,
+      "duration_s": 7.566,
+      "derived_duration_s": 7.566,
+      "clamp": "as derived",
+      "landmark": "first downbeat at/after the action run end"
+     }
+    },
+    "collapsed": [],
+    "fallback": null,
+    "limits": {
+     "minimum_b_shot": 4.0,
+     "maximum_b_shot": 14.0,
+     "remaining_slot_width_s": 10.909
+    }
+   }
+  },
+  {
+   "event_id": "evt_05",
+   "context": {
+    "beat": 340.293,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 21,
+    "bars_into_phrase": 5,
+    "b_slot": [
+     343.636,
+     354.545
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 349.155,
+     "end": 354.064,
+     "timeline_start": 339.812,
+     "timeline_end": 344.721,
+     "duration_s": 4.909,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.749,
+      "action": 0.372,
+      "quality": 0.47,
+      "info_gain": 0.742,
+      "continuity": 0.657,
+      "novelty": 0.175,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_EARLY \u2014 enter one beat (0.481s) before the boundary, carrying the B_ACTION length, so the action peak lands ON the boundary: Duration taken from this event's B_ACTION level (the visible action), not a fixed bucket. Endpoint 355.196s = first beat at/after the action run end. Length 4.909s (capped by the remaining slot width 4.909s); derived 5.560s. Evidence: 5 motion samples at 1 Hz over this window (peak 0.0030).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.258 over 5 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.26s < minimum 8.00s",
+      "gap since previous B exit: 5.26s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.67
+    },
+    {
+     "id": "b_glance",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 349.636,
+     "end": 354.214,
+     "timeline_start": 340.293,
+     "timeline_end": 344.871,
+     "duration_s": 4.578,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.373,
+      "quality": 0.47,
+      "info_gain": 0.743,
+      "continuity": 0.718,
+      "novelty": 0.191,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_GLANCE \u2014 a brief useful detail: leave as soon as the strongest visible movement in the slot has been delivered, on the next beat. Endpoint 354.214s = first beat at/after the motion peak. Length 4.578s (as derived); derived 4.578s. Evidence: 5 motion samples at 1 Hz over this window (peak 0.0030).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.257 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.74s < minimum 8.00s",
+      "gap since previous B exit: 5.74s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.699
+    },
+    {
+     "id": "b_action",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 349.636,
+     "end": 354.545,
+     "timeline_start": 340.293,
+     "timeline_end": 345.202,
+     "duration_s": 4.909,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.373,
+      "quality": 0.47,
+      "info_gain": 0.744,
+      "continuity": 0.718,
+      "novelty": 0.191,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_ACTION \u2014 hold through the visible action: stay until the contiguous movement around the peak has run out, then leave on the next beat. Endpoint 355.196s = first beat at/after the action run end. Length 4.909s (capped by the remaining slot width 4.909s); derived 5.560s. Evidence: 5 motion samples at 1 Hz over this window (peak 0.0030).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.256 over 5 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.74s < minimum 8.00s",
+      "gap since previous B exit: 5.74s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.7
+    },
+    {
+     "id": "b_hold",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 349.636,
+     "end": 354.545,
+     "timeline_start": 340.293,
+     "timeline_end": 345.202,
+     "duration_s": 4.909,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.373,
+      "quality": 0.47,
+      "info_gain": 0.744,
+      "continuity": 0.718,
+      "novelty": 0.191,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_HOLD \u2014 continue past the action to the next useful musical boundary (the next downbeat). Endpoint 355.677s = first downbeat at/after the action run end. Length 4.909s (capped by the remaining slot width 4.909s); derived 6.041s. Evidence: 5 motion samples at 1 Hz over this window (peak 0.0030).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.256 over 5 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.74s < minimum 8.00s",
+      "gap since previous B exit: 5.74s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.7
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 340.293,
+     "end": 344.293,
+     "timeline_start": 340.293,
+     "timeline_end": 344.293,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.628,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.548
+    }
+   ],
+   "recommended_by_score": "b_hold",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only",
+   "duration_choices": {
+    "instrument": "B-window motion (visual_signals.py, 1.0 Hz samples)",
+    "n_samples": 5,
+    "sample_period_s": 1.0,
+    "peak": {
+     "t_s": 354.0,
+     "motion": 0.003
+    },
+    "action_run": {
+     "start_s": 353.0,
+     "end_s": 355.0,
+     "threshold_motion": 0.002,
+     "open_ended_at_window_edge": true
+    },
+    "levels": {
+     "glance": {
+      "endpoint_s": 354.214,
+      "duration_s": 4.578,
+      "derived_duration_s": 4.578,
+      "clamp": "as derived",
+      "landmark": "first beat at/after the motion peak"
+     },
+     "action": {
+      "endpoint_s": 355.196,
+      "duration_s": 4.909,
+      "derived_duration_s": 5.56,
+      "clamp": "capped by the remaining slot width 4.909s",
+      "landmark": "first beat at/after the action run end"
+     },
+     "hold": {
+      "endpoint_s": 355.677,
+      "duration_s": 4.909,
+      "derived_duration_s": 6.041,
+      "clamp": "capped by the remaining slot width 4.909s",
+      "landmark": "first downbeat at/after the action run end"
+     }
+    },
+    "collapsed": [],
+    "fallback": null,
+    "limits": {
+     "minimum_b_shot": 4.0,
+     "maximum_b_shot": 14.0,
+     "remaining_slot_width_s": 4.909
+    }
+   }
+  },
+  {
+   "event_id": "evt_06",
+   "context": {
+    "beat": 349.819,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 22,
+    "bars_into_phrase": 2,
+    "b_slot": [
+     354.545,
+     365.455
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 360.064,
+     "end": 364.973,
+     "timeline_start": 349.338,
+     "timeline_end": 354.247,
+     "duration_s": 4.909,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.749,
+      "action": 0.406,
+      "quality": 0.399,
+      "info_gain": 0.746,
+      "continuity": 0.631,
+      "novelty": 0.168,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_EARLY \u2014 enter one beat (0.481s) before the boundary, carrying the B_ACTION length, so the action peak lands ON the boundary: Duration taken from this event's B_ACTION level (the visible action), not a fixed bucket. Endpoint 366.165s = first beat at/after the action run end. Length 4.909s (capped by the remaining slot width 4.909s); derived 5.620s. Evidence: 5 motion samples at 1 Hz over this window (peak 0.0040).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.254 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.05s < minimum 8.00s",
+      "gap since previous B exit: 5.05s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.667
+    },
+    {
+     "id": "b_glance",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 360.545,
+     "end": 365.18,
+     "timeline_start": 349.819,
+     "timeline_end": 354.454,
+     "duration_s": 4.635,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.406,
+      "quality": 0.405,
+      "info_gain": 0.747,
+      "continuity": 0.691,
+      "novelty": 0.184,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_GLANCE \u2014 a brief useful detail: leave as soon as the strongest visible movement in the slot has been delivered, on the next beat. Endpoint 365.181s = first beat at/after the motion peak. Length 4.635s (as derived); derived 4.635s. Evidence: 5 motion samples at 1 Hz over this window (peak 0.0040).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.253 over 5 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.53s < minimum 8.00s",
+      "gap since previous B exit: 5.53s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.697
+    },
+    {
+     "id": "b_action",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 360.545,
+     "end": 365.454,
+     "timeline_start": 349.819,
+     "timeline_end": 354.728,
+     "duration_s": 4.909,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.406,
+      "quality": 0.405,
+      "info_gain": 0.747,
+      "continuity": 0.691,
+      "novelty": 0.184,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_ACTION \u2014 hold through the visible action: stay until the contiguous movement around the peak has run out, then leave on the next beat. Endpoint 366.165s = first beat at/after the action run end. Length 4.909s (capped by the remaining slot width 4.909s); derived 5.620s. Evidence: 5 motion samples at 1 Hz over this window (peak 0.0040).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.253 over 5 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.53s < minimum 8.00s",
+      "gap since previous B exit: 5.53s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.697
+    },
+    {
+     "id": "b_hold",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 360.545,
+     "end": 365.454,
+     "timeline_start": 349.819,
+     "timeline_end": 354.728,
+     "duration_s": 4.909,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.406,
+      "quality": 0.405,
+      "info_gain": 0.747,
+      "continuity": 0.691,
+      "novelty": 0.184,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_HOLD \u2014 continue past the action to the next useful musical boundary (the next downbeat). Endpoint 367.150s = first downbeat at/after the action run end. Length 4.909s (capped by the remaining slot width 4.909s); derived 6.605s. Evidence: 5 motion samples at 1 Hz over this window (peak 0.0040).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.253 over 5 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.53s < minimum 8.00s",
+      "gap since previous B exit: 5.53s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.697
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 349.819,
+     "end": 353.819,
+     "timeline_start": 349.819,
+     "timeline_end": 353.819,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.63,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.548
+    }
+   ],
+   "recommended_by_score": "b_hold",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only",
+   "duration_choices": {
+    "instrument": "B-window motion (visual_signals.py, 1.0 Hz samples)",
+    "n_samples": 5,
+    "sample_period_s": 1.0,
+    "peak": {
+     "t_s": 365.0,
+     "motion": 0.004
+    },
+    "action_run": {
+     "start_s": 362.0,
+     "end_s": 366.0,
+     "threshold_motion": 0.002,
+     "open_ended_at_window_edge": true
+    },
+    "levels": {
+     "glance": {
+      "endpoint_s": 365.181,
+      "duration_s": 4.635,
+      "derived_duration_s": 4.635,
+      "clamp": "as derived",
+      "landmark": "first beat at/after the motion peak"
+     },
+     "action": {
+      "endpoint_s": 366.165,
+      "duration_s": 4.909,
+      "derived_duration_s": 5.62,
+      "clamp": "capped by the remaining slot width 4.909s",
+      "landmark": "first beat at/after the action run end"
+     },
+     "hold": {
+      "endpoint_s": 367.15,
+      "duration_s": 4.909,
+      "derived_duration_s": 6.605,
+      "clamp": "capped by the remaining slot width 4.909s",
+      "landmark": "first downbeat at/after the action run end"
+     }
+    },
+    "collapsed": [],
+    "fallback": null,
+    "limits": {
+     "minimum_b_shot": 4.0,
+     "maximum_b_shot": 14.0,
+     "remaining_slot_width_s": 4.909
+    }
+   }
+  },
+  {
+   "event_id": "evt_07",
+   "context": {
+    "beat": 359.339,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 22,
+    "bars_into_phrase": 7,
+    "b_slot": [
+     365.455,
+     376.364
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 364.974,
+     "end": 374.872,
+     "timeline_start": 358.858,
+     "timeline_end": 368.756,
+     "duration_s": 9.898,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.75,
+      "action": 0.387,
+      "quality": 0.422,
+      "info_gain": 0.738,
+      "continuity": 0.63,
+      "novelty": 0.168,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_EARLY \u2014 enter one beat (0.481s) before the boundary, carrying the B_ACTION length, so the action peak lands ON the boundary: Duration taken from this event's B_ACTION level (the visible action), not a fixed bucket. Endpoint 375.353s = first beat at/after the action run end. Length 9.898s (as derived); derived 9.898s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0050).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.262 over 10 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.04s < minimum 8.00s",
+      "gap since previous B exit: 5.04s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.664
+    },
+    {
+     "id": "b_glance",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 365.455,
+     "end": 369.455,
+     "timeline_start": 359.339,
+     "timeline_end": 363.339,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.406,
+      "quality": 0.467,
+      "info_gain": 0.734,
+      "continuity": 0.69,
+      "novelty": 0.184,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_GLANCE \u2014 a brief useful detail: leave as soon as the strongest visible movement in the slot has been delivered, on the next beat. Endpoint 368.111s = first beat at/after the motion peak. Length 4.000s (clamped UP to minimum_b_shot 4.0s); derived 2.656s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0050).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.266 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.52s < minimum 8.00s",
+      "gap since previous B exit: 5.52s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.701
+    },
+    {
+     "id": "b_action",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 365.455,
+     "end": 375.353,
+     "timeline_start": 359.339,
+     "timeline_end": 369.237,
+     "duration_s": 9.898,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.385,
+      "quality": 0.417,
+      "info_gain": 0.739,
+      "continuity": 0.69,
+      "novelty": 0.184,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_ACTION \u2014 hold through the visible action: stay until the contiguous movement around the peak has run out, then leave on the next beat. Endpoint 375.353s = first beat at/after the action run end. Length 9.898s (as derived); derived 9.898s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0050).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.261 over 10 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.52s < minimum 8.00s",
+      "gap since previous B exit: 5.52s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.693
+    },
+    {
+     "id": "b_hold",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 365.455,
+     "end": 376.364,
+     "timeline_start": 359.339,
+     "timeline_end": 370.248,
+     "duration_s": 10.909,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.384,
+      "quality": 0.42,
+      "info_gain": 0.74,
+      "continuity": 0.69,
+      "novelty": 0.184,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_HOLD \u2014 continue past the action to the next useful musical boundary (the next downbeat). Endpoint 376.806s = first downbeat at/after the action run end. Length 10.909s (capped by the remaining slot width 10.909s); derived 11.351s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0050).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.260 over 11 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.52s < minimum 8.00s",
+      "gap since previous B exit: 5.52s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.693
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 359.339,
+     "end": 363.339,
+     "timeline_start": 359.339,
+     "timeline_end": 363.339,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.608,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.546
+    }
+   ],
+   "recommended_by_score": "b_glance",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only",
+   "duration_choices": {
+    "instrument": "B-window motion (visual_signals.py, 1.0 Hz samples)",
+    "n_samples": 11,
+    "sample_period_s": 1.0,
+    "peak": {
+     "t_s": 368.0,
+     "motion": 0.005
+    },
+    "action_run": {
+     "start_s": 366.0,
+     "end_s": 375.0,
+     "threshold_motion": 0.003,
+     "open_ended_at_window_edge": false
+    },
+    "levels": {
+     "glance": {
+      "endpoint_s": 368.111,
+      "duration_s": 4.0,
+      "derived_duration_s": 2.656,
+      "clamp": "clamped UP to minimum_b_shot 4.0s",
+      "landmark": "first beat at/after the motion peak"
+     },
+     "action": {
+      "endpoint_s": 375.353,
+      "duration_s": 9.898,
+      "derived_duration_s": 9.898,
+      "clamp": "as derived",
+      "landmark": "first beat at/after the action run end"
+     },
+     "hold": {
+      "endpoint_s": 376.806,
+      "duration_s": 10.909,
+      "derived_duration_s": 11.351,
+      "clamp": "capped by the remaining slot width 10.909s",
+      "landmark": "first downbeat at/after the action run end"
+     }
+    },
+    "collapsed": [],
+    "fallback": null,
+    "limits": {
+     "minimum_b_shot": 4.0,
+     "maximum_b_shot": 14.0,
+     "remaining_slot_width_s": 10.909
+    }
+   }
+  },
+  {
+   "event_id": "evt_08",
+   "context": {
+    "beat": 369.093,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 23,
+    "bars_into_phrase": 4,
+    "b_slot": [
+     376.364,
+     387.273
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 375.883,
+     "end": 380.731,
+     "timeline_start": 368.612,
+     "timeline_end": 373.46,
+     "duration_s": 4.848,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.75,
+      "action": 0.36,
+      "quality": 0.365,
+      "info_gain": 0.75,
+      "continuity": 0.659,
+      "novelty": 0.176,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_EARLY \u2014 enter one beat (0.481s) before the boundary, carrying the B_ACTION length, so the action peak lands ON the boundary: Duration taken from this event's B_ACTION level (the visible action), not a fixed bucket. Endpoint 381.212s = first beat at/after the action run end. Length 4.848s (as derived); derived 4.848s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0050).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.250 over 5 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.27s < minimum 8.00s",
+      "gap since previous B exit: 5.27s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.658
+    },
+    {
+     "id": "b_glance",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 376.364,
+     "end": 380.364,
+     "timeline_start": 369.093,
+     "timeline_end": 373.093,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.363,
+      "quality": 0.344,
+      "info_gain": 0.749,
+      "continuity": 0.719,
+      "novelty": 0.192,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_GLANCE \u2014 a brief useful detail: leave as soon as the strongest visible movement in the slot has been delivered, on the next beat. Endpoint 377.287s = first beat at/after the motion peak. Length 4.000s (clamped UP to minimum_b_shot 4.0s); derived 0.923s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0050).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.251 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.75s < minimum 8.00s",
+      "gap since previous B exit: 5.75s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.686
+    },
+    {
+     "id": "b_action",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 376.364,
+     "end": 381.212,
+     "timeline_start": 369.093,
+     "timeline_end": 373.941,
+     "duration_s": 4.848,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.355,
+      "quality": 0.355,
+      "info_gain": 0.749,
+      "continuity": 0.719,
+      "novelty": 0.192,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_ACTION \u2014 hold through the visible action: stay until the contiguous movement around the peak has run out, then leave on the next beat. Endpoint 381.212s = first beat at/after the action run end. Length 4.848s (as derived); derived 4.848s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0050).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.251 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.75s < minimum 8.00s",
+      "gap since previous B exit: 5.75s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.685
+    },
+    {
+     "id": "b_hold",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 376.364,
+     "end": 382.664,
+     "timeline_start": 369.093,
+     "timeline_end": 375.393,
+     "duration_s": 6.3,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.346,
+      "quality": 0.365,
+      "info_gain": 0.751,
+      "continuity": 0.719,
+      "novelty": 0.192,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_HOLD \u2014 continue past the action to the next useful musical boundary (the next downbeat). Endpoint 382.664s = first downbeat at/after the action run end. Length 6.300s (as derived); derived 6.300s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0050).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.249 over 6 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.75s < minimum 8.00s",
+      "gap since previous B exit: 5.75s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.685
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 369.093,
+     "end": 373.093,
+     "timeline_start": 369.093,
+     "timeline_end": 373.093,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.626,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.548
+    }
+   ],
+   "recommended_by_score": "b_glance",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only",
+   "duration_choices": {
+    "instrument": "B-window motion (visual_signals.py, 1.0 Hz samples)",
+    "n_samples": 11,
+    "sample_period_s": 1.0,
+    "peak": {
+     "t_s": 377.0,
+     "motion": 0.005
+    },
+    "action_run": {
+     "start_s": 377.0,
+     "end_s": 381.0,
+     "threshold_motion": 0.003,
+     "open_ended_at_window_edge": false
+    },
+    "levels": {
+     "glance": {
+      "endpoint_s": 377.287,
+      "duration_s": 4.0,
+      "derived_duration_s": 0.923,
+      "clamp": "clamped UP to minimum_b_shot 4.0s",
+      "landmark": "first beat at/after the motion peak"
+     },
+     "action": {
+      "endpoint_s": 381.212,
+      "duration_s": 4.848,
+      "derived_duration_s": 4.848,
+      "clamp": "as derived",
+      "landmark": "first beat at/after the action run end"
+     },
+     "hold": {
+      "endpoint_s": 382.664,
+      "duration_s": 6.3,
+      "derived_duration_s": 6.3,
+      "clamp": "as derived",
+      "landmark": "first downbeat at/after the action run end"
+     }
+    },
+    "collapsed": [],
+    "fallback": null,
+    "limits": {
+     "minimum_b_shot": 4.0,
+     "maximum_b_shot": 14.0,
+     "remaining_slot_width_s": 10.909
+    }
+   }
+  },
+  {
+   "event_id": "evt_09",
+   "context": {
+    "beat": 378.733,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 24,
+    "bars_into_phrase": 1,
+    "b_slot": [
+     387.273,
+     398.182
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 386.791,
+     "end": 397.7,
+     "timeline_start": 378.251,
+     "timeline_end": 389.16,
+     "duration_s": 10.909,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.747,
+      "action": 0.288,
+      "quality": 0.399,
+      "info_gain": 0.75,
+      "continuity": 0.645,
+      "novelty": 0.172,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_EARLY \u2014 enter one beat (0.482s) before the boundary, carrying the B_ACTION length, so the action peak lands ON the boundary: Duration taken from this event's B_ACTION level (the visible action), not a fixed bucket. Endpoint 399.110s = first beat at/after the action run end. Length 10.909s (capped by the remaining slot width 10.909s); derived 11.837s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0050).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.250 over 11 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.16s < minimum 8.00s",
+      "gap since previous B exit: 5.16s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.645
+    },
+    {
+     "id": "b_glance",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 387.273,
+     "end": 398.182,
+     "timeline_start": 378.733,
+     "timeline_end": 389.642,
+     "duration_s": 10.909,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.287,
+      "quality": 0.402,
+      "info_gain": 0.75,
+      "continuity": 0.705,
+      "novelty": 0.188,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_GLANCE \u2014 a brief useful detail: leave as soon as the strongest visible movement in the slot has been delivered, on the next beat. Endpoint 398.254s = first beat at/after the motion peak. Length 10.909s (capped by the remaining slot width 10.909s); derived 10.982s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0050).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.250 over 11 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.64s < minimum 8.00s",
+      "gap since previous B exit: 5.64s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.675
+    },
+    {
+     "id": "b_action",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 387.273,
+     "end": 398.182,
+     "timeline_start": 378.733,
+     "timeline_end": 389.642,
+     "duration_s": 10.909,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.287,
+      "quality": 0.402,
+      "info_gain": 0.75,
+      "continuity": 0.705,
+      "novelty": 0.188,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_ACTION \u2014 hold through the visible action: stay until the contiguous movement around the peak has run out, then leave on the next beat. Endpoint 399.110s = first beat at/after the action run end. Length 10.909s (capped by the remaining slot width 10.909s); derived 11.837s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0050).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.250 over 11 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.64s < minimum 8.00s",
+      "gap since previous B exit: 5.64s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.675
+    },
+    {
+     "id": "b_hold",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 387.273,
+     "end": 398.182,
+     "timeline_start": 378.733,
+     "timeline_end": 389.642,
+     "duration_s": 10.909,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.287,
+      "quality": 0.402,
+      "info_gain": 0.75,
+      "continuity": 0.705,
+      "novelty": 0.188,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_HOLD \u2014 continue past the action to the next useful musical boundary (the next downbeat). Endpoint 400.084s = first downbeat at/after the action run end. Length 10.909s (capped by the remaining slot width 10.909s); derived 12.811s. Evidence: 11 motion samples at 1 Hz over this window (peak 0.0050).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.250 over 11 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.64s < minimum 8.00s",
+      "gap since previous B exit: 5.64s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.675
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 378.733,
+     "end": 382.733,
+     "timeline_start": 378.733,
+     "timeline_end": 382.733,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.638,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.549
+    }
+   ],
+   "recommended_by_score": "b_hold",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only",
+   "duration_choices": {
+    "instrument": "B-window motion (visual_signals.py, 1.0 Hz samples)",
+    "n_samples": 11,
+    "sample_period_s": 1.0,
+    "peak": {
+     "t_s": 398.0,
+     "motion": 0.005
+    },
+    "action_run": {
+     "start_s": 398.0,
+     "end_s": 399.0,
+     "threshold_motion": 0.003,
+     "open_ended_at_window_edge": true
+    },
+    "levels": {
+     "glance": {
+      "endpoint_s": 398.254,
+      "duration_s": 10.909,
+      "derived_duration_s": 10.982,
+      "clamp": "capped by the remaining slot width 10.909s",
+      "landmark": "first beat at/after the motion peak"
+     },
+     "action": {
+      "endpoint_s": 399.11,
+      "duration_s": 10.909,
+      "derived_duration_s": 11.837,
+      "clamp": "capped by the remaining slot width 10.909s",
+      "landmark": "first beat at/after the action run end"
+     },
+     "hold": {
+      "endpoint_s": 400.084,
+      "duration_s": 10.909,
+      "derived_duration_s": 12.811,
+      "clamp": "capped by the remaining slot width 10.909s",
+      "landmark": "first downbeat at/after the action run end"
+     }
+    },
+    "collapsed": [],
+    "fallback": null,
+    "limits": {
+     "minimum_b_shot": 4.0,
+     "maximum_b_shot": 14.0,
+     "remaining_slot_width_s": 10.909
+    }
+   }
+  },
+  {
+   "event_id": "evt_10",
+   "context": {
+    "beat": 388.515,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 24,
+    "bars_into_phrase": 6,
+    "b_slot": [
+     398.182,
+     409.091
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 399.702,
+     "end": 408.611,
+     "timeline_start": 388.035,
+     "timeline_end": 396.944,
+     "duration_s": 8.909,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.749,
+      "action": 0.426,
+      "quality": 0.423,
+      "info_gain": 0.753,
+      "continuity": 0.663,
+      "novelty": 0.177,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_EARLY \u2014 enter one beat (0.480s) before the boundary, carrying the B_ACTION length, so the action peak lands ON the boundary: Duration taken from this event's B_ACTION level (the visible action), not a fixed bucket. Endpoint 409.346s = first beat at/after the action run end. Length 8.909s (capped by the remaining slot width 8.909s); derived 9.164s. Evidence: 9 motion samples at 1 Hz over this window (peak 0.0050).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.247 over 8 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.30s < minimum 8.00s",
+      "gap since previous B exit: 5.30s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.678
+    },
+    {
+     "id": "b_glance",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 400.182,
+     "end": 405.435,
+     "timeline_start": 388.515,
+     "timeline_end": 393.768,
+     "duration_s": 5.253,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.431,
+      "quality": 0.381,
+      "info_gain": 0.756,
+      "continuity": 0.723,
+      "novelty": 0.193,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_GLANCE \u2014 a brief useful detail: leave as soon as the strongest visible movement in the slot has been delivered, on the next beat. Endpoint 405.434s = first beat at/after the motion peak. Length 5.253s (as derived); derived 5.253s. Evidence: 9 motion samples at 1 Hz over this window (peak 0.0050).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.244 over 5 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.78s < minimum 8.00s",
+      "gap since previous B exit: 5.78s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.705
+    },
+    {
+     "id": "b_action",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 400.182,
+     "end": 409.091,
+     "timeline_start": 388.515,
+     "timeline_end": 397.424,
+     "duration_s": 8.909,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.431,
+      "quality": 0.431,
+      "info_gain": 0.752,
+      "continuity": 0.723,
+      "novelty": 0.193,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_ACTION \u2014 hold through the visible action: stay until the contiguous movement around the peak has run out, then leave on the next beat. Endpoint 409.346s = first beat at/after the action run end. Length 8.909s (capped by the remaining slot width 8.909s); derived 9.164s. Evidence: 9 motion samples at 1 Hz over this window (peak 0.0050).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.248 over 9 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.78s < minimum 8.00s",
+      "gap since previous B exit: 5.78s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.709
+    },
+    {
+     "id": "b_hold",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 400.182,
+     "end": 409.091,
+     "timeline_start": 388.515,
+     "timeline_end": 397.424,
+     "duration_s": 8.909,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.431,
+      "quality": 0.431,
+      "info_gain": 0.752,
+      "continuity": 0.723,
+      "novelty": 0.193,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_HOLD \u2014 continue past the action to the next useful musical boundary (the next downbeat). Endpoint 409.826s = first downbeat at/after the action run end. Length 8.909s (capped by the remaining slot width 8.909s); derived 9.644s. Evidence: 9 motion samples at 1 Hz over this window (peak 0.0050).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.248 over 9 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.78s < minimum 8.00s",
+      "gap since previous B exit: 5.78s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.709
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 388.515,
+     "end": 392.515,
+     "timeline_start": 388.515,
+     "timeline_end": 392.515,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.63,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.548
+    }
+   ],
+   "recommended_by_score": "b_hold",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only",
+   "duration_choices": {
+    "instrument": "B-window motion (visual_signals.py, 1.0 Hz samples)",
+    "n_samples": 9,
+    "sample_period_s": 1.0,
+    "peak": {
+     "t_s": 405.0,
+     "motion": 0.005
+    },
+    "action_run": {
+     "start_s": 405.0,
+     "end_s": 409.0,
+     "threshold_motion": 0.003,
+     "open_ended_at_window_edge": false
+    },
+    "levels": {
+     "glance": {
+      "endpoint_s": 405.434,
+      "duration_s": 5.253,
+      "derived_duration_s": 5.253,
+      "clamp": "as derived",
+      "landmark": "first beat at/after the motion peak"
+     },
+     "action": {
+      "endpoint_s": 409.346,
+      "duration_s": 8.909,
+      "derived_duration_s": 9.164,
+      "clamp": "capped by the remaining slot width 8.909s",
+      "landmark": "first beat at/after the action run end"
+     },
+     "hold": {
+      "endpoint_s": 409.826,
+      "duration_s": 8.909,
+      "derived_duration_s": 9.644,
+      "clamp": "capped by the remaining slot width 8.909s",
+      "landmark": "first downbeat at/after the action run end"
+     }
+    },
+    "collapsed": [],
+    "fallback": null,
+    "limits": {
+     "minimum_b_shot": 4.0,
+     "maximum_b_shot": 14.0,
+     "remaining_slot_width_s": 8.909
+    }
+   }
+  },
+  {
+   "event_id": "evt_11",
+   "context": {
+    "beat": 398.254,
+    "downbeat": true,
+    "phrase_boundary": false,
+    "phrase_index": 25,
+    "bars_into_phrase": 3,
+    "b_slot": [
+     409.091,
+     420.0
+    ],
+    "boundary_kind": "downbeat",
+    "structure_source": "phrase_map.py"
+   },
+   "candidates": [
+    {
+     "id": "b_early",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 409.61,
+     "end": 414.704,
+     "timeline_start": 397.773,
+     "timeline_end": 402.867,
+     "duration_s": 5.094,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.747,
+      "action": 0.543,
+      "quality": 0.467,
+      "info_gain": 0.754,
+      "continuity": 0.657,
+      "novelty": 0.175,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_EARLY \u2014 enter one beat (0.481s) before the boundary, carrying the B_ACTION length, so the action peak lands ON the boundary: Duration taken from this event's B_ACTION level (the visible action), not a fixed bucket. Endpoint 415.185s = first beat at/after the action run end. Length 5.094s (as derived); derived 5.094s. Evidence: 10 motion samples at 1 Hz over this window (peak 0.0060).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.246 over 5 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.26s < minimum 8.00s",
+      "gap since previous B exit: 5.26s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.705
+    },
+    {
+     "id": "b_glance",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 410.091,
+     "end": 414.091,
+     "timeline_start": 398.254,
+     "timeline_end": 402.254,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.552,
+      "quality": 0.469,
+      "info_gain": 0.756,
+      "continuity": 0.717,
+      "novelty": 0.191,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_GLANCE \u2014 a brief useful detail: leave as soon as the strongest visible movement in the slot has been delivered, on the next beat. Endpoint 413.249s = first beat at/after the motion peak. Length 4.000s (clamped UP to minimum_b_shot 4.0s); derived 3.158s. Evidence: 10 motion samples at 1 Hz over this window (peak 0.0060).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.244 over 4 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.74s < minimum 8.00s",
+      "gap since previous B exit: 5.74s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.737
+    },
+    {
+     "id": "b_action",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 410.091,
+     "end": 415.185,
+     "timeline_start": 398.254,
+     "timeline_end": 403.348,
+     "duration_s": 5.094,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.552,
+      "quality": 0.472,
+      "info_gain": 0.755,
+      "continuity": 0.717,
+      "novelty": 0.191,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_ACTION \u2014 hold through the visible action: stay until the contiguous movement around the peak has run out, then leave on the next beat. Endpoint 415.185s = first beat at/after the action run end. Length 5.094s (as derived); derived 5.094s. Evidence: 10 motion samples at 1 Hz over this window (peak 0.0060).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.245 over 5 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.74s < minimum 8.00s",
+      "gap since previous B exit: 5.74s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.737
+    },
+    {
+     "id": "b_hold",
+     "angle": "B",
+     "action": "SWITCH",
+     "start": 410.091,
+     "end": 415.666,
+     "timeline_start": 398.254,
+     "timeline_end": 403.829,
+     "duration_s": 5.575,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.552,
+      "quality": 0.472,
+      "info_gain": 0.755,
+      "continuity": 0.717,
+      "novelty": 0.191,
+      "coverage": 1.0
+     },
+     "notes": [
+      "B_HOLD \u2014 continue past the action to the next useful musical boundary (the next downbeat). Endpoint 415.666s = first downbeat at/after the action run end. Length 5.575s (as derived); derived 5.575s. Evidence: 10 motion samples at 1 Hz over this window (peak 0.0060).",
+      "action profile 209 segments, reel max 1.000",
+      "B-vs-A histogram similarity 0.245 over 5 paired samples",
+      "quality from visual_signals sharpness/brightness",
+      "short A recovery: 5.74s < minimum 8.00s",
+      "gap since previous B exit: 5.74s (novelty cap 30.0s)"
+     ],
+     "weighted_sum": 0.737
+    },
+    {
+     "id": "hold_a",
+     "angle": "A",
+     "action": "HOLD",
+     "start": 398.254,
+     "end": 402.254,
+     "timeline_start": 398.254,
+     "timeline_end": 402.254,
+     "duration_s": 4.0,
+     "scores": {
+      "sync": 1.0,
+      "musical": 0.9,
+      "action": 0.0,
+      "quality": 0.645,
+      "info_gain": 0.0,
+      "continuity": 1.0,
+      "novelty": 0.0,
+      "coverage": 1.0
+     },
+     "notes": [
+      "stay on angle A across the boundary",
+      "angle A was already on screen; HOLD is the 'do nothing' option",
+      "action/novelty/info_gain are legitimately LOW for hold_a",
+      "info_gain=0 by construction (A stays A)",
+      "quality from visual_signals sharpness/brightness",
+      "angle A is the safe master: continuity holds by definition",
+      "seconds since A was last on screen: 0 (it is on screen)"
+     ],
+     "weighted_sum": 0.549
+    }
+   ],
+   "recommended_by_score": "b_hold",
+   "recommendation_note": "argmax of a fixed weighted sum over the eight evidence scores; informational only",
+   "duration_choices": {
+    "instrument": "B-window motion (visual_signals.py, 1.0 Hz samples)",
+    "n_samples": 10,
+    "sample_period_s": 1.0,
+    "peak": {
+     "t_s": 413.0,
+     "motion": 0.006
+    },
+    "action_run": {
+     "start_s": 413.0,
+     "end_s": 415.0,
+     "threshold_motion": 0.003,
+     "open_ended_at_window_edge": false
+    },
+    "levels": {
+     "glance": {
+      "endpoint_s": 413.249,
+      "duration_s": 4.0,
+      "derived_duration_s": 3.158,
+      "clamp": "clamped UP to minimum_b_shot 4.0s",
+      "landmark": "first beat at/after the motion peak"
+     },
+     "action": {
+      "endpoint_s": 415.185,
+      "duration_s": 5.094,
+      "derived_duration_s": 5.094,
+      "clamp": "as derived",
+      "landmark": "first beat at/after the action run end"
+     },
+     "hold": {
+      "endpoint_s": 415.666,
+      "duration_s": 5.575,
+      "derived_duration_s": 5.575,
+      "clamp": "as derived",
+      "landmark": "first downbeat at/after the action run end"
+     }
+    },
+    "collapsed": [],
+    "fallback": null,
+    "limits": {
+     "minimum_b_shot": 4.0,
+     "maximum_b_shot": 14.0,
+     "remaining_slot_width_s": 9.909
+    }
+   }
+  }
+ ]
+}
