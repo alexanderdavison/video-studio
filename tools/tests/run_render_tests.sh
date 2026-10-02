@@ -82,8 +82,9 @@ if [ "${1:-}" = "--list" ]; then
   echo "  R08 verified final never clobbered           -> FAIL (rc 2)"
   echo "  R09 pre-graded manifest renders               -> PASS (rc 0)"
   echo "  R09b postflight records pre_grades_applied   -> PASS"
-  echo "  R10 auto-pre-graded manifest renders          -> PASS (rc 0)"
-  echo "  R10b postflight records auto pre-grades      -> PASS"
+  echo "  R10 auto pre-grade refused for angle B (owns match)-> PASS (rc 0)"
+  echo "  R10b no auto pre-grade applied to the B source      -> PASS"
+  echo "  R10c refusal (source + grade) recorded in the log   -> PASS"
   exit 0
 fi
 
@@ -136,15 +137,25 @@ else
   fail "R09b postflight records pre_grades_applied" "$(grep -A6 postflight "$R09_MAN" | head -8)"
 fi
 
-# R10: --auto-pre-grade derives the curve at render time through the FULL
-# locked chain + QC record (Phase 6). valid_dark_b has no pre_grades — the
-# renderer's default auto mode must derive one for the dark B source.
-render_check "R10 auto-pre-graded manifest renders" PASS 0 valid_dark_b.yaml
-R10_MAN="$W/man_R10_auto_pre_graded_manifest_renders.yaml"
-if grep -q "pre_grades_applied" "$R10_MAN" && grep -q "dark_b.mp4" "$R10_MAN"; then
-  pass "R10b postflight records auto pre_grades_applied"
+# R10: the per-angle camera-match OVERRIDE (enforced 2026-09-14). valid_dark_b declares
+# grade club_dispatch_pb3_v1, whose registry entry owns a DEDICATED B camera-match grade
+# (club_dispatch_pb3_b_v1). That chain already IS the derived correction, so the renderer's
+# default auto mode must REFUSE to derive a second pre-grade for the B source — applying
+# both lifts B twice (the club-dispatch-set01 blow-out). The job must still render.
+R10_NAME="R10 auto pre-grade refused for the B angle that owns a match"
+render_check "$R10_NAME" PASS 0 valid_dark_b.yaml
+R10_MAN="$W/man_$(printf '%s' "$R10_NAME" | tr -cs 'A-Za-z0-9' '_').yaml"
+if ! grep -q "pre_grades_applied" "$R10_MAN"; then
+  pass "R10b no auto pre-grade applied to the B source"
 else
-  fail "R10b postflight records auto pre_grades_applied" "$(grep -A6 postflight "$R10_MAN" | head -8)"
+  fail "R10b no auto pre-grade applied to the B source" "$(grep -A6 postflight "$R10_MAN" | head -8)"
+fi
+if grep -q "AUTO PRE-GRADE SKIPPED" "$W/render_last.log" \
+   && grep -q "club_dispatch_pb3_b_v1" "$W/render_last.log"; then
+  pass "R10c refusal (source + grade) recorded in the render log"
+else
+  fail "R10c refusal (source + grade) recorded in the render log" \
+       "$(grep -i "PRE-GRADE" "$W/render_last.log" | head -2)"
 fi
 
 echo

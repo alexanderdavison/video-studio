@@ -3,11 +3,34 @@
 Studio index search — semantic query over the SQLite library.
 Usage: search.py "find the drop where the crowd goes crazy" [--top 8] [--source whisper|scribe]
 """
+import os
 import argparse, json, sqlite3, sys, urllib.request
 from pathlib import Path
 
 DB = Path("/opt/video-studio/studio.db")
-OLLAMA = "http://192.168.1.22:11434"
+def _deploy_host(name, default="localhost"):
+    """Deployment host: environment, else the untracked .env. See .env.example.
+
+    Tracked source carries no LAN addresses: they are deployment configuration, they make a clone
+    unusable anywhere else, and they keep tripping the GitHub mirror's scrubber.
+    """
+    if os.environ.get(name):
+        return os.environ[name]
+    d = os.path.dirname(os.path.abspath(__file__))
+    for _ in range(5):
+        cand = os.path.join(d, ".env")
+        if os.path.exists(cand):
+            for line in open(cand):
+                line = line.strip()
+                if line.startswith(name + "="):
+                    return line.split("=", 1)[1].strip()
+            break
+        if os.path.exists(os.path.join(d, ".git")):
+            break                       # reached the repo root without a .env
+        d = os.path.dirname(d)
+    return default
+
+OLLAMA = "http://%s:11434" % _deploy_host("VIDEO_OPS_HOST")
 EMBED_MODEL = "bge-m3"
 
 def embed(text):

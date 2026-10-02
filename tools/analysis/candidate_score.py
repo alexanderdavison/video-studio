@@ -392,8 +392,58 @@ DURATION_RULES = {
 # and then moved the window further on an action argmax, displacing the shipped
 # source by up to 11.837 s from the moment it claimed to show.
 
-SYNC_LAG_S = 1.2783              # accepted mapping: r = A_t - SYNC_LAG_S
+SYNC_LAG_S = 1.2783              # LEGACY fallback: Set 01's accepted mapping
 FRAME_SNAP_MAX_S = 0.036         # accepted budget: mapping uncertainty 0.0021 s + ~1 frame
+# ---- per-job camera sync map (v1.1, 2026-09-14) --------------------------------
+# The offset is JOB DATA, not a house constant. With --sync-map this tool resolves the lag
+# and the reel geometry from the job's canonical map; the legacy value above applies ONLY
+# when no map is supplied, which is what keeps a Set 01 re-run byte-identical.
+SYNC_MAP = None
+
+
+def apply_sync_map(path):
+    """Load and validate the job's canonical camera sync map. Fail-closed, no fallback."""
+    global SYNC_LAG_S, SYNC_MAP
+    if not path:
+        return None
+    if not os.path.exists(path):
+        raise SystemExit("SYNC MAP MISSING: %s — refusing to build candidates on an "
+                         "unresolved timebase" % path)
+    m = json.load(open(path))
+    problems = []
+    if m.get("schema_version") != 1:
+        problems.append("unsupported schema_version=%r" % m.get("schema_version"))
+    if m.get("reference_angle") != "A":
+        problems.append("reference_angle must be A")
+    cards = m.get("cards") or []
+    if not cards:
+        problems.append("the sync map carries no B cards")
+    tol = m.get("tolerance_s")
+    if tol is None or float(tol) < 0 or float(tol) > FRAME_SNAP_MAX_S:
+        problems.append("tolerance_s %r is missing, negative or above the frame budget %.3f"
+                        % (tol, FRAME_SNAP_MAX_S))
+    prev_end = None
+    for c in cards:
+        off, dur = c.get("a_time_at_b_zero"), c.get("duration_s")
+        if off is None or float(off) < 0:
+            problems.append("%s has no valid a_time_at_b_zero" % c.get("name"))
+            continue
+        if not dur or float(dur) <= 0:
+            problems.append("%s has no positive duration_s" % c.get("name"))
+            continue
+        if prev_end is not None and abs(float(off) - prev_end) > FRAME_SNAP_MAX_S:
+            problems.append("%s is discontinuous with the previous card (%.4f vs %.4f)"
+                            % (c.get("name"), float(off), prev_end))
+        prev_end = float(off) + float(dur)
+    lag = m.get("lag_a_to_b_s", cards[0].get("a_time_at_b_zero") if cards else None)
+    if lag is None or float(lag) <= 0:
+        problems.append("job lag is missing or not positive (sign convention: "
+                        "A_time = B_time + a_time_at_b_zero)")
+    if problems:
+        raise SystemExit("SYNC MAP INVALID (%s): %s" % (path, "; ".join(problems)))
+    SYNC_LAG_S = float(lag)
+    SYNC_MAP = m
+    return m
 B_FPS_DEFAULT = 30000.0 / 1001.0  # used only for the frame snap
 COVERAGE_NEAR_S = 1.0            # a clean sampled frame this close to the entry is required
 
@@ -561,6 +611,224 @@ def derive_durations(sig, start, dmax, min_b, max_b, beats, downbeats, span_labe
                        "remaining_slot_width_s": r3(dmax)}}
 
 
+# --------------------------------------- action-onset event proposal ----------
+# 2026-09-13, candidate-timing increment. The 1020-1380 s opportunity audit found
+# that B content is generally present but that a legal B entry can only ever BEGIN
+# on the event-anchor grid (anchors ~9.7 s apart), so an alternate-camera action
+# starting between anchors is met either by committing B seconds early or by
+# entering seconds late: 6 of 11 strongest opportunities had no candidate that both
+# entered near the action and ran to its end, and 9.4 % of the range had no legal B
+# at all (holes opened where all four derived faces collapsed to minimum_b_shot).
+#
+# This step is deliberately narrow:
+#
+#   a sustained localised B-activity run (b_activity_signals.py) whose onset is not
+#   already served by a legal B face may PROPOSE ONE ADDITIONAL EVENT at that onset
+#   (snapped to the nearest existing grid beat).
+#
+# It proposes an EVENT LOCATION and nothing else. The locked rule is untouched: a B
+# entry is still DERIVED from the event timestamp through the accepted sync mapping
+# and is never searched, so the new event simply carries the mapping for its own
+# timestamp. Existing events are never moved, and no candidate score is derived
+# from the activity signal — it answers only "should an opportunity exist here?".
+
+ONSET_MIN_RUN_S = 2.5        # a proposal needs a sustained run, not a gesture
+ONSET_NEAR_S = 2.0           # "already represented": a face entering this close to the onset
+ONSET_TAIL_TOL_S = 1.0       # ... and reaching the action end minus this
+ONSET_MAX_SNAP_FRAC = 0.5    # snap to the nearest grid beat, within half a beat period
+ONSET_MIN_LUMA_FRAC = 0.5    # fail-closed usability gate against the signal's own median luma
+ONSET_MAX_FROZEN_FRAC = 0.5  # ditto for the frozen-sample share inside the run
+# Supplemental spacing rule (2026-09-13, after the measured sweep). An editorial event is an
+# OPPORTUNITY to decide, not a delivered cut: supplemental events therefore do not inherit the
+# base grid's 9.0 s spacing, which exists to keep the musical grid from crowding. The gap sweep
+# (2.5-5.0 s) showed 4.5 s captures the entire measured coverage gain (audit 5/6/0 -> 6/5/0,
+# legal-B holes 34.00 -> 29.84 s, zero sustained runs left under 25 % covered) with the fewest
+# added events, so it is the least aggressive value that materially improves coverage.
+# TRIAL STATUS: candidate timing vNext — long-form trial, not permanent ISH-D policy.
+ONSET_GAP_DEFAULT_S = 4.5
+
+
+def load_activity(path):
+    """b_activity_signals.py JSON. Returns the parsed doc, or None (fail closed)."""
+    if not path or not os.path.exists(path):
+        return None
+    try:
+        with open(path) as f:
+            doc = json.load(f)
+    except Exception:
+        return None
+    if not isinstance(doc, dict) or not isinstance(doc.get("runs"), list):
+        return None
+    return doc
+
+
+def sync_faces(t, sig_b, reel_end, beats, structure, min_b, max_b, b_fps, beat_period):
+    """The legal B faces a sync-anchored event at timeline `t` would offer.
+
+    Returns a list of (candidate_id, timeline_start, timeline_end). This is a
+    PREDICTION used only to decide whether an activity run is already represented;
+    it mirrors the main loop exactly and the caller asserts the emitted artifact
+    agrees with it for every base event, so any drift fails closed.
+    """
+    raw = t - SYNC_LAG_S
+    snapped, snap = frame_snap(raw, b_fps)
+    if abs(snap) > FRAME_SNAP_MAX_S + 1e-9:
+        snapped, snap = raw, 0.0
+    entry = round(snapped, 3)
+    cov_ok, _ = b_entry_coverage(sig_b, entry, reel_end)
+    if not cov_ok:
+        return []
+    dmax = min(max_b, max(0.0, reel_end - entry))
+    dc = derive_durations(sig_b, entry, dmax, min_b, max_b,
+                          beats, structure["downbeats"], span_label="reel")
+    bi = min(range(len(beats)), key=lambda k: abs(beats[k] - t))
+    prev_beat = beats[bi - 1] if bi > 0 else round(t - beat_period, 3)
+    beat_shift = round(t - prev_beat, 3)
+    if dc is None:
+        # No usable motion evidence at the entry: the main loop falls back to the
+        # canonical length on b_downbeat (+ b_early), so predict exactly that.
+        faces = [("b_downbeat", round(t, 3), round(t + min_b, 3))]
+        if round(entry - beat_shift, 3) >= 0.0:
+            faces.append(("b_early", round(prev_beat, 3), round(prev_beat + min_b, 3)))
+        return faces
+    lv = dc["levels"]
+    dg = lv["glance"]["duration_s"]
+    da = lv["action"]["duration_s"]
+    dh = lv["hold"]["duration_s"]
+    faces = []
+    if round(entry - beat_shift, 3) >= 0.0:
+        faces.append(("b_early", round(prev_beat, 3), round(prev_beat + da, 3)))
+    faces.append(("b_glance", round(t, 3), round(t + dg, 3)))
+    faces.append(("b_action", round(t, 3), round(t + da, 3)))
+    faces.append(("b_hold", round(t, 3), round(t + dh, 3)))
+    return faces
+
+
+def propose_onset_events(act, base_events, base_faces, neighbor_anchors, sig_b, reel_end,
+                         beats, structure, min_b, max_b, b_fps, beat_period,
+                         t_lo, t_hi, min_gap, min_run_s, near_s, tail_tol_s):
+    """Decide which activity runs become supplemental events. Deterministic.
+
+    Runs are considered strongest-first (smoothed peak, then onset) so that when two
+    runs compete for the same slot the stronger one wins; every run gets exactly one
+    decision and the full reason is recorded. Returns (accepted, record).
+    """
+    luma_med = float((act.get("summary") or {}).get("luma_median") or 0.0)
+    runs = sorted(act["runs"],
+                  key=lambda r: (-float(r.get("peak_sm") or 0.0),
+                                 float(r.get("onset_perf_s") or 0.0)))
+    accepted, accepted_anchors, record = [], list(base_events), []
+    for r in runs:
+        rec = {"run_id": r.get("run_id"),
+               "onset_perf_s": r.get("onset_perf_s"), "end_perf_s": r.get("end_perf_s"),
+               "duration_s": r.get("duration_s"), "peak_perf_s": r.get("peak_perf_s"),
+               "peak_loc": r.get("peak_loc"), "peak_cell": r.get("peak_cell"),
+               "decision": None, "reason": None, "anchor_s": None, "snap_s": None,
+               "gap_to_nearest_anchor_s": None, "nearest_anchor_kind": None,
+               "represented_by": None}
+        dur = float(r.get("duration_s") or 0.0)
+        onset = float(r.get("onset_perf_s") or 0.0)
+        if dur < min_run_s - 1e-9:
+            rec["decision"], rec["reason"] = "rejected", "run shorter than %.1f s" % min_run_s
+            record.append(rec)
+            continue
+        # --- snap the proposed anchor to the existing grid, at or near the onset
+        bi = min(range(len(beats)), key=lambda k: abs(beats[k] - onset))
+        anchor = float(beats[bi])
+        snap = round(anchor - onset, 3)
+        rec["anchor_s"], rec["snap_s"] = r3(anchor), snap
+        if abs(snap) > ONSET_MAX_SNAP_FRAC * beat_period + 1e-9:
+            rec["decision"], rec["reason"] = (
+                "rejected", "no grid beat within half a beat period of the onset "
+                            "(nearest %.3f s away)" % abs(snap))
+            record.append(rec)
+            continue
+        if anchor < t_lo - 1e-9 or anchor > t_hi + 1e-9:
+            rec["decision"], rec["reason"] = (
+                "rejected", "snapped anchor %.3f s lies outside the event window" % anchor)
+            record.append(rec)
+            continue
+
+        # --- reel-end rule: the event must be able to evidence its OWN minimum envelope.
+        # hold_a's span is pinned at min_b, so an anchor closer than min_b to the end of the
+        # reel proposes an event whose only candidate the evidence builder can never render —
+        # it fails closed on an envelope that leaves the reel. Reject the proposal here: this
+        # defect belongs to the generator, never to the builder or the renderer.
+        if anchor + min_b > reel_end + 1e-9:
+            rec["decision"], rec["reason"] = (
+                "rejected", "rejected_reel_end_min_envelope: anchor %.3f s + the minimum %.3f s "
+                            "event envelope reaches %.3f s, past the end of the reel %.3f s — "
+                            "no evidenceable candidate exists for this onset"
+                            % (anchor, min_b, anchor + min_b, reel_end))
+            record.append(rec)
+            continue
+        # --- usability: fail closed on an unusable signal rather than propose blind
+        lmin = r.get("luma_min")
+        ffr = r.get("frozen_frac")
+        if luma_med > 0 and isinstance(lmin, (int, float)) and \
+                float(lmin) < ONSET_MIN_LUMA_FRAC * luma_med:
+            rec["decision"], rec["reason"] = (
+                "rejected", "run is unusably dark (min luma %.3f vs signal median %.3f)"
+                            % (float(lmin), luma_med))
+            record.append(rec)
+            continue
+        if isinstance(ffr, (int, float)) and float(ffr) > ONSET_MAX_FROZEN_FRAC:
+            rec["decision"], rec["reason"] = (
+                "rejected", "run is %.0f %% frozen samples" % (float(ffr) * 100.0))
+            record.append(rec)
+            continue
+        # --- synchronized coverage at the derived entry (same gate every event uses)
+        entry = round(anchor - SYNC_LAG_S, 3)
+        cov_ok, cov_why = b_entry_coverage(sig_b, entry, reel_end)
+        if not cov_ok:
+            rec["decision"], rec["reason"] = (
+                "rejected", "no synchronized B coverage at the derived entry %.3f s: %s"
+                            % (entry, cov_why))
+            record.append(rec)
+            continue
+        # --- already represented by an existing legal face?
+        reps = [(ev_t, cid, f0, f1) for ev_t, faces in base_faces.items()
+                for (cid, f0, f1) in faces
+                if (onset - near_s) <= f0 <= (onset + near_s) and f1 >= (float(r["end_perf_s"]) - tail_tol_s)]
+        if reps:
+            ev_t, cid, f0, f1 = reps[0]
+            rec["decision"], rec["reason"] = (
+                "rejected", "coverage already existed: a legal face (%s, entry %.3f s) enters "
+                            "within %.1f s of the onset and reaches the action end"
+                            % (cid, f0, near_s))
+            rec["represented_by"] = {"anchor_s": r3(ev_t), "candidate": cid,
+                                     "entry_s": r3(f0), "exit_s": r3(f1)}
+            record.append(rec)
+            continue
+        # --- min_event_gap against base events, accepted proposals and neighbours
+        nearest, kind = None, None
+        for a in accepted_anchors:
+            if nearest is None or abs(a - anchor) < abs(nearest - anchor):
+                nearest, kind = a, "grid"
+        for a, _ in accepted:
+            if abs(a - anchor) < abs(nearest - anchor):
+                nearest, kind = a, "b_action_onset"
+        for a in neighbor_anchors:
+            if abs(a - anchor) < abs(nearest - anchor):
+                nearest, kind = a, "adjacent_section"
+        rec["gap_to_nearest_anchor_s"] = r3(abs(anchor - nearest))
+        rec["nearest_anchor_kind"] = kind
+        if abs(anchor - nearest) < min_gap - 1e-9:
+            rec["decision"], rec["reason"] = (
+                "rejected", "min_event_gap: nearest anchor (%.3f s, %s) is only %.3f s away"
+                            % (nearest, kind, abs(anchor - nearest)))
+            record.append(rec)
+            continue
+        accepted.append((anchor, r))
+        accepted_anchors.append(anchor)
+        rec["decision"] = "accepted"
+        rec["reason"] = ("sustained localised activity (%.2f s) whose onset %.3f s was not served "
+                         "by a legal B face; proposed at grid beat %.3f s"
+                         % (dur, onset, anchor))
+        record.append(rec)
+    return accepted, record
+
+
 def main():
     ap = argparse.ArgumentParser(description="Deterministic candidate scorer (set of choices per event)")
     ap.add_argument("--beats", required=True, help="A-camera beat grid JSON (beat_detect.py)")
@@ -599,9 +867,37 @@ def main():
                          "historical slot search")
     ap.add_argument("--b-fps", type=float, default=B_FPS_DEFAULT,
                     help="B reel frame rate, used only for the accepted +/-0.036 s frame snap")
+    ap.add_argument("--b-action-onset-events", action="store_true",
+                    help="propose at most ONE additional event per sustained alternate-camera "
+                         "activity run whose onset is not already served by a legal B face. "
+                         "Adds events; never moves one. Entry semantics are untouched. "
+                         "Requires --b-activity-signals and --sync-anchored-entry. Default off.")
+    ap.add_argument("--b-activity-signals", default=None,
+                    help="b_activity_signals.py JSON (dense localised B activity; the proposal "
+                         "source for --b-action-onset-events)")
+    ap.add_argument("--onset-min-run-s", type=float, default=ONSET_MIN_RUN_S,
+                    help="minimum sustained run length a proposal may be built from")
+    ap.add_argument("--onset-near-s", type=float, default=ONSET_NEAR_S,
+                    help="a face entering within this many seconds of the onset counts as "
+                         "already representing the action")
+    ap.add_argument("--onset-tail-tol-s", type=float, default=ONSET_TAIL_TOL_S,
+                    help="... provided it also reaches the action end minus this")
+    ap.add_argument("--neighbor-anchors", default=None,
+                    help="comma-separated anchors from adjacent processing sections; a proposal "
+                         "must also keep min_event_gap from these (cross-boundary context)")
+    ap.add_argument("--onset-gap-s", type=float, default=None,
+                    help="DIAGNOSTIC ONLY. Minimum gap a supplemental event must keep from other "
+                         "anchors. Default (None) = the policy --min-event-gap, which is the "
+                         "shipped behaviour: a supplemental event obeys the same gap rule as the "
+                         "grid. Overriding it measures what the constraint costs and must not be "
+                         "used for a production run without an explicit decision.")
+    ap.add_argument("--sync-map", default=None,
+                    help="the JOB's canonical camera sync map (v1.1). Without it the tool "
+                         "uses the Set 01 legacy constant and refuses any other timebase.")
     ap.add_argument("--out", default=None)
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
+    apply_sync_map(args.sync_map)
 
     for p in [args.beats] + args.action_profile + args.signals + (args.signals_a or []):
         if not os.path.exists(p):
@@ -619,6 +915,16 @@ def main():
         print("ERROR: --sync-anchored-entry needs --duration-choices: with the entry pinned to "
               "the event timestamp there is no slot search left to supply a shot length, and "
               "offering an unmeasured length would be inventing one.", file=sys.stderr)
+        return 2
+    if args.b_action_onset_events and not args.sync_anchored_entry:
+        print("ERROR: --b-action-onset-events requires --sync-anchored-entry. The proposal only "
+              "moves WHERE an event exists; it must not be bolted onto the historical slot "
+              "search, which is the defect sync anchoring replaced.", file=sys.stderr)
+        return 2
+    if args.b_action_onset_events and not args.b_activity_signals:
+        print("ERROR: --b-action-onset-events needs --b-activity-signals "
+              "(b_activity_signals.py output). Without a proposal source there is nothing to "
+              "propose from; refusing to guess.", file=sys.stderr)
         return 2
 
     segs, prof_meta = load_action_profiles(args.action_profile, args.virtual_reel)
@@ -646,6 +952,61 @@ def main():
                                      args.min_event_gap)
     beat_period = (60.0 / bpm) if bpm else 0.5
 
+    # ---- action-onset event proposal (opt-in; default OFF) -------------------
+    # reel_end is needed by the proposal step (coverage / remaining reel), so it is
+    # computed here; the value and expression are the ones the path below always used.
+    reel_end = max([(m["offset"] + (m["duration_s"] or 0.0)) for m in prof_meta] or [0.0])
+    if SYNC_MAP:
+        # The job's canonical map owns the reel geometry. The approved action profile is
+        # evidence about a reel, not the definition of that reel's length, so a disagreement
+        # is reported and the map wins.
+        map_reel = float(SYNC_MAP.get("reel_end_s") or 0.0)
+        if map_reel and abs(map_reel - reel_end) > FRAME_SNAP_MAX_S:
+            print("   note: action-profile reel %.3f s vs canonical sync map %.3f s — using "
+                  "the map (job data is authoritative)" % (reel_end, map_reel), file=sys.stderr)
+        if map_reel:
+            reel_end = map_reel
+    origins = ["grid"] * len(events)
+    kinds = [event_kind] * len(events)
+    onset_map = {}
+    onset_record, onset_doc, onset_neighbors = [], None, []
+    if args.b_action_onset_events:
+        onset_doc = load_activity(args.b_activity_signals)
+        if onset_doc is None:
+            print("ERROR: --b-activity-signals did not load (%s) — refusing to emit a "
+                  "supplemental event without a valid proposal source."
+                  % args.b_activity_signals, file=sys.stderr)
+            return 2
+        act_tol = (float(SYNC_MAP.get("tolerance_s")) if SYNC_MAP else 0.0) + 1e-9
+        if abs(float(onset_doc.get("lag_s", -1.0)) - SYNC_LAG_S) > act_tol:
+            print("ERROR: activity signal lag_s=%r does not match this job's canonical sync "
+                  "map lag %.4f s (tolerance %.4f) — the proposal would be built on a "
+                  "different timebase."
+                  % (onset_doc.get("lag_s"), SYNC_LAG_S, act_tol), file=sys.stderr)
+            return 2
+        base_events = list(events)
+        base_faces = {t: sync_faces(t, sig_b[0] if sig_b else None, reel_end, beats,
+                                    structure, args.min_b, args.max_b, args.b_fps, beat_period)
+                      for t in base_events}
+        if args.neighbor_anchors:
+            onset_neighbors = [float(x) for x in args.neighbor_anchors.split(",") if x.strip()]
+        accepted, onset_record = propose_onset_events(
+            onset_doc, base_events, base_faces, onset_neighbors,
+            sig_b[0] if sig_b else None, reel_end, beats, structure,
+            args.min_b, args.max_b, args.b_fps, beat_period, t_lo, t_hi,
+            (args.onset_gap_s if args.onset_gap_s is not None else ONSET_GAP_DEFAULT_S),
+            args.onset_min_run_s, args.onset_near_s,
+            args.onset_tail_tol_s)
+        onset_gap_used = (args.onset_gap_s if args.onset_gap_s is not None
+                          else ONSET_GAP_DEFAULT_S)
+        onset_gap_overridden = args.onset_gap_s is not None
+        merged = sorted([(t, "grid") for t in base_events] +
+                        [(t, "b_action_onset") for t, _ in accepted], key=lambda x: x[0])
+        events = [t for t, _ in merged]
+        origins = [o for _, o in merged]
+        kinds = [event_kind if o == "grid" else "action_onset" for o in origins]
+        onset_map = {t: r for t, r in accepted}
+
     # canonical reference path.
     # Flag OFF (historical): the B search range is split into ONE SLOT PER EVENT (in
     #   event order) and each event takes its highest-action window inside its own slot.
@@ -658,7 +1019,6 @@ def main():
     slots = []
     win_his = []
     sync_entries = []
-    reel_end = max([(m["offset"] + (m["duration_s"] or 0.0)) for m in prof_meta] or [0.0])
     n_ev = max(1, len(events))
     slot_len = (s_hi - s_lo) / n_ev
     for i, t in enumerate(events):
@@ -1009,7 +1369,7 @@ def main():
             "phrase_index": pi,
             "bars_into_phrase": bars_in,
             "b_slot": (list(slots[i]) if slots[i] else None),
-            "boundary_kind": event_kind,
+            "boundary_kind": kinds[i],
             "structure_source": structure["source"],
         }
         ev = {
@@ -1026,6 +1386,28 @@ def main():
             ev["duration_choices"] = dchoice
         if args.sync_anchored_entry:
             ctxt["sync_entry"] = sync_rec
+        if args.b_action_onset_events:
+            # Provenance, for auditability only. It is a factual label of where the
+            # event came from — it carries no preference, no score and no rank, and
+            # nothing downstream may read it as a reason to cut.
+            ctxt["event_origin"] = origins[i]
+            if origins[i] == "b_action_onset":
+                r = onset_map[t]
+                ctxt["action_onset"] = {
+                    "signal": os.path.basename(args.b_activity_signals),
+                    "run_id": r.get("run_id"),
+                    "onset_perf_s": r.get("onset_perf_s"),
+                    "end_perf_s": r.get("end_perf_s"),
+                    "duration_s": r.get("duration_s"),
+                    "peak_perf_s": r.get("peak_perf_s"),
+                    "peak_loc": r.get("peak_loc"),
+                    "peak_cell": r.get("peak_cell"),
+                    "snap_to_grid_beat_s": r.get("snap_s"),
+                    "why": ("a sustained localised alternate-camera activity run began here and "
+                            "no existing legal B face served its onset; this event exists so the "
+                            "accepted sync mapping can offer B at the action. The candidates on "
+                            "this event carry the same evidence scores as any grid event."),
+                }
         out_events.append(ev)
 
     doc = {
@@ -1087,6 +1469,68 @@ def main():
                         "anticipation would start before the B reel."),
             "events": sync_entries}
 
+    if args.b_action_onset_events:
+        doc["policy"]["b_action_onset_events"] = True
+        acc = [r for r in onset_record if r["decision"] == "accepted"]
+        rej = [r for r in onset_record if r["decision"] == "rejected"]
+        doc["b_action_onset_events"] = {
+            "why": ("a sustained localised alternate-camera activity run whose onset is not "
+                    "already served by a legal B face proposes ONE ADDITIONAL EVENT at that "
+                    "onset (snapped to the nearest existing grid beat). It changes WHERE an "
+                    "editorial event exists, never how a camera candidate maps to performance "
+                    "time: the entry is still derived from the event timestamp through the "
+                    "accepted sync mapping and is never searched. The activity signal is a "
+                    "proposal signal only — it is not a candidate score and no score here is "
+                    "derived from it."),
+            "signal": args.b_activity_signals,
+            "lag_s": SYNC_LAG_S,
+            "rule": {"min_run_s": args.onset_min_run_s,
+                     "snap": "nearest grid beat within half a beat period (%.4f s)"
+                             % (ONSET_MAX_SNAP_FRAC * beat_period),
+                     "already_represented": ("a legal face entering within %.1f s of the onset "
+                                             "and reaching the action end minus %.1f s"
+                                             % (args.onset_near_s, args.onset_tail_tol_s)),
+                     "min_event_gap_s": onset_gap_used,
+                     "min_event_gap_s_grid": args.min_event_gap,
+                     "min_event_gap_overridden": bool(onset_gap_overridden),
+                     "usability": ("fail closed if the run's minimum luma is below %.1f x the "
+                                   "signal's median luma or more than %.0f %% of its samples are "
+                                   "frozen" % (ONSET_MIN_LUMA_FRAC, ONSET_MAX_FROZEN_FRAC * 100)),
+                     "coverage": ("b_entry_coverage at the derived entry must pass; otherwise "
+                                  "no event is proposed"),
+                     "per_run": "at most one supplemental event per activity run"},
+            "counts": {"base_events": len(base_events), "runs_considered": len(onset_record),
+                       "accepted": len(acc), "rejected": len(rej),
+                       "final_events": len(out_events)},
+            "neighbor_anchors": onset_neighbors,
+            "accepted_events": [{"anchor_s": r["anchor_s"], "run_id": r["run_id"],
+                                 "onset_perf_s": r["onset_perf_s"],
+                                 "action_end_perf_s": r["end_perf_s"],
+                                 "duration_s": r["duration_s"],
+                                 "snap_s": r["snap_s"],
+                                 "gap_to_nearest_anchor_s": r["gap_to_nearest_anchor_s"],
+                                 "nearest_anchor_kind": r["nearest_anchor_kind"]}
+                                for r in sorted(acc, key=lambda x: x["anchor_s"])],
+            "runs": onset_record,
+        }
+        # Fail-closed self-check: the face prediction behind the "already represented"
+        # test must agree with the faces actually emitted for every base event, so a
+        # drifted model of the grid cannot ship a wrong proposal.
+        bad = []
+        for i, t in enumerate(events):
+            if origins[i] != "grid":
+                continue
+            pred = sorted(base_faces[t])
+            got = sorted((c["id"], c["timeline_start"], c["timeline_end"])
+                         for c in out_events[i]["candidates"] if c["angle"] == "B")
+            if pred != got:
+                bad.append({"anchor_s": r3(t), "predicted": pred, "emitted": got})
+        if bad:
+            print("ERROR: face prediction disagrees with the emitted artifact for %d base "
+                  "event(s) — refusing to ship a proposal built on a stale model of the grid: %s"
+                  % (len(bad), json.dumps(bad[:2])), file=sys.stderr)
+            return 2
+
     if args.out:
         with open(args.out, "w") as f:
             json.dump(doc, f, indent=1)
@@ -1099,6 +1543,18 @@ def main():
                 print("   %s B lengths: %s" % (e["event_id"],
                       "  ".join("%s=%.3fs" % (k, d[k]) for k in
                                 ("b_early", "b_glance", "b_action", "b_hold") if k in d)))
+        if args.b_action_onset_events:
+            c0 = doc["b_action_onset_events"]["counts"]
+            print("   ACTION-ONSET EVENTS: %d base + %d supplemental = %d events "
+                  "(%d runs considered, %d rejected)"
+                  % (c0["base_events"], c0["accepted"], c0["final_events"],
+                     c0["runs_considered"], c0["rejected"]))
+            for r in doc["b_action_onset_events"]["accepted_events"]:
+                print("      + event at %.3f s (onset %.3f, action %.3f-%.3f, snap %+.3f, "
+                      "nearest anchor %.3f s / %s)"
+                      % (r["anchor_s"], r["onset_perf_s"], r["onset_perf_s"],
+                         r["action_end_perf_s"], r["snap_s"],
+                         r["gap_to_nearest_anchor_s"], r["nearest_anchor_kind"]))
         if args.sync_anchored_entry:
             print("   SYNC-ANCHORED ENTRY: entry = T - %.4f s (accepted mapping), frame snap "
                   "<= %.3f s, B reel end %.3f s" % (SYNC_LAG_S, FRAME_SNAP_MAX_S, reel_end))

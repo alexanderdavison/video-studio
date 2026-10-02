@@ -30,6 +30,15 @@ Assertions, all fatal (no package is written if any fails):
   * both bursts actually reach the envelope end on disk, at comparable density
   * neither envelope leaves its reel
 
+Editorial evidence contract (2026-09-12, Known defect 10). The package this tool writes IS
+the transmitted editorial evidence. It therefore does NOT emit the deterministic scorer's
+aggregate, ranking or recommendation — no per-candidate weighted total, no per-event
+recommended id, no note naming one — so nothing has to be stripped at transmission to make
+the package match the prompt's "no total, no ranking and no recommendation". The sender
+transmits these bytes unmodified. The eight approved individual evidence scores are
+untouched: they are evidence, not a preference. A package that would carry any such field
+is not written.
+
 Usage:
   build_evidence_package.py --candidates sync_300_420.json --out PKGDIR
       [--media-root /mnt/media/raw] [--fps 2] [--section 300 600]
@@ -44,11 +53,15 @@ import glob
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
 
-# ---- accepted sync mapping (Locked decisions 1) — not to be changed here ------
+# ---- accepted sync mapping (Locked decisions 1) — LEGACY fallback --------------
+# These are Set 01's values. They apply ONLY when no --sync-map is supplied, which is what
+# keeps a Set 01 rebuild byte-identical. v1.1: a job's mapping (lag, per-card reel geometry
+# and the per-card SOURCES) comes from that job's canonical sync map.
 LAG = 1.2783
 K = 1673.8707
 B1_DUR = 1672.5973
@@ -58,10 +71,86 @@ INVARIANT_TOL = 0.036            # accepted mapping uncertainty + ~1 frame
 A_CAM = "A CAM/DJI_20260824204625_0054_D.MP4"
 B1 = "B CAM/DJI_20260824204627_0038_D.MP4"
 B2 = "B CAM/DJI_20260824211420_0039_D.MP4"
+SYNC_MAP = None
+
+
+def apply_sync_map(path, media_root):
+    """Resolve THIS job's mapping. Fail-closed: no silent fallback to Set 01's numbers.
+
+    Card sources are stored relative to the media root, which is how this builder consumes
+    them everywhere else.
+    """
+    global LAG, B1_DUR, B2_OFF, A_CAM, B1, B2, SYNC_MAP
+    if not path:
+        return None
+    if not os.path.exists(path):
+        raise SystemExit("SYNC MAP MISSING: %s — refusing to build evidence on an unresolved "
+                         "timebase" % path)
+    m = json.load(open(path))
+    problems, cards = [], m.get("cards") or []
+    if m.get("schema_version") != 1:
+        problems.append("unsupported schema_version=%r" % m.get("schema_version"))
+    if m.get("reference_angle") != "A":
+        problems.append("reference_angle must be A")
+    if not cards:
+        problems.append("the sync map carries no B cards")
+    if len(cards) > 2:
+        problems.append("this builder handles A plus up to two B cards")
+    tol = m.get("tolerance_s")
+    if tol is None or float(tol) < 0 or float(tol) > INVARIANT_TOL:
+        problems.append("tolerance_s %r is missing, negative or above the frame budget %.3f"
+                        % (tol, INVARIANT_TOL))
+    prev_end = None
+    for c in cards:
+        off, dur = c.get("a_time_at_b_zero"), c.get("duration_s")
+        if off is None or float(off) < 0:
+            problems.append("%s has no valid a_time_at_b_zero" % c.get("name"))
+            continue
+        if not dur or float(dur) <= 0:
+            problems.append("%s has no positive duration_s" % c.get("name"))
+            continue
+        if prev_end is not None and abs(float(off) - prev_end) > INVARIANT_TOL:
+            problems.append("%s is discontinuous with the previous card (%.4f vs %.4f)"
+                            % (c.get("name"), float(off), prev_end))
+        prev_end = float(off) + float(dur)
+    lag = m.get("lag_a_to_b_s")
+    if lag is None or float(lag) <= 0:
+        problems.append("lag_a_to_b_s is missing or not positive")
+    if problems:
+        raise SystemExit("SYNC MAP INVALID (%s): %s" % (path, "; ".join(problems)))
+
+    root = os.path.realpath(media_root)
+
+    def rel(p):
+        rp = os.path.realpath(p)
+        return os.path.relpath(rp, root) if rp.startswith(root + os.sep) else p
+
+    LAG = float(lag)
+    A_CAM = rel(m["reference"]["source"])
+    B1 = rel(cards[0]["source"])
+    B1_DUR = float(cards[0]["duration_s"])
+    if len(cards) > 1:
+        B2 = rel(cards[1]["source"])
+        B2_OFF = float(cards[1].get("reel_offset_s",
+                                    float(cards[1]["a_time_at_b_zero"]) - LAG))
+    SYNC_MAP = m
+    return m
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf"
 TILE = (320, 180)
 GRID = (5, 6)
 EPS = 1e-6
+
+# ---- editorial evidence contract (Known defect 10, 2026-09-12) ----------------
+# The prompt tells the editorial model it gets eight individual evidence scores per
+# candidate and "no total, no ranking and no recommendation". That has to be literally
+# true of the canonical package ITSELF, so the deterministic aggregate is dropped HERE,
+# at build time — never by a sender filtering the package on the way out.
+CANDIDATE_DROP = ("weighted_sum", "_w")        # the deterministic weighted total
+EVENT_DROP = ("recommended_by_score", "recommendation_note", "recommendation")
+# a field whose NAME marks it as a deterministic total / ranking / recommendation, i.e.
+# something that would tell the model which candidate the scorer prefers
+AGGREGATE_NAME = re.compile(r"(recommend|rank|aggregate|weighted|argmax|winner|prefer|"
+                            r"best_|_best|best$|total|_sum$|sum$)", re.I)
 
 
 def b_source(t):
@@ -106,6 +195,59 @@ def draw_tc(text, size, x, y):
             "bordercolor=black:x=%s:y=%s" % (FONT, esc(text), size, x, y))
 
 
+def editorial_events(events):
+    """The model-facing event records: candidate geometry and the eight approved evidence
+    scores, and nothing that tells the model which candidate the deterministic scorer
+    prefers.
+
+    Returns (events_out, dropped, violations). A non-empty `violations` means a field the
+    editorial evidence contract forbids is present and the package must not be written.
+    Scoped to the event and candidate records; the geometry, context, duration_choices and
+    evidence blocks are the approved contract and pass through untouched.
+    """
+    out, dropped, bad = [], [], []
+    for ev in events:
+        e = dict(ev)
+        for k in EVENT_DROP:
+            if k in e:
+                dropped.append("%s.%s" % (ev.get("event_id"), k))
+                del e[k]
+        for k in e:
+            if AGGREGATE_NAME.search(k):
+                bad.append("event %s carries %r" % (ev.get("event_id"), k))
+        e["candidates"] = []
+        for c in ev["candidates"]:
+            rec = dict(c)
+            for k in CANDIDATE_DROP:
+                if k in rec:
+                    dropped.append("%s/%s.%s" % (ev.get("event_id"), c.get("id"), k))
+                    del rec[k]
+            for k in rec:
+                if AGGREGATE_NAME.search(k):
+                    bad.append("candidate %s/%s carries %r"
+                               % (ev.get("event_id"), c.get("id"), k))
+            e["candidates"].append(rec)
+        out.append(e)
+    return out, dropped, bad
+
+
+def aggregate_hits(node, path="events"):
+    """Deep walk of the model-facing evidence, returning every field whose name marks it
+    as a deterministic total, ranking or recommendation. Empty = the emitted package
+    carries no such field and is safe to transmit unmodified."""
+    hits = []
+    if isinstance(node, dict):
+        for k, v in node.items():
+            jp = "%s.%s" % (path, k)
+            if k in CANDIDATE_DROP or k in EVENT_DROP or AGGREGATE_NAME.search(k):
+                hits.append(jp)
+            hits.extend(aggregate_hits(v, jp))
+    elif isinstance(node, list):
+        for i, v in enumerate(node):
+            hits.extend(aggregate_hits(v, "%s[%d]" % (path, i)))
+    return hits
+
+
 def main():
     ap = argparse.ArgumentParser(description="Matched A/B candidate-aligned evidence builder")
     ap.add_argument("--candidates", required=True)
@@ -115,6 +257,9 @@ def main():
     ap.add_argument("--section", type=float, nargs=2, default=[300.0, 600.0])
     ap.add_argument("--grade-json", default=None)
     ap.add_argument("--prompt-from", default=None)
+    ap.add_argument("--sync-map", default=None,
+                    help="the JOB's canonical camera sync map (v1.1). Without it the builder "
+                         "uses the Set 01 legacy mapping and sources.")
     ap.add_argument("--sheet", action="store_true", default=True)
     ap.add_argument("--no-sheet", dest="sheet", action="store_false")
     args = ap.parse_args()
@@ -122,6 +267,7 @@ def main():
     if not os.path.exists(args.candidates):
         print("ERROR: no candidate artifact: %s" % args.candidates, file=sys.stderr)
         return 2
+    apply_sync_map(args.sync_map, args.media_root)
     cand = json.load(open(args.candidates))
     pol = cand["policy"]
     if not pol.get("sync_anchored_entry"):
@@ -231,6 +377,24 @@ def main():
     print("pre-render assertions: %d events, %d B candidates, A+B envelopes share the "
           "performance interval" % (len(plan), sum(len(p["b_faces"]) for p in plan)))
 
+    # ------------------------- editorial evidence contract (Known defect 10) ----
+    # Drop the deterministic scorer's aggregate/ranking/recommendation BEFORE anything is
+    # rendered, so a package that would contradict the prompt is never written at all and
+    # no sender ever has to sanitize these bytes.
+    events_out, dropped, violations = editorial_events(events)
+    if violations:
+        print("SCHEMA FAILURE — the editorial package would carry a deterministic "
+              "aggregate/ranking/recommendation field, which the prompt states does not "
+              "exist:", file=sys.stderr)
+        for v in violations:
+            print("   ! %s" % v, file=sys.stderr)
+        return 1
+    n_event_drops = sum(1 for d in dropped if d.rsplit(".", 1)[-1] in EVENT_DROP)
+    print("contract   : dropped %d deterministic aggregate/ranking field(s) that are not "
+          "part of the editorial evidence contract — %d candidate weighted totals, "
+          "%d event recommendations" % (len(dropped), len(dropped) - n_event_drops,
+                                        n_event_drops))
+
     # ------------------------------------------------------------ overview -----
     S0, S1 = args.section
     times = [S0 + i * 10.0 for i in range(int((S1 - S0) / 10.0))]
@@ -331,8 +495,9 @@ def main():
                        % (eid, p["n_a"], p["n_b"]))
         if p["a_face"] is not None:
             a0, a1 = p["a_face"]["start"], p["a_face"]["end"]
-            if a0 < p["a_src"][0] - EPS or a1 > p["a_src"][1] + EPS:
-                bad.append("%s/hold_a: A span not contained in the rendered A burst" % eid)
+            if a0 < p["a_src"][0] - INVARIANT_TOL or a1 > p["a_src"][1] + INVARIANT_TOL:
+                bad.append("%s/hold_a: A span not contained in the rendered A burst "
+                           "(residual within the accepted sync tolerance %.3f s)" % (eid, INVARIANT_TOL))
     if bad:
         print("\nALIGNMENT FAILURE — rendered bursts do not meet the matched-evidence "
               "requirement:", file=sys.stderr)
@@ -353,6 +518,14 @@ def main():
                                               ("minimum_b_shot", "maximum_b_shot",
                                                "minimum_a_recovery")}},
             "sync_mapping": {"lag_a_to_b_s": lag, "b1_dur_s": B1_DUR, "b2_reel_offset_s": B2_OFF,
+                             "source": (SYNC_MAP.get("method") if SYNC_MAP else "legacy_set01"),
+                             "job_sync_map": ({"job_id": SYNC_MAP.get("job_id"),
+                                               "tolerance_s": SYNC_MAP.get("tolerance_s"),
+                                               "cards": [{"name": c.get("name"),
+                                                          "a_time_at_b_zero": c.get("a_time_at_b_zero"),
+                                                          "duration_s": c.get("duration_s")}
+                                                         for c in SYNC_MAP.get("cards", [])]}
+                                              if SYNC_MAP else None),
                              "a_offset_s": a_off,
                              "mapping": "B_source = performance - %.4f ; A_source = performance "
                                         "+ %.4f" % (lag, a_off),
@@ -399,7 +572,7 @@ def main():
                          "sheet_interval_s": 10.0, "sheet_role": "broad program context only",
                          "sheet_grid": list(GRID), "sheet_tile_wh": list(TILE)}}
 
-    for p, ev in zip(plan, events):
+    for p, ev, evo in zip(plan, events, events_out):
         d = os.path.join(out, "events", p["event_id"])
         frames = []
         for cam, prefix, src0 in (("A", "a", p["a_src"][0]),
@@ -410,7 +583,7 @@ def main():
                 s = round(src0 + idx / args.fps, 3)
                 frames.append({"file": os.path.basename(f), "camera": cam, "source_s": s,
                                "performance_s": round(s + (a_off if cam == "A" else lag), 3)})
-        ev["evidence"] = {"performance_span_s": [round(p["perf"][0], 3), round(p["perf"][1], 3)],
+        evo["evidence"] = {"performance_span_s": [round(p["perf"][0], 3), round(p["perf"][1], 3)],
                           "performance_span_tc": [tc(p["perf"][0]), tc(p["perf"][1])],
                           "a": {"timebase": "A source = performance time",
                                 "span_s": [round(p["a_src"][0], 3), round(p["a_src"][1], 3)],
@@ -426,12 +599,13 @@ def main():
                           "hold_a_evidence": "a",
                           "containment": "PASS", "synchronized": "PASS",
                           "dir": "events/%s" % p["event_id"], "frames": frames}
-        ev["dense_window"] = {"used": [round(p["perf"][0], 3), round(p["perf"][1], 3)],
-                              "timebase": "performance time"}
+        evo["dense_window"] = {"used": [round(p["perf"][0], 3), round(p["perf"][1], 3)],
+                               "timebase": "performance time"}
         # the prompt tells the model to read candidates/<event_id>.json; write exactly the
-        # list embedded in the pack so that promise is literally true
+        # list embedded in the pack — the same contract-clean records — so that promise is
+        # literally true
         os.makedirs(os.path.join(out, "candidates"), exist_ok=True)
-        json.dump(ev["candidates"],
+        json.dump(evo["candidates"],
                   open(os.path.join(out, "candidates", "%s.json" % ev["event_id"]), "w"), indent=1)
     if args.sheet and os.path.exists(out + "/overview/sheet_01.jpg"):
         pack["sheets"] = [{"file": "overview/sheet_01.jpg", "angle": "A",
@@ -443,7 +617,7 @@ def main():
                            "bytes": os.path.getsize(out + "/overview/sheet_01.jpg"),
                            "sha256": sha(out + "/overview/sheet_01.jpg"),
                            "frames": [[i, round(t, 3)] for i, t in enumerate(times)]}]
-    pack["events"] = events
+    pack["events"] = events_out
     pack["counts"] = {"n_events": len(events),
                       "n_a_frames": sum(c["a"] for c in counts.values()),
                       "n_b_frames": sum(c["b"] for c in counts.values()),
@@ -452,6 +626,32 @@ def main():
                       "n_images_total": sum(c["a"] + c["b"] for c in counts.values())
                                         + (1 if args.sheet else 0)}
     json.dump(pack, open(out + "/evidence_pack.json", "w"), indent=1)
+
+    # ---- verify the file that was actually WRITTEN, not the object in memory -------
+    # Exit before package_index.json so a package that contradicts the prompt can never
+    # look complete. This is a gate, not a filter: it never edits the emitted bytes.
+    written = json.load(open(out + "/evidence_pack.json"))
+    hits = aggregate_hits(written.get("events") or [])
+    if hits:
+        print("SCHEMA FAILURE — the written evidence_pack.json carries deterministic "
+              "aggregate/ranking/recommendation field(s); it is not canonical and its "
+              "index has not been written:", file=sys.stderr)
+        for h in hits:
+            print("   ! %s" % h, file=sys.stderr)
+        return 1
+    cand_hits = []
+    for f in sorted(glob.glob(out + "/candidates/*.json")):
+        cand_hits += aggregate_hits(json.load(open(f)),
+                                    "candidates/" + os.path.basename(f))
+    if cand_hits:
+        print("SCHEMA FAILURE — a candidates/<event_id>.json carries a deterministic "
+              "aggregate/ranking/recommendation field:", file=sys.stderr)
+        for h in cand_hits:
+            print("   ! %s" % h, file=sys.stderr)
+        return 1
+    print("contract   : written evidence_pack.json and every candidates/<event>.json carry "
+          "no deterministic total, ranking or recommendation — the package is safe to "
+          "transmit unmodified")
 
     if args.prompt_from and os.path.exists(args.prompt_from + "/prompt.md"):
         shutil.copy(args.prompt_from + "/prompt.md", out + "/prompt.md")

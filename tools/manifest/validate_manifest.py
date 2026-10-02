@@ -208,8 +208,53 @@ def check_pre_grades(manifest) -> list:
             errors.append(
                 f"manifest.pre_grades: key '{name}' is not a declared source (a_reel/b_reel)"
             )
-        if not isinstance(curve, str) or not curve.strip():
+        if isinstance(curve, dict):
+            errors.extend(check_time_varying(name, curve))
+        elif not isinstance(curve, str) or not curve.strip():
             errors.append(f"manifest.pre_grades.{name}: curve must be a non-empty string")
+    return errors
+
+
+def check_time_varying(name, entry) -> list:
+    """Structural check of a time-varying camera match (camera drift, 2026-09-15).
+
+    A job whose source exposure drifts cannot be normalised by one transform, so the match is a
+    list of control points in source time with continuous interpolation between them.
+    """
+    errors = []
+    if entry.get("mode") != "time_varying":
+        errors.append(f"manifest.pre_grades.{name}: dict form must be mode 'time_varying'")
+        return errors
+    if entry.get("interpolation", "linear") not in ("linear",):
+        errors.append(f"manifest.pre_grades.{name}: unsupported interpolation "
+                      f"'{entry.get('interpolation')}' (only 'linear' is defined)")
+    mcs = entry.get("max_chunk_s", 30.0)
+    try:
+        if not (1.0 <= float(mcs) <= 600.0):
+            errors.append(f"manifest.pre_grades.{name}: max_chunk_s {mcs} outside [1, 600]")
+    except (TypeError, ValueError):
+        errors.append(f"manifest.pre_grades.{name}: max_chunk_s must be numeric")
+    pts = entry.get("points")
+    if not isinstance(pts, list) or not pts:
+        errors.append(f"manifest.pre_grades.{name}: time_varying needs a non-empty points list")
+        return errors
+    last = None
+    for i, pt in enumerate(pts):
+        if not isinstance(pt, dict):
+            errors.append(f"manifest.pre_grades.{name}.points[{i}]: must be a mapping")
+            continue
+        try:
+            t = float(pt.get("t"))
+        except (TypeError, ValueError):
+            errors.append(f"manifest.pre_grades.{name}.points[{i}].t: must be numeric")
+            continue
+        if last is not None and t <= last:
+            errors.append(f"manifest.pre_grades.{name}.points[{i}].t: {t} is not after {last}")
+        last = t
+        c = pt.get("curve")
+        if not isinstance(c, str) or not c.strip():
+            errors.append(f"manifest.pre_grades.{name}.points[{i}].curve: must be a non-empty "
+                          f"string")
     return errors
 
 

@@ -26,3 +26,47 @@ tools/tests/work/
 !tools/bin/examples/example_edl.json
 !tools/analysis/p1_out/*.json
 !tools/analysis/harness/records/*.json
+
+# --- preview/proof cleanup policy + generated analysis output (added 2026-09-14) ---
+# Runtime job state and render scratch: never source (the cleanup policy owns these on the NAS).
+jobs/*
+!jobs/.gitkeep
+final_work*/
+render_work*/
+bcolorfix*/
+*_work/
+# Generated analysis output (prompts, signal dumps, per-window products) — code is tracked, output is not.
+tools/analysis/cal/
+tools/analysis/dc/
+tools/analysis/test5/
+tools/analysis/test6/
+tools/analysis/test6_out/
+tools/analysis/p1_out/signals_*.json
+
+# --- generated media and frame dumps (blanket rules last: later rules win) ---
+*.wav
+*.aac
+*.m4a
+*.jpg
+*.jpeg
+*.webp
+*.log
+*.out
+*.tmp
+*.temp
+nohup.out
+.DS_Store
+._*
+*.swp
+*.png
+
+# --- but the graphics SOURCE assets and fixture DEFINITIONS are source, not dumps ---
+!assets/**
+!tools/tests/**/*.py
+!tools/tests/**/*.sh
+!tools/tests/**/*.md
+!tools/tests/**/*.json
+!tools/tests/**/*.yaml
+!tools/**/fixtures/**/*.json
+!tools/**/fixtures/**/*.yaml
+!tools/**/fixtures/**/*.txt

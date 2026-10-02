@@ -1,8 +1,7 @@
 # Editorial selector prompt — DJ set edit (evidence package v2)
 
 > **Provider boundary:** this prompt and its evidence package were built LOCALLY.
-> Nothing here has been sent anywhere. `package_index.json` carries
-> `"transmitted": false` for every file.
+> Nothing here has been sent anywhere.
 
 ## Role
 
@@ -79,15 +78,17 @@ of the same performance moment at every length.
 5. **State a confidence between 0 and 1** for every choice. Use low confidence
    when the frames are dark or ambiguous, when the A/B match is unverified, or
    when the phrase phase is only nominal.
-6. The `policy` block is binding context, not a suggestion — respect
-   `minimum_b_shot`, `maximum_b_shot`, `minimum_a_recovery`, `cut_grid` and
-   `low_confidence_action`. `low_confidence_action: stay_on_a` means: when in
-   doubt, hold A.
+6. Binding policy comes from two places, and both bind. `candidate_artifact.policy`
+   in the evidence pack is authoritative for the candidate policy values present in
+   the package — `minimum_b_shot`, `maximum_b_shot` and `minimum_a_recovery`.
+   `cut_grid` and `low_confidence_action` are binding request-level editorial policy
+   supplied directly by this prompt, not carried in the package; their values are
+   given in the “Active policy” line below. `low_confidence_action: stay_on_a`
+   means: when in doubt, hold A.
 7. **No aggregate is provided, deliberately.** You get eight individual evidence
    scores per candidate and no total, no ranking and no recommendation. Judging
    their relative importance is your job, and the eight scores are not equally
-   trustworthy — read `evidence_notes` in the evidence pack before you lean on
-   any of them.
+   trustworthy.
 8. The phrase artifact's `phase_method` is `nominal`: the downbeat phase is
    **assumed, not measured**. Do not treat a cited downbeat as certain.
 9. Output **JSON only** — no prose before or after the JSON. No markdown fences.
@@ -131,9 +132,6 @@ evt_01, evt_02, evt_03, evt_04, evt_05, evt_06, evt_07, evt_08, evt_09, evt_10, 
    supplied. If the directory is still a placeholder, you have no reference: say
    so in your rationale when it changes what you would otherwise choose.
 
-`candidates/deterministic_ranking_LOCAL.json` exists in the package but is
-**local-only**: it is not part of your input and must not be treated as evidence.
-
 Span: **00:05:00.000 -> 00:10:00.000** (1 sheet(s) attached).
 
 ---
@@ -144,7 +142,9 @@ Span: **00:05:00.000 -> 00:10:00.000** (1 sheet(s) attached).
 {{PASTE_EVIDENCE_PACK_JSON_HERE}}
 <!-- ==== END EVIDENCE PACK ==== -->
 
-Active policy (for reference only; the pack's `policy` block is authoritative):
+Active policy — `candidate_artifact.policy` is authoritative for the candidate policy
+values present in the package; `cut_grid` and `low_confidence_action` are binding
+request-level editorial policy supplied directly by this prompt:
 minimum_b_shot=4, maximum_b_shot=14, minimum_a_recovery=8, cut_grid=phrase, low_confidence_action=stay_on_a
 
-Package: `openai_test/`
+Package: `matched_ab_evidence/`

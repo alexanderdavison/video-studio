@@ -93,7 +93,8 @@ if [ "${1:-}" = "--list" ]; then
   echo "  P11 per-angle grade resolves B to curves -> PASS (lookup asserts pixels)"
   echo "  P12 pre_grades lift B pixels             -> PASS (pixel compare)"
   echo "  P13 pre_grades unknown source refused    -> FAIL (rc 1)"
-  echo "  P14 auto-pre-grade derives at render time-> PASS (pixel compare)"
+  echo "  P14 auto pre-grade REFUSED for angle B (owns match) -> PASS (pixel equal)"
+  echo "  P14b refusal (source + grade) recorded in log -> PASS"
   exit 0
 fi
 
@@ -197,14 +198,20 @@ fi
 # P13: pre_grades key that is not a declared source -> refused before render
 proxy_check "P13 pre_grades unknown source refused" FAIL 1 invalid_pre_grades_key.yaml
 
-# P14: --auto-pre-grade derives the corrective curve at RENDER time (Phase 6).
-# Same dark-B job rendered without (--no-auto-pre-grade) vs with (default) —
-# the auto mode must derive a curve that lifts the B frame.
+# P14: the per-angle camera-match OVERRIDE (2026-08-27 decision doc point 4, enforced
+# 2026-09-14). valid_dark_b declares grade club_dispatch_pb3_v1, for which the registry
+# defines a DEDICATED B camera-match grade (club_dispatch_pb3_b_v1). That chain already IS
+# the derived correction, so the auto pre-grade must be REFUSED for the B source —
+# applying both lifts B twice (the club-dispatch-set01 blow-out: mean luma 135.5 / p95 204
+# with 0.7% new clipping instead of the accepted 28.5 / 76 / 0.01%).
+# So the default (auto) render and the --no-auto-pre-grade render must agree on the B cut.
+# (The derivation itself is still covered by the exposure suite: E02 dark-lifts, E04
+#  manifest --write.)
 P14_BASE="$W/out_P14_base.mp4"
 P14_AUTO="$W/out_P14_auto.mp4"
 rm -f "$P14_BASE" "$P14_AUTO"
 "$PY" "$PROXY" "$MFX/valid_dark_b.yaml" --media-root "$SRC" --work "$W/proxy_work" \
-    --out "$P14_BASE" --full --no-auto-pre-grade >"$W/proxy_last.log" 2>&1
+    --out "$P14_BASE" --full --no-auto-pre-grade >"$W/P14_base.log" 2>&1
 P14_R1=$?
 "$PY" "$PROXY" "$MFX/valid_dark_b.yaml" --media-root "$SRC" --work "$W/proxy_work" \
     --out "$P14_AUTO" --full >"$W/proxy_last.log" 2>&1
@@ -224,19 +231,30 @@ yb = yavg(base, 3.5)
 ya = yavg(auto, 3.5)
 if yb is None or ya is None:
     print("FAIL no YAVG (base=%s auto=%s)" % (yb, ya))
-elif ya > yb + 1.5:
+elif abs(ya - yb) <= 0.5:
     print("PASS")
 else:
-    print("FAIL yb=%.2f ya=%.2f (auto not brighter)" % (yb, ya))
+    print("FAIL yb=%.2f ya=%.2f (auto pre-grade WAS applied to a B source that owns its match)"
+          % (yb, ya))
 PY
 )
   if [ "$P14_RES" = "PASS" ]; then
-    pass "P14 auto-pre-grade derives curve at render time"
+    pass "P14 auto pre-grade refused for the B angle that owns a match"
   else
-    fail "P14 auto-pre-grade derives curve at render time" "$P14_RES"
+    fail "P14 auto pre-grade refused for the B angle that owns a match" "$P14_RES"
   fi
 else
-  fail "P14 auto-pre-grade derives curve at render time" "base rc=$P14_R1 auto rc=$P14_R2"
+  fail "P14 auto pre-grade refused for the B angle that owns a match" \
+       "base rc=$P14_R1 auto rc=$P14_R2"
+fi
+
+# P14b: the refusal is auditable — the render log says which source and which grade.
+if grep -q "AUTO PRE-GRADE SKIPPED" "$W/proxy_last.log" \
+   && grep -q "club_dispatch_pb3_b_v1" "$W/proxy_last.log"; then
+  pass "P14b refusal (source + grade) recorded in the render log"
+else
+  fail "P14b refusal (source + grade) recorded in the render log" \
+       "$(grep -i "PRE-GRADE" "$W/proxy_last.log" | head -2)"
 fi
 
 echo

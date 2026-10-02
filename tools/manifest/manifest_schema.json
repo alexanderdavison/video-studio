@@ -4,7 +4,14 @@
   "title": "ISH D DJ-video template manifest",
   "description": "Typed, versioned edit-plan manifest for the ISH D template engine (Phase 2). The manifest constrains, never expands: everything in it is a request the template engine is allowed to honor, and nothing more. Consumed identically by the visual proxy (Phase 3) and the future deterministic renderer (Phase 4).",
   "type": "object",
-  "required": ["manifest_version", "job_id", "template", "sources", "timeline", "profiles"],
+  "required": [
+    "manifest_version",
+    "job_id",
+    "template",
+    "sources",
+    "timeline",
+    "profiles"
+  ],
   "additionalProperties": false,
   "properties": {
     "manifest_version": {
@@ -25,7 +32,9 @@
     },
     "sources": {
       "type": "object",
-      "required": ["a_reel"],
+      "required": [
+        "a_reel"
+      ],
       "additionalProperties": false,
       "properties": {
         "a_reel": {
@@ -35,7 +44,10 @@
         },
         "b_reel": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 },
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
           "description": "Ordered B-camera files. Treated as ONE virtual reel: durations concatenate in list order. Omit for A-Cam-Only jobs; any angle B cut requires it."
         }
       }
@@ -43,64 +55,185 @@
     "timeline": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/$defs/cut" },
+      "items": {
+        "$ref": "#/$defs/cut"
+      },
       "description": "Ordered list of hard cuts. Within one angle, cuts must be sorted by source_in and must not overlap."
     },
     "profiles": {
       "type": "object",
-      "required": ["grade", "crop", "graphics", "audio"],
+      "required": [
+        "grade",
+        "crop",
+        "graphics",
+        "audio"
+      ],
       "additionalProperties": false,
       "properties": {
-        "grade":    { "type": "string", "minLength": 1 },
-        "crop":     { "type": "string", "minLength": 1 },
-        "graphics": { "type": "string", "minLength": 1 },
-        "audio":    { "type": "string", "minLength": 1 }
+        "grade": {
+          "type": "string",
+          "minLength": 1
+        },
+        "crop": {
+          "type": "string",
+          "minLength": 1
+        },
+        "graphics": {
+          "type": "string",
+          "minLength": 1
+        },
+        "audio": {
+          "type": "string",
+          "minLength": 1
+        }
       },
       "description": "Versioned profile names resolved to LOCKED creative params in the profile registry. The app encodes these; it does not redesign them."
     },
     "postflight": {
       "type": "object",
-      "description": "OPTIONAL — written by the postflight verifier onto the COMPLETED job manifest (never an input request). Records the QC results the refined plan requires: integrated loudness + BT.709 confirmation + delivery file.",
-      "required": ["status"],
+      "description": "OPTIONAL \u2014 written by the postflight verifier onto the COMPLETED job manifest (never an input request). Records the QC results the refined plan requires: integrated loudness + BT.709 confirmation + delivery file.",
+      "required": [
+        "status"
+      ],
       "additionalProperties": false,
       "properties": {
-        "status": { "enum": ["passed", "failed"] },
-        "checked_at": { "type": "string", "format": "date-time" },
-        "integrated_lufs": { "type": "number", "description": "Full-program integrated loudness (EBU R128), target -13.5 ±0.3." },
-        "true_peak_dbtp": { "type": "number", "description": "True peak on the delivered file, must be <= -1.5 dBTP." },
-        "lra": { "type": "number" },
-        "duration_s": { "type": "number", "minimum": 0 },
+        "status": {
+          "enum": [
+            "passed",
+            "failed"
+          ]
+        },
+        "checked_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "integrated_lufs": {
+          "type": "number",
+          "description": "Full-program integrated loudness (EBU R128), target -13.5 \u00b10.3."
+        },
+        "true_peak_dbtp": {
+          "type": "number",
+          "description": "True peak on the delivered file, must be <= -1.5 dBTP."
+        },
+        "lra": {
+          "type": "number"
+        },
+        "duration_s": {
+          "type": "number",
+          "minimum": 0
+        },
         "bt709": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "primaries": { "type": "boolean" },
-            "transfer":  { "type": "boolean" },
-            "matrix":    { "type": "boolean" }
+            "primaries": {
+              "type": "boolean"
+            },
+            "transfer": {
+              "type": "boolean"
+            },
+            "matrix": {
+              "type": "boolean"
+            }
           },
           "description": "All three must be true for a passed BT.709 confirmation."
         },
-        "delivered_file": { "type": "string", "minLength": 1 },
+        "delivered_file": {
+          "type": "string",
+          "minLength": 1
+        },
         "pre_grades_applied": {
           "type": "object",
           "additionalProperties": {
             "type": "object",
-            "additionalProperties": { "type": ["string", "number", "boolean"] }
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean"
+              ]
+            }
           },
-          "description": "OPTIONAL — Phase 6 QC record of exposure pre-grades the renderer applied (written by renderer postflight, never authored). Key = source name; value = {curve, ...}."
+          "description": "OPTIONAL \u2014 Phase 6 QC record of exposure pre-grades the renderer applied (written by renderer postflight, never authored). Key = source name; value = {curve, ...}."
         }
       }
     },
     "pre_grades": {
       "type": "object",
-      "additionalProperties": { "type": "string", "minLength": 1 },
-      "description": "OPTIONAL — Phase 6 analyzer-written corrective exposure pre-grades. Keys MUST be exact source names declared in sources (a_reel or b_reel entries) — enforced by the validator. Values are ffmpeg filter fragments (curves=...). Applied BEFORE the locked creative grade; an absent source has no pre-grade."
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "string",
+            "minLength": 1
+          },
+          {
+            "type": "object",
+            "required": [
+              "mode",
+              "points"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "mode": {
+                "const": "time_varying"
+              },
+              "interpolation": {
+                "enum": [
+                  "linear"
+                ]
+              },
+              "units": {
+                "enum": [
+                  "source_seconds"
+                ]
+              },
+              "max_chunk_s": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 600
+              },
+              "points": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "t",
+                    "curve"
+                  ],
+                  "properties": {
+                    "t": {
+                      "type": "number"
+                    },
+                    "curve": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "gamma": {
+                      "type": "number"
+                    },
+                    "sat": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "description": "OPTIONAL - Phase 6 / camera-match pre-grades. Keys MUST be exact source names declared in sources (a_reel or b_reel entries) - enforced by the validator. A value is either an ffmpeg filter fragment (curves=...) for a STATIC match, or a time_varying object with control points in source seconds for a source whose exposure DRIFTS over the recording (the renderer interpolates between control points per rendered chunk, on the frame grid). Applied BEFORE the locked creative grade; an absent source has no pre-grade."
     }
   },
   "$defs": {
     "cut": {
       "type": "object",
-      "required": ["id", "angle", "source_in", "source_out"],
+      "required": [
+        "id",
+        "angle",
+        "source_in",
+        "source_out"
+      ],
       "additionalProperties": false,
       "properties": {
         "id": {
@@ -109,7 +242,10 @@
           "description": "Cut id, 1:1 with the proxy burn-in (cut_018 renders as CUT 018). Zero-padded, three digits. Must be unique within the timeline."
         },
         "angle": {
-          "enum": ["A", "B"],
+          "enum": [
+            "A",
+            "B"
+          ],
           "description": "A = a_reel (safe master). B = the b_reel virtual reel (concatenated files)."
         },
         "source_in": {
@@ -124,7 +260,10 @@
         },
         "confidence": {
           "type": "string",
-          "enum": ["low", "high"],
+          "enum": [
+            "low",
+            "high"
+          ],
           "description": "OPTIONAL (Phase 3). low = proxy burns a LOW CONF marker on this cut; high/absent = no marker. Drives the proxy's low-confidence burn-in only; no editorial effect yet."
         }
       }

@@ -100,6 +100,21 @@ def load_registry():
         return json.load(f)
 
 
+def b_grade_name(registry, grade_name):
+    """Name of the DEDICATED B-angle camera-match grade, or None when there is none.
+
+    Same naming rule as grade_for() (base WITHOUT the version suffix + _b_v1, both
+    spellings tried). Kept as its own function because the pre-grade branch must be able
+    to ask "does angle B own its own camera-match grade?" without re-deriving the chain.
+    """
+    grades = registry["profiles"]["grade"]
+    base = re.sub(r"_v\d+$", "", grade_name)
+    for cand in (grade_name + "_b_v1", base + "_b_v1"):
+        if cand in grades:
+            return cand
+    return None
+
+
 def grade_for(registry, grade_name, angle):
     """Renderer rule (2026-08-27): B-cuts use the <base>_b_v1 variant when the
     registry defines it, otherwise the base grade. Variant naming convention:
@@ -109,10 +124,9 @@ def grade_for(registry, grade_name, angle):
     """
     grades = registry["profiles"]["grade"]
     if angle == "B":
-        base = re.sub(r"_v\d+$", "", grade_name)
-        for cand in (grade_name + "_b_v1", base + "_b_v1"):
-            if cand in grades:
-                return grades[cand]["locked_params"]
+        cand = b_grade_name(registry, grade_name)
+        if cand:
+            return grades[cand]["locked_params"]
     return grades[grade_name]["locked_params"]
 
 
@@ -136,6 +150,35 @@ def dt(text, x_expr, y, size=26, color="white"):
             f"fontsize={size}:fontcolor={color}:borderw=2:bordercolor=black")
 
 
+PROOF_FPS = 30000.0 / 1001.0   # the CFR rate every segment is rendered at
+
+
+
+# ---------------------------------------------------------------------------------------------
+# TIME-VARYING CAMERA MATCH (2026-09-15)
+#
+# A camera whose exposure drifts during a 40-minute recording cannot be normalised by one static
+# transform: club-dispatch-set02 A measured 71 -> 28 luma across the set where Set 01 A sat flat at
+# 29-32, so any single curve either crushes the tail or leaves the head blown. A job may therefore
+# carry a TIME-VARYING match: control points in SOURCE time, each holding a solved curve, with
+# continuous interpolation between them.
+#
+# ffmpeg is the constraint that shapes this. The eq filter in this build does NOT evaluate t in its
+# expressions (measured: brightness=0.05 gives +14 luma, brightness=0.05*t changes nothing, and a
+# piecewise form is a parse error), and curves is a static LUT. So the transform is interpolated per
+# RENDERED CHUNK on the frame grid: each chunk takes the curve evaluated at the MIDPOINT of its own
+# source window, and chunk length is capped (max_chunk_s) so one step is a fraction of a luma.
+# Exactly one technical normalisation per angle, applied before the shared creative grade, and the
+# chunk joins are reported as processing boundaries (they are not timeline cuts).
+# ---------------------------------------------------------------------------------------------
+
+# The time-varying primitives live in ONE shared module: the proxy and the delivery renderer read
+# the same manifest field, so they must not hold two independent meanings of it (2026-09-15).
+sys.path.insert(0, os.path.normpath(os.path.join(HERE, "..", "lib")))
+from camera_match import (CURVE_RE, EQ_RE, split_pre, join_pre, parse_curve, curve_str,  # noqa: E402
+                          interp_curve, curve_at, is_time_varying, tv_chunks)
+
+
 def segment_filters(res, grade, pushin, abs_off, cam_label, cut_label, low_conf, pre_grade=None):
     w, h = res.split("x")
     chain = []
@@ -156,7 +199,15 @@ def segment_filters(res, grade, pushin, abs_off, cam_label, cut_label, low_conf,
     return ",".join(chain)
 
 
-def render_segment(src, local_in, local_out, abs_off, vf, seg_path, quality):
+def render_segment(src, local_in, local_out, abs_off, vf, seg_path, quality, frames=None):
+    """Encode one segment with an EXACT frame count.
+
+    `-t dur` alone keeps every CFR frame that starts before `dur`, so it rounds each segment
+    UP to the frame grid; concatenating 57 of those accumulated ~1 s of drift (picture cuts
+    late, audio unchanged). The caller derives the count from the GLOBAL program frame
+    boundaries, so each cut lands on the plan's own frame grid and nothing accumulates.
+    `-t dur` is kept as an upper bound only.
+    """
     dur = local_out - local_in
     cmd = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
            "-vaapi_device", VAAPI_DEVICE,
@@ -164,7 +215,10 @@ def render_segment(src, local_in, local_out, abs_off, vf, seg_path, quality):
            "-t", "%.6f" % dur,
            "-vf", vf,
            "-c:v", "h264_vaapi", "-global_quality", str(quality),
-           "-an", seg_path]
+           "-an"]
+    if frames:
+        cmd += ["-frames:v", str(int(frames))]
+    cmd.append(seg_path)
     r = run(cmd)
     if r.returncode != 0:
         return False, r.stderr.strip().splitlines()[-1] if r.stderr.strip() else "ffmpeg failed"
@@ -361,6 +415,21 @@ def main():
             parsed = {}
         if r.returncode == 0 and parsed.get("ok"):
             auto = parsed.get("pre_grades") or {}
+            # Per-angle camera-match override (2026-08-27 decision doc, point 4: "a hand-set
+            # per-source grade ... wins over the auto-pre-grade for that source"). When the
+            # registry defines a DEDICATED camera-match grade for the B angle (<base>_b_v1),
+            # that chain already IS the derived correction — grade_for() applies it to every
+            # B cut. An auto-derived pre-grade on top lifts the same shadows twice. Measured
+            # on club-dispatch-set01: B inserts reached mean luma 135.5 / p95 204 with 0.7%
+            # new highlight clipping instead of the accepted 28.5 / 76 / 0.01%.
+            if auto:
+                dedicated = b_grade_name(registry, grade_name)
+                held = sorted(k for k in auto if k in b_names) if dedicated else []
+                for k in held:
+                    auto.pop(k, None)
+                if held:
+                    log("AUTO PRE-GRADE SKIPPED for %s: angle B owns the camera-match grade "
+                        "'%s' (applying both would lift B twice)" % (", ".join(held), dedicated))
             if auto:
                 pre_grades = dict(auto)
                 log("AUTO PRE-GRADE: %s" % ", ".join("%s=%s" % (k, v) for k, v in auto.items()))
@@ -386,19 +455,53 @@ def main():
         fail("truncation left no segments (target %.3fs of %.3fs)" % (target, full_total), rc=2)
 
     seg_paths = []
+    proc_bounds = []
+    tv_sources = sorted(k for k, v in (pre_grades or {}).items() if is_time_varying(v))
+    if tv_sources:
+        log("TIME-VARYING CAMERA MATCH on: %s" % ", ".join(tv_sources))
     n = 0
     for (src, l_in, l_out, abs_off, angle, cut_label, low_conf) in segs:
         n += 1
-        seg_path = os.path.join(work, "seg_%s_%02d.mp4" % (cut_label, n))
         cam = "A-CAM" if angle == "A" else "B-CAM"
         pushin = (angle == "A")  # push-in is an A-cam look
         grade = grade_for(registry, grade_name, angle)
         pre = pre_grades.get(src_to_name.get(src, ""))
+        if is_time_varying(pre):
+            chunks = tv_chunks(pre, l_in, l_out, abs_off, PROOF_FPS,
+                               float(pre.get("max_chunk_s") or 30.0))
+            if not chunks:
+                fail("time-varying match produced no chunks for %s" % cut_label, rc=2)
+            for j, ch in enumerate(chunks):
+                seg_path = os.path.join(work, "seg_%s_%02d%s.mp4"
+                                        % (cut_label, n, chr(97 + j % 26)))
+                vf = segment_filters(args.res, grade, pushin, ch["abs_off"], cam, cut_label,
+                                     low_conf, ch["curve"])
+                ok, err = render_segment(src, ch["l_in"], ch["l_out"], ch["abs_off"], vf,
+                                         seg_path, args.quality, frames=ch["frames"])
+                if not ok:
+                    fail("segment %s chunk %d encode failed: %s" % (seg_path, j, err), rc=2)
+                seg_paths.append(seg_path)
+                if j:
+                    proc_bounds.append(round(ch["abs_off"], 6))
+            continue
+        seg_path = os.path.join(work, "seg_%s_%02d.mp4" % (cut_label, n))
         vf = segment_filters(args.res, grade, pushin, abs_off, cam, cut_label, low_conf, pre)
-        ok, err = render_segment(src, l_in, l_out, abs_off, vf, seg_path, args.quality)
+        # frame count from the GLOBAL program frame boundaries, not from this segment's own
+        # duration: round(end*fps) - round(start*fps) puts every cut on the plan's frame grid
+        n_frames = (int(round((abs_off + (l_out - l_in)) * PROOF_FPS))
+                    - int(round(abs_off * PROOF_FPS)))
+        ok, err = render_segment(src, l_in, l_out, abs_off, vf, seg_path, args.quality,
+                                 frames=n_frames)
         if not ok:
             fail("segment %s encode failed: %s" % (seg_path, err), rc=2)
         seg_paths.append(seg_path)
+
+    # The renderer's OWN processing boundaries (time-varying sub-chunk joins) are reported so QC can
+    # prove they are invisible: they are not timeline cuts and have no planned cut.
+    pb_path = os.path.join(work, "processing_boundaries.json")
+    json.dump({"processing_boundaries_s": sorted(proc_bounds),
+               "n_processing_boundaries": len(proc_bounds)}, open(pb_path, "w"), indent=1)
+    log("PROCESSING BOUNDARIES (%d) -> %s" % (len(proc_bounds), pb_path))
 
     out_video = os.path.join(work, "video.mp4")
     ok, err = concat_video(seg_paths, out_video)

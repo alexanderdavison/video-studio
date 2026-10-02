@@ -53,7 +53,92 @@
     "graphics": {
       "cd_bug_v9": {
         "locked_params": "bug overlay v9 (CD bug). Exact overlay asset + placement owned by the renderer/hyperframes; this name locks WHICH bug, not the filter graph.",
-        "source": "2026-08-26-audio-true-peak-repair.md (v9 bug mux)"
+        "source": "2026-08-26-audio-true-peak-repair.md (v9 bug mux)",
+        "asset_root": "/opt/video-studio/assets/graphics/cd_bug_v9",
+        "asset_type": "png_sequence",
+        "frames": {
+          "pattern": "%04d.png",
+          "first_index": 1,
+          "frame_count": 240,
+          "fps": 30,
+          "loop_s": 8.0
+        },
+        "canvas": [1280, 720],
+        "alpha": {
+          "mode": "native_rgba",
+          "chroma_key": false,
+          "threshold": 16
+        },
+        "content_bbox": [71, 505, 152, 152],
+        "content_bbox_source": "union alpha bbox over all 240 frames, threshold 16/255 (the plateau at >=16; the legacy hard-coded crop=152:152:71:505 is exactly this box). Measured 2026-09-13 by tools/graphics/union_bbox.py.",
+        "geometry": {
+          "anchor": "bottom-left",
+          "reference_height": 1080,
+          "visible_width_at_reference": 152,
+          "margin_left_at_reference": 72,
+          "margin_bottom_at_reference": 24,
+          "rendered_size_at_reference": [152, 152]
+        },
+        "persistence": {
+          "scope": "program",
+          "start_s": 0.0,
+          "end": "program_end",
+          "survives": ["camera_cuts", "window_boundaries", "coverage_promotions", "section_boundaries", "long_a_holds"]
+        },
+        "animation": {
+          "clock": "absolute_program_time",
+          "phase": "floor(program_time * fps) mod frame_count",
+          "restarts_on_cut": false
+        },
+        "geometry_added": "2026-09-13 — geometry/asset/frames keys added so the profile owns its own crop and placement. locked_params and source unchanged; the rendered filter chain and position are byte-identical to the previous renderer constants (crop=152:152:71:505, overlay=72:904)."
+      },
+      "orbit_relay_v1": {
+        "locked_params": "Orbit Relay v1 (CD bug). Approved artwork uploaded 2026-09-13 (orbit_relay_v1_upload_ready.zip). 240-frame RGBA loop, 600x600 canvas; placement is bottom-right and is computed from the MEASURED union alpha content bbox, never from the transparent canvas.",
+        "source": "orbit_relay_v1_upload_ready.zip -> /mnt/media/graphics/orbit_relay/v1 (checksum manifest 245 OK / 0 FAILED, 240 contiguous frames, verified 2026-09-13)",
+        "asset_root": "/mnt/media/graphics/orbit_relay/v1",
+        "asset_type": "png_sequence",
+        "frames": {
+          "dir": "frames",
+          "pattern": "%04d.png",
+          "first_index": 0,
+          "frame_count": 240,
+          "fps": 30,
+          "loop_s": 8.0
+        },
+        "canvas": [600, 600],
+        "alpha": {
+          "mode": "native_rgba",
+          "chroma_key": false,
+          "threshold": 8
+        },
+        "content_bbox": [42, 79, 484, 398],
+        "content_bbox_source": "union alpha bbox over all 240 frames, threshold 8/255 (identical 1..64: the artwork's alpha edge is hard, so the threshold is not critical). Padding in the 600x600 canvas: left 42, right 74, top 79, bottom 123 — positioning from the canvas would have been wrong by exactly that padding. Measured 2026-09-13 by tools/graphics/union_bbox.py.",
+        "geometry": {
+          "anchor": "bottom-right",
+          "reference_height": 1080,
+          "visible_width_at_reference": 150,
+          "margin_right_at_reference": 40,
+          "margin_bottom_at_reference": 40,
+          "rendered_size_at_reference": [150, 123]
+        },
+        "persistence": {
+          "scope": "program",
+          "start_s": 0.0,
+          "end": "program_end",
+          "survives": ["camera_cuts", "window_boundaries", "coverage_promotions", "section_boundaries", "long_a_holds"]
+        },
+        "animation": {
+          "clock": "absolute_program_time",
+          "phase": "floor(program_time * fps) mod frame_count",
+          "restarts_on_cut": false
+        },
+        "reference_asset": "orbit_relay_v1.mov (qtrle/argb, 600x600, 30 fps, 8.000 s) — reference/fallback only; the verified PNG sequence is the production source of truth.",
+        "review_assets": {
+          "approved_board": "reference/approved_board.png (1536x1024)",
+          "placement_preview": "previews/placement_1080p.png",
+          "loop_preview": "previews/loop_1080p.mp4 (1920x1080)"
+        },
+        "approved": "2026-09-13"
       }
     },
     "audio": {

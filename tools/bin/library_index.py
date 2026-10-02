@@ -16,7 +16,7 @@ Subcommands:
   rm      <match>                             drop clip + segments + embedding
 
 DB default: /opt/video-studio/data/library.db  (override: --db PATH)
-Ollama default: http://192.168.1.22:11434       (override: --ollama URL)
+Ollama default: http://$VIDEO_OPS_HOST:11434       (override: --ollama URL)
 
 Examples:
   library_index.py scan
@@ -29,6 +29,7 @@ Examples:
 
 from __future__ import annotations
 
+import os
 import argparse
 import csv
 import io
@@ -43,7 +44,29 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 DEFAULT_DB = Path("/opt/video-studio/data/library.db")
-DEFAULT_OLLAMA = "http://192.168.1.22:11434"
+def _deploy_host(name, default="localhost"):
+    """Deployment host: environment, else the untracked .env. See .env.example.
+
+    Tracked source carries no LAN addresses: they are deployment configuration, they make a clone
+    unusable anywhere else, and they keep tripping the GitHub mirror's scrubber.
+    """
+    if os.environ.get(name):
+        return os.environ[name]
+    d = os.path.dirname(os.path.abspath(__file__))
+    for _ in range(5):
+        cand = os.path.join(d, ".env")
+        if os.path.exists(cand):
+            for line in open(cand):
+                line = line.strip()
+                if line.startswith(name + "="):
+                    return line.split("=", 1)[1].strip()
+            break
+        if os.path.exists(os.path.join(d, ".git")):
+            break                       # reached the repo root without a .env
+        d = os.path.dirname(d)
+    return default
+
+DEFAULT_OLLAMA = "http://%s:11434" % _deploy_host("VIDEO_OPS_HOST")
 DEFAULT_EXTS = {".mp4", ".mov", ".mxf", ".mkv", ".avi", ".m4v", ".ts", ".mts", ".3gp"}
 SKIP_PREFIXES = (".", "._")  # .DS_Store, AppleDouble junk
 

@@ -5,12 +5,35 @@ DB lives on LOCAL disk (/opt/video-studio/studio.db), NOT NFS.
 Embeddings: bge-m3 via Ollama on .22, stored as float32 BLOB (no sqlite-vec).
 Transcripts: whisper (search-grade, free) on ingest; scribe (cut-grade, paid) on-demand.
 """
+import os
 import hashlib, json, os, sqlite3, subprocess, sys, time, urllib.request
 from pathlib import Path
 
 DB = Path("/opt/video-studio/studio.db")
 RAW = Path("/mnt/media/raw")
-OLLAMA = "http://192.168.1.22:11434"
+def _deploy_host(name, default="localhost"):
+    """Deployment host: environment, else the untracked .env. See .env.example.
+
+    Tracked source carries no LAN addresses: they are deployment configuration, they make a clone
+    unusable anywhere else, and they keep tripping the GitHub mirror's scrubber.
+    """
+    if os.environ.get(name):
+        return os.environ[name]
+    d = os.path.dirname(os.path.abspath(__file__))
+    for _ in range(5):
+        cand = os.path.join(d, ".env")
+        if os.path.exists(cand):
+            for line in open(cand):
+                line = line.strip()
+                if line.startswith(name + "="):
+                    return line.split("=", 1)[1].strip()
+            break
+        if os.path.exists(os.path.join(d, ".git")):
+            break                       # reached the repo root without a .env
+        d = os.path.dirname(d)
+    return default
+
+OLLAMA = "http://%s:11434" % _deploy_host("VIDEO_OPS_HOST")
 EMBED_MODEL = "bge-m3"
 MAX_RETRIES = 3
 VIDEO_EXTS = {".mp4", ".mov", ".mkv", ".m4v", ".avi", ".ts"}
@@ -430,7 +453,7 @@ def scan_and_ingest(stages, max_seconds=None, limit=None):
         conn = connect_db()
         conn.executescript(SCHEMA)
         conn.commit()
-        files = [p for p in sorted(RAW.rglob("*")) if p.is_file() and p.suffix.lower() in VIDEO_EXTS]
+        files = [p for p in sorted(RAW.rglob("*")) if p.is_file() and p.suffix.lower() in VIDEO_EXTS and not p.name.startswith(".")]
         done = 0
         for f in files:
             try:
